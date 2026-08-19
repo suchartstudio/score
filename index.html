@@ -29,8 +29,15 @@
       <h2 class="text-2xl font-bold mb-2 text-center text-amber-500">Scoreboard System</h2>
       <p class="text-xs text-slate-400 text-center mb-6">เข้าสู่ระบบควบคุมสกอร์บอร์ด / ผู้ดูแลระบบ</p>
       <form id="login-form" class="space-y-4">
-        <div><label class="block text-sm mb-1">Username / Email</label><input type="text" id="login-username" class="w-full p-2.5 rounded bg-slate-800 border border-slate-700" required></div>
-        <div><label class="block text-sm mb-1">Password</label><input type="password" id="login-password" class="w-full p-2.5 rounded bg-slate-800 border border-slate-700" required></div>
+        <!-- ปรับจาก Email เป็น Username -->
+        <div>
+          <label class="block text-sm mb-1">Username</label>
+          <input type="text" id="login-username" placeholder="ชื่อผู้ใช้งาน (ไม่ต้องใส่ @)" class="w-full p-2.5 rounded bg-slate-800 border border-slate-700" required>
+        </div>
+        <div>
+          <label class="block text-sm mb-1">Password</label>
+          <input type="password" id="login-password" class="w-full p-2.5 rounded bg-slate-800 border border-slate-700" required>
+        </div>
         <button type="submit" class="w-full py-3 bg-amber-500 hover:bg-amber-600 font-bold rounded text-slate-950 text-lg">LOGIN</button>
       </form>
     </div>
@@ -54,7 +61,11 @@
       <div class="bg-slate-900 p-4 rounded-xl border border-amber-500/30">
         <h3 class="text-sm font-bold text-amber-400 mb-3">➕ เพิ่มผู้ใช้งานใหม่</h3>
         <form id="create-user-form" class="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <div><label class="block text-xs mb-1 text-slate-400">Email</label><input type="email" id="new-user-email" class="w-full p-1.5 rounded bg-slate-800 text-sm" required></div>
+          <!-- เปลี่ยน input type="email" เป็น text และเปลี่ยน label เป็น Username -->
+          <div>
+            <label class="block text-xs mb-1 text-slate-400">Username</label>
+            <input type="text" id="new-user-username" placeholder="ชื่อผู้ใช้งาน (ไม่ต้องใส่ @)" class="w-full p-1.5 rounded bg-slate-800 text-sm" required>
+          </div>
           <div><label class="block text-xs mb-1 text-slate-400">Password</label><input type="password" id="new-user-password" class="w-full p-1.5 rounded bg-slate-800 text-sm" required></div>
           <div><label class="block text-xs mb-1 text-slate-400">สิทธิ์กีฬา</label>
             <div class="flex flex-wrap gap-2 text-xs pt-1">
@@ -70,7 +81,7 @@
       </div>
       <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
         <table class="w-full text-left text-xs text-slate-300">
-          <thead class="bg-slate-800 text-amber-400"><tr><th class="p-2">UID</th><th class="p-2">Email</th><th class="p-2">Role</th><th class="p-2">สิทธิ์</th><th class="p-2">จัดการ</th></tr></thead>
+          <thead class="bg-slate-800 text-amber-400"><tr><th class="p-2">UID</th><th class="p-2">Username</th><th class="p-2">Role</th><th class="p-2">สิทธิ์</th><th class="p-2">จัดการ</th></tr></thead>
           <tbody id="users-table-body" class="divide-y divide-slate-800"></tbody>
         </table>
       </div>
@@ -308,7 +319,8 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    // นำเข้า createUserWithEmailAndPassword สำหรับการสร้างบัญชีผู้ใช้ใหม่
+    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getDatabase, ref, set, onValue, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = {
@@ -359,14 +371,40 @@
       });
     }
 
+    // --- ส่วนของการ Login ---
     document.getElementById('login-form').addEventListener('submit', (e) => {
       e.preventDefault();
       let inputUser = document.getElementById('login-username').value.trim();
       const pass = document.getElementById('login-password').value;
+      
+      // แปลง Username เป็น Email อัตโนมัติ หากไม่มี @ อยู่
       if (inputUser === 'suchart') inputUser = 'suchart@suchartstudio.com';
       else if (!inputUser.includes('@')) inputUser = `${inputUser}@suchartstudio.com`;
+      
       signInWithEmailAndPassword(auth, inputUser, pass).catch(err => alert("Error: " + err.message));
     });
+
+    // --- ส่วนของการสร้าง User ใหม่ (Admin) ---
+    const createUserForm = document.getElementById('create-user-form');
+    if(createUserForm) {
+      createUserForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        let newUsername = document.getElementById('new-user-username').value.trim();
+        const newPassword = document.getElementById('new-user-password').value;
+        
+        // เติม @suchartstudio.com ให้ Username อัตโนมัติ หากไม่มี
+        const newUserEmail = newUsername.includes('@') ? newUsername : `${newUsername}@suchartstudio.com`;
+
+        // สร้างผู้ใช้ใน Firebase Auth
+        createUserWithEmailAndPassword(auth, newUserEmail, newPassword)
+          .then((userCredential) => {
+            alert(`สร้างผู้ใช้ ${newUsername} สำเร็จ!\n(ระบบอาจทำการเปลี่ยนสิทธิ์ Login ไปยังบัญชีที่เพิ่งสร้างใหม่)`);
+            document.getElementById('create-user-form').reset();
+            // การบันทึกสิทธิ์ลง Database (Realtime DB) สามารถเพิ่มเติมได้ที่นี่
+          })
+          .catch((error) => alert("ไม่สามารถสร้างผู้ใช้ได้ Error: " + error.message));
+      });
+    }
 
     onAuthStateChanged(auth, (user) => {
       if (isDisplayMode) return;
@@ -374,7 +412,10 @@
         currentUser = user;
         document.getElementById('view-login').classList.add('hidden');
         document.getElementById('main-nav').classList.remove('hidden');
-        document.getElementById('user-info').innerText = `Logged in: ${user.email}`;
+        
+        // โชว์แค่ส่วนชื่อ User (ตัด @suchartstudio.com ออกตอนแสดงผลเพื่อความสวยงาม)
+        const displayEmail = user.email.replace('@suchartstudio.com', '');
+        document.getElementById('user-info').innerText = `Logged in: ${displayEmail}`;
 
         currentMatchRef = ref(db, `scoreboards/${user.uid}`);
         onValue(currentMatchRef, (snapshot) => {
@@ -581,7 +622,7 @@
       document.getElementById('ctrl-home-foul').innerText = matchState.homeFouls || 0;
       document.getElementById('ctrl-away-foul').innerText = matchState.awayFouls || 0;
       
-      renderPeriodButtons(matchState.sport); // อัปเดตสถานะปุ่มสีเหลือง(Active)
+      renderPeriodButtons(matchState.sport); 
       updateControlTimerUI();
     }
 

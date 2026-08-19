@@ -53,7 +53,6 @@
       </div>
       <div class="flex items-center gap-2">
         <button id="nav-btn-control" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 rounded text-xs font-semibold" data-i18n="navControl">🎮 หน้าควบคุม</button>
-        <!-- ปุ่ม Admin กลับมาแล้ว -->
         <button id="nav-btn-admin" class="hidden px-3 py-1 bg-amber-500 text-slate-950 hover:bg-amber-400 rounded text-xs font-bold" data-i18n="navAdmin">⚡ จัดการ User</button>
         <button id="btn-extend-display" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 rounded font-semibold text-xs" data-i18n="navLed">🖥️ เปิดจอ LED</button>
         <button id="btn-logout" class="px-3 py-1 bg-rose-600 hover:bg-rose-500 rounded font-semibold text-xs" data-i18n="navLogout">ออกจากระบบ</button>
@@ -129,7 +128,6 @@
         <div class="col-span-4 space-y-3 bg-slate-950/60 p-3 rounded-lg">
           <div class="flex gap-2 items-center">
             <input type="text" id="input-home-name" data-i18n-placeholder="homePlaceholder" placeholder="ชื่อทีมเหย้า" class="w-full p-2 rounded bg-slate-800 font-bold text-amber-400 text-base">
-            <!-- Custom File Upload Button for Home -->
             <div class="custom-file-upload w-24">
               <input type="file" id="input-home-logo" accept="image/*">
               <div id="lbl-home-logo" class="bg-slate-700 hover:bg-slate-600 text-slate-200 text-[10px] py-1.5 px-1 rounded truncate border border-slate-600 font-semibold" data-i18n="lblUploadLogo">อัพโหลดโลโก้</div>
@@ -177,7 +175,6 @@
 
         <div class="col-span-4 space-y-3 bg-slate-950/60 p-3 rounded-lg">
           <div class="flex gap-2 items-center">
-            <!-- Custom File Upload Button for Away -->
             <div class="custom-file-upload w-24">
               <input type="file" id="input-away-logo" accept="image/*">
               <div id="lbl-away-logo" class="bg-slate-700 hover:bg-slate-600 text-slate-200 text-[10px] py-1.5 px-1 rounded truncate border border-slate-600 font-semibold" data-i18n="lblUploadLogo">อัพโหลดโลโก้</div>
@@ -189,7 +186,7 @@
         </div>
       </div>
 
-      <!-- ส่วนควบคุมเสริม (คงเดิม) -->
+      <!-- Match Events / Extra Controllers -->
       <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 mt-2">
         <h3 class="font-bold text-slate-300 text-sm mb-3" data-i18n="lblEvents">🛠️ แผงควบคุมเสริม (Match Events)</h3>
         
@@ -260,9 +257,8 @@
       </div>
     </div>
 
-    <!-- View: Display Window (คงเดิม) -->
+    <!-- View: Display Window -->
     <div id="view-display" class="hidden fixed inset-0 bg-[#0a0f1d] w-screen h-screen flex flex-col justify-between p-8 select-none overflow-hidden" style="aspect-ratio: 16/9;">
-      <!-- ... ส่วนจอแสดงผลโค้ดเดิมทั้งหมด ... -->
       <div class="h-[8%] flex justify-center items-center border-b-4 border-slate-800 pb-2 relative">
         <span id="disp-comp-name" class="text-4xl font-bold uppercase tracking-widest text-amber-400 text-center">CHAMPIONSHIP 2026</span>
       </div>
@@ -313,6 +309,11 @@
         </div>
       </div>
 
+      <!-- Popup Event Overlay -->
+      <div id="disp-event-overlay" class="hidden absolute bottom-[15%] left-1/2 transform -translate-x-1/2 bg-slate-900/95 border-4 border-amber-500 px-10 py-5 rounded-3xl shadow-[0_0_40px_rgba(245,158,11,0.6)] z-50 text-center min-w-[60%] transition-opacity duration-300">
+        <div id="disp-event-text" class="text-5xl font-black text-white tracking-wide"></div>
+      </div>
+
       <div id="disp-marquee-bar" class="h-[10%] bg-slate-900/80 rounded-xl flex items-center border border-slate-800 text-amber-400 text-4xl font-bold shadow-2xl">
         <div class="marquee-container h-full">
           <div id="disp-marquee" class="marquee-content h-full flex items-center">
@@ -328,7 +329,6 @@
     import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getDatabase, ref, set, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-    // เพิ่มคำแปลสำหรับปุ่มอัพโหลดรูป
     const dict = {
       th: {
         subtitleLogin: "เข้าสู่ระบบควบคุมสกอร์บอร์ด / ผู้ดูแลระบบ", userPlaceholder: "ชื่อผู้ใช้งาน (ไม่ต้องใส่ @)",
@@ -342,7 +342,7 @@
         optGoal: "⚽ ทำประตู", optYellow: "🟨 ใบเหลือง", optRed: "🟥 ใบแดง", btnSaveEvent: "บันทึกเหตุการณ์", 
         btnClearLog: "ล้าง Log", lblHomeFouls: "ฟาล์วทีมเหย้า (Home Fouls):", lblAwayFouls: "ฟาล์วทีมเยือน (Away Fouls):", 
         btnEndSet: "📌 จบเซ็ต (บันทึกคะแนนเซ็ตนี้)", btnResetSets: "รีเซ็ตเซ็ตทั้งหมด", lblSub: "ระบบเปลี่ยนตัว:", 
-        subIn: "เข้า 🟢", subOut: "ออก 🔴", btnSub: "🔄 แจ้งเปลี่ยนตัว", lblUploadLogo: "อัพโหลดโลโก้", // <--- เพิ่มคำแปล
+        subIn: "เข้า 🟢", subOut: "ออก 🔴", btnSub: "🔄 แจ้งเปลี่ยนตัว", lblUploadLogo: "อัพโหลดโลโก้",
         marqueeDefault: "ยินดีต้อนรับสู่การแข่งขันนัดสำคัญประจำวันนี้", lblShortcuts: "🖮 คีย์บอร์ดชอร์ตคัต (Keyboard Shortcuts):",
         scTimer: "เริ่ม/หยุดเวลา", scReset: "รีเซ็ตเวลา", scHomeScore: "คะแนนเหย้า +", scHomeSub: "คะแนนเหย้า -1", 
         scShotclock: "Shotclock 24/14", scAwayScore: "คะแนนเยือน +", scAwaySub: "คะแนนเยือน -1", scHomeFoul: "ฟาล์วเหย้า +/-", 
@@ -360,7 +360,7 @@
         optGoal: "⚽ Goal", optYellow: "🟨 Yellow Card", optRed: "🟥 Red Card", btnSaveEvent: "Save Event", 
         btnClearLog: "Clear Log", lblHomeFouls: "Home Fouls:", lblAwayFouls: "Away Fouls:", 
         btnEndSet: "📌 End Set (Save Score)", btnResetSets: "Reset All Sets", lblSub: "Substitution:", 
-        subIn: "In 🟢", subOut: "Out 🔴", btnSub: "🔄 Substitute", lblUploadLogo: "Upload Logo", // <--- เพิ่มคำแปล
+        subIn: "In 🟢", subOut: "Out 🔴", btnSub: "🔄 Substitute", lblUploadLogo: "Upload Logo",
         marqueeDefault: "Welcome to today's match", lblShortcuts: "🖮 Keyboard Shortcuts:",
         scTimer: "Start/Pause Timer", scReset: "Reset Timer", scHomeScore: "Home Score +", scHomeSub: "Home Score -1", 
         scShotclock: "Shotclock 24/14", scAwayScore: "Away Score +", scAwaySub: "Away Score -1", scHomeFoul: "Home Foul +/-", 
@@ -382,7 +382,6 @@
         if (dict[currentLang][key]) el.placeholder = dict[currentLang][key];
       });
       
-      // Update label texts for file uploads if no file selected
       const lblHome = document.getElementById('lbl-home-logo');
       const lblAway = document.getElementById('lbl-away-logo');
       if (lblHome.innerText === dict['th'].lblUploadLogo || lblHome.innerText === dict['en'].lblUploadLogo) {
@@ -470,10 +469,9 @@
         const displayEmail = user.email.replace('@suchartstudio.com', '');
         document.getElementById('user-info').innerText = `Logged in: ${displayEmail}`;
 
-        // 1. เพิ่มโค้ดตรวจสอบสิทธิ์ Admin กลับมา
         if (user.email === 'suchart@suchartstudio.com') {
           document.getElementById('nav-btn-admin').classList.remove('hidden');
-          loadUsersList(); // โหลดรายชื่อผู้ใช้งาน
+          loadUsersList();
         } else {
           document.getElementById('nav-btn-admin').classList.add('hidden');
         }
@@ -525,7 +523,6 @@
       document.getElementById(`view-${v}`).classList.remove('hidden');
     };
     document.getElementById('nav-btn-control').addEventListener('click', () => switchView('control'));
-    // เพิ่ม Listener ให้ปุ่ม Admin
     document.getElementById('nav-btn-admin').addEventListener('click', () => switchView('admin'));
     document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
     
@@ -537,7 +534,6 @@
 
     function syncToDatabase() { if (currentUser && currentMatchRef) set(currentMatchRef, matchState); }
 
-    // คืนค่าระบบจัดการ User ให้แอดมิน
     function loadUsersList() {
       onValue(ref(db, 'users'), (snapshot) => {
         const tbody = document.getElementById('users-table-body');
@@ -586,8 +582,6 @@
         remove(ref(db, `scoreboards/${uid}`));
       }
     };
-
-    // ... [โค้ดส่วนควบคุมคะแนน, กีฬา, คีย์บอร์ด เหมือนเดิมทั้งหมด] ...
 
     function setupSportsSelector(sports) {
       const container = document.getElementById('sports-selector');
@@ -683,6 +677,47 @@
     };
     window.resetSets = () => { matchState.setScoresHome = []; matchState.setScoresAway = []; syncToDatabase(); };
 
+    // ฟังก์ชัน Match Events
+    window.addMatchEvent = () => {
+      const team = document.getElementById('fb-team').value;
+      const player = document.getElementById('fb-player').value.trim();
+      const eventType = document.getElementById('fb-event').value;
+      if (!player) {
+        alert("กรุณาใส่ชื่อหรือเบอร์นักเตะครับ");
+        return;
+      }
+      const teamName = team === 'home' ? matchState.homeName : matchState.awayName;
+      matchState.matchEvent = {
+        text: `${teamName}: ${eventType} - ${player}`,
+        timestamp: Date.now()
+      };
+      document.getElementById('fb-player').value = '';
+      syncToDatabase();
+    };
+
+    window.clearMatchEvents = () => {
+      matchState.matchEvent = { text: '', timestamp: 0 };
+      syncToDatabase();
+    };
+
+    window.addSubstitute = () => {
+      const team = document.getElementById('sub-team').value;
+      const subIn = document.getElementById('sub-in').value.trim();
+      const subOut = document.getElementById('sub-out').value.trim();
+      if (!subIn || !subOut) {
+        alert("กรุณาระบุคนเข้าและคนออกให้ครบถ้วนครับ");
+        return;
+      }
+      const teamName = team === 'home' ? matchState.homeName : matchState.awayName;
+      matchState.matchEvent = {
+        text: `🔄 ${teamName} เปลี่ยนตัว: เข้า 🟢 ${subIn} | ออก 🔴 ${subOut}`,
+        timestamp: Date.now()
+      };
+      document.getElementById('sub-in').value = '';
+      document.getElementById('sub-out').value = '';
+      syncToDatabase();
+    };
+
     window.addEventListener('keydown', (e) => {
       if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
       if (!currentUser || document.getElementById('view-control').classList.contains('hidden')) return;
@@ -707,18 +742,17 @@
       }
     });
 
-    // 2. จัดการอัพโหลดรูป พร้อมอัพเดทชื่อไฟล์ลงบนปุ่ม
     const handleImg = (el, k, lblId) => { 
       document.getElementById(el).addEventListener('change', (e) => { 
         const f = e.target.files[0]; 
         const labelEl = document.getElementById(lblId);
         if (f) { 
-          labelEl.innerText = f.name; // เปลี่ยนชื่อปุ่มเป็นชื่อไฟล์
+          labelEl.innerText = f.name;
           const r = new FileReader(); 
           r.onload = ev => { matchState[k] = ev.target.result; syncToDatabase(); }; 
           r.readAsDataURL(f); 
         } else {
-          labelEl.innerText = dict[currentLang].lblUploadLogo; // คืนค่าข้อความตั้งต้นถ้ากดยกเลิก
+          labelEl.innerText = dict[currentLang].lblUploadLogo;
         }
       }); 
     };
@@ -831,6 +865,27 @@
         });
       } else {
         setsContainer.classList.add('hidden');
+      }
+
+      // ระบบแสดง Event บนจอ (Popup)
+      const eventOverlay = document.getElementById('disp-event-overlay');
+      const eventText = document.getElementById('disp-event-text');
+
+      if (data.matchEvent && data.matchEvent.text) {
+        if (data.matchEvent.timestamp !== window.lastEventTimestamp) {
+          window.lastEventTimestamp = data.matchEvent.timestamp;
+          eventText.innerText = data.matchEvent.text;
+          eventOverlay.classList.remove('hidden');
+          
+          if (window.eventTimeout) clearTimeout(window.eventTimeout);
+          
+          // ซ่อนกล่องอัตโนมัติภายใน 10 วินาที
+          window.eventTimeout = setTimeout(() => {
+            eventOverlay.classList.add('hidden');
+          }, 10000); 
+        }
+      } else {
+        eventOverlay.classList.add('hidden');
       }
     }
   </script>

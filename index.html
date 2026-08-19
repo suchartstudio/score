@@ -29,7 +29,6 @@
       <h2 class="text-2xl font-bold mb-2 text-center text-amber-500">Scoreboard System</h2>
       <p class="text-xs text-slate-400 text-center mb-6">เข้าสู่ระบบควบคุมสกอร์บอร์ด / ผู้ดูแลระบบ</p>
       <form id="login-form" class="space-y-4">
-        <!-- ปรับจาก Email เป็น Username -->
         <div>
           <label class="block text-sm mb-1">Username</label>
           <input type="text" id="login-username" placeholder="ชื่อผู้ใช้งาน (ไม่ต้องใส่ @)" class="w-full p-2.5 rounded bg-slate-800 border border-slate-700" required>
@@ -61,7 +60,6 @@
       <div class="bg-slate-900 p-4 rounded-xl border border-amber-500/30">
         <h3 class="text-sm font-bold text-amber-400 mb-3">➕ เพิ่มผู้ใช้งานใหม่</h3>
         <form id="create-user-form" class="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <!-- เปลี่ยน input type="email" เป็น text และเปลี่ยน label เป็น Username -->
           <div>
             <label class="block text-xs mb-1 text-slate-400">Username</label>
             <input type="text" id="new-user-username" placeholder="ชื่อผู้ใช้งาน (ไม่ต้องใส่ @)" class="w-full p-1.5 rounded bg-slate-800 text-sm" required>
@@ -94,141 +92,141 @@
       <div class="grid grid-cols-12 gap-2 bg-slate-900 p-2.5 rounded-xl border border-slate-800 items-center">
         <div class="col-span-3 border-r border-slate-800 pr-2">
           <label class="block font-bold mb-1 text-slate-300 text-[11px]">เลือกโหมดกีฬา:</label>
-          <div id="sports-selector" class="flex flex-wrap gap-1"></div>
+          <div id="sports-selector" class="flex flex-wrap gap-1.5"></div>
         </div>
         <div class="col-span-3 border-r border-slate-800 px-2">
           <label class="block font-bold mb-1 text-slate-300 text-[11px]">🏆 ชื่อรายการแข่งขัน:</label>
-          <input type="text" id="input-comp-name" placeholder="CHAMPIONSHIP 2026" class="w-full p-1.5 rounded bg-slate-800 border border-slate-700 font-bold text-amber-400 text-xs">
+          <input type="text" id="input-comp-name" placeholder="CHAMPIONSHIP 2026" class="w-full p-2 rounded bg-slate-800 border border-slate-700 font-bold text-amber-400 text-sm">
         </div>
         <div class="col-span-6 pl-2">
           <div class="flex justify-between items-center mb-1">
             <label class="font-bold text-slate-300 text-[11px]">📢 ข้อความตัววิ่ง (Marquee):</label>
             <label class="flex items-center cursor-pointer text-amber-400 font-bold text-[11px]">
               <input type="checkbox" id="input-toggle-marquee" class="sr-only peer" checked>
-              <div class="relative w-7 h-4 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-amber-500"></div>
-              <span class="ms-1.5">แสดงตัววิ่ง</span>
+              <div class="relative w-8 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
+              <span class="ms-2 text-sm">แสดงตัววิ่ง</span>
             </label>
           </div>
-          <input type="text" id="input-marquee" placeholder="ยินดีต้อนรับสู่การแข่งขัน..." class="w-full p-1.5 rounded bg-slate-800 border border-slate-700 text-xs">
+          <input type="text" id="input-marquee" placeholder="ยินดีต้อนรับสู่การแข่งขัน..." class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-sm">
         </div>
       </div>
 
       <!-- Main Match Controller -->
       <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 grid grid-cols-12 gap-3 text-center items-start">
         
-        <!-- Home Team -->
-        <div class="col-span-4 space-y-2 bg-slate-950/60 p-2.5 rounded-lg border border-slate-800">
+        <!-- Home Team (เอาเส้นขอบออกตามคำขอ) -->
+        <div class="col-span-4 space-y-3 bg-slate-950/60 p-3 rounded-lg">
           <div class="flex gap-2 items-center">
-            <input type="text" id="input-home-name" placeholder="ชื่อทีมเหย้า" class="w-full p-1 rounded bg-slate-800 font-bold text-amber-400 text-sm">
+            <input type="text" id="input-home-name" placeholder="ชื่อทีมเหย้า" class="w-full p-2 rounded bg-slate-800 font-bold text-amber-400 text-base">
             <input type="file" id="input-home-logo" accept="image/*" class="w-24 text-[10px] text-slate-400">
           </div>
-          <div id="ctrl-home-score" class="text-6xl font-black text-emerald-400 bg-slate-950 py-1 rounded border border-slate-800 leading-none">0</div>
-          <div id="home-score-controls" class="flex justify-center gap-1.5 flex-wrap"></div>
+          <div id="ctrl-home-score" class="text-7xl font-black text-emerald-400 bg-slate-950 py-2 rounded leading-none">0</div>
+          <div id="home-score-controls" class="flex justify-center gap-2 flex-wrap mt-2"></div>
         </div>
 
         <!-- Center: Timer & Periods -->
-        <div class="col-span-4 space-y-2 px-1">
-          <div class="bg-slate-950 py-1 px-3 rounded border border-slate-800 relative">
-            <div id="ctrl-timer" class="text-4xl font-black text-amber-400 leading-none py-1">00:00</div>
+        <div class="col-span-4 space-y-3 px-1">
+          <div class="bg-slate-950 py-2 px-3 rounded relative">
+            <div id="ctrl-timer" class="text-5xl font-black text-amber-400 leading-none py-1">00:00</div>
           </div>
           
-          <div class="flex justify-center gap-1.5">
-            <button id="btn-timer-toggle" class="px-4 py-1 bg-amber-500 text-slate-950 font-bold rounded text-xs hover:bg-amber-400">START</button>
-            <button id="btn-timer-reset" class="px-3 py-1 bg-slate-700 hover:bg-slate-600 font-bold rounded text-xs">RESET</button>
+          <div class="flex justify-center gap-2">
+            <button id="btn-timer-toggle" class="px-6 py-2.5 bg-amber-500 text-slate-950 font-black rounded-lg text-sm hover:bg-amber-400 uppercase">START</button>
+            <button id="btn-timer-reset" class="px-4 py-2.5 bg-slate-700 hover:bg-slate-600 font-bold rounded-lg text-sm">RESET</button>
           </div>
 
           <!-- ปรับเวลา Manual & Shot Clock -->
-          <div class="grid grid-cols-2 gap-1 text-[11px]">
-            <div class="bg-slate-800 p-1 rounded border border-slate-700">
-              <span class="text-[10px] text-slate-400 block font-semibold">⏱️ ตั้งเวลา</span>
-              <div class="flex justify-center gap-1 items-center mt-0.5">
-                <input type="number" id="input-manual-min" placeholder="น." class="w-8 p-0.5 text-center bg-slate-950 rounded font-bold text-xs">
-                <span>:</span>
-                <input type="number" id="input-manual-sec" placeholder="วิ" class="w-8 p-0.5 text-center bg-slate-950 rounded font-bold text-xs">
-                <button onclick="setManualTime()" class="px-1.5 py-0.5 bg-amber-500 text-slate-950 font-bold rounded text-[10px]">ตั้ง</button>
+          <div class="grid grid-cols-2 gap-2 text-[11px]">
+            <div class="bg-slate-800 p-2 rounded">
+              <span class="text-xs text-slate-400 block font-semibold">⏱️ ตั้งเวลา</span>
+              <div class="flex justify-center gap-1 items-center mt-1">
+                <input type="number" id="input-manual-min" placeholder="น." class="w-10 p-1.5 text-center bg-slate-950 rounded font-bold text-sm">
+                <span class="text-sm">:</span>
+                <input type="number" id="input-manual-sec" placeholder="วิ" class="w-10 p-1.5 text-center bg-slate-950 rounded font-bold text-sm">
+                <button onclick="setManualTime()" class="px-3 py-1.5 bg-amber-500 text-slate-950 font-bold rounded text-xs ml-1">ตั้ง</button>
               </div>
             </div>
 
             <!-- Panel Shot Clock (บาสเกตบอล) -->
-            <div id="panel-shotclock-ctrl" class="hidden bg-red-950/50 p-1 rounded border border-red-800/60 flex flex-col justify-center items-center">
-              <span class="text-[10px] font-bold text-red-400 block">SHOT CLOCK</span>
-              <div class="flex gap-1 mt-0.5">
-                <button onclick="resetShotClock(24)" class="px-2 py-0.5 bg-red-600 hover:bg-red-500 text-white font-bold rounded text-[10px]">24s</button>
-                <button onclick="resetShotClock(14)" class="px-2 py-0.5 bg-red-600 hover:bg-red-500 text-white font-bold rounded text-[10px]">14s</button>
+            <div id="panel-shotclock-ctrl" class="hidden bg-red-950/50 p-2 rounded flex flex-col justify-center items-center">
+              <span class="text-xs font-bold text-red-400 block">SHOT CLOCK</span>
+              <div class="flex gap-2 mt-1">
+                <button onclick="resetShotClock(24)" class="px-4 py-1.5 bg-red-600 hover:bg-red-500 text-white font-bold rounded text-sm">24s</button>
+                <button onclick="resetShotClock(14)" class="px-4 py-1.5 bg-red-600 hover:bg-red-500 text-white font-bold rounded text-sm">14s</button>
               </div>
             </div>
           </div>
 
-          <!-- เปลี่ยนจากการกรอกข้อความ เป็นปุ่มเลือก Period ตามกีฬาที่เลือก -->
-          <div class="bg-slate-800 p-1 rounded border border-slate-700 mt-1">
-            <span class="text-[10px] text-slate-400 block font-semibold mb-1">🎯 เลือกช่วงการแข่งขัน</span>
-            <div id="period-selector-container" class="flex flex-wrap justify-center gap-1"></div>
+          <!-- ปุ่มเลือก Period ตามกีฬาที่เลือก -->
+          <div class="bg-slate-800 p-2 rounded mt-2">
+            <span class="text-xs text-slate-400 block font-semibold mb-2">🎯 เลือกช่วงการแข่งขัน</span>
+            <div id="period-selector-container" class="flex flex-wrap justify-center gap-1.5"></div>
           </div>
         </div>
 
-        <!-- Away Team -->
-        <div class="col-span-4 space-y-2 bg-slate-950/60 p-2.5 rounded-lg border border-slate-800">
+        <!-- Away Team (เอาเส้นขอบออกตามคำขอ) -->
+        <div class="col-span-4 space-y-3 bg-slate-950/60 p-3 rounded-lg">
           <div class="flex gap-2 items-center">
-            <input type="text" id="input-away-name" placeholder="ชื่อทีมเยือน" class="w-full p-1 rounded bg-slate-800 font-bold text-amber-400 text-sm">
+            <input type="text" id="input-away-name" placeholder="ชื่อทีมเยือน" class="w-full p-2 rounded bg-slate-800 font-bold text-amber-400 text-base">
             <input type="file" id="input-away-logo" accept="image/*" class="w-24 text-[10px] text-slate-400">
           </div>
-          <div id="ctrl-away-score" class="text-6xl font-black text-emerald-400 bg-slate-950 py-1 rounded border border-slate-800 leading-none">0</div>
-          <div id="away-score-controls" class="flex justify-center gap-1.5 flex-wrap"></div>
+          <div id="ctrl-away-score" class="text-7xl font-black text-emerald-400 bg-slate-950 py-2 rounded leading-none">0</div>
+          <div id="away-score-controls" class="flex justify-center gap-2 flex-wrap mt-2"></div>
         </div>
 
       </div>
 
       <!-- Dynamic Control Panel (เหตุการณ์เสริม) -->
-      <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
-        <h3 class="font-bold text-slate-300 text-xs mb-2">🛠️ แผงควบคุมเสริม (Match Events)</h3>
+      <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 mt-2">
+        <h3 class="font-bold text-slate-300 text-sm mb-3">🛠️ แผงควบคุมเสริม (Match Events)</h3>
         
-        <div class="grid grid-cols-12 gap-2 items-center">
+        <div class="grid grid-cols-12 gap-3 items-center">
           <!-- ฟุตบอล/ฟุตซอล -->
-          <div id="panel-football" class="hidden col-span-12 flex flex-wrap items-center gap-2 p-1.5 bg-slate-800/80 rounded">
-            <div><select id="fb-team" class="p-1 rounded bg-slate-950 text-xs"><option value="home">Home</option><option value="away">Away</option></select></div>
-            <div><input type="text" id="fb-player" placeholder="ชื่อ/เบอร์นักเตะ" class="p-1 rounded bg-slate-950 w-28 text-xs"></div>
+          <div id="panel-football" class="hidden col-span-12 flex flex-wrap items-center gap-2.5 p-2 bg-slate-800/80 rounded">
+            <div><select id="fb-team" class="p-2 rounded bg-slate-950 text-sm"><option value="home">Home</option><option value="away">Away</option></select></div>
+            <div><input type="text" id="fb-player" placeholder="ชื่อ/เบอร์นักเตะ" class="p-2 rounded bg-slate-950 w-36 text-sm"></div>
             <div>
-              <select id="fb-event" class="p-1 rounded bg-slate-950 text-xs">
+              <select id="fb-event" class="p-2 rounded bg-slate-950 text-sm">
                 <option value="⚽ Goal">⚽ ทำประตู</option><option value="🟨 Yellow Card">🟨 ใบเหลือง</option><option value="🟥 Red Card">🟥 ใบแดง</option>
               </select>
             </div>
-            <button onclick="addMatchEvent()" class="px-3 py-1 bg-emerald-600 font-bold rounded text-xs hover:bg-emerald-500">บันทึกเหตุการณ์</button>
-            <button onclick="clearMatchEvents()" class="px-3 py-1 bg-slate-700 font-bold rounded text-xs hover:bg-slate-600">ล้าง Log</button>
+            <button onclick="addMatchEvent()" class="px-4 py-2 bg-emerald-600 font-bold rounded text-sm hover:bg-emerald-500">บันทึกเหตุการณ์</button>
+            <button onclick="clearMatchEvents()" class="px-4 py-2 bg-slate-700 font-bold rounded text-sm hover:bg-slate-600">ล้าง Log</button>
           </div>
 
           <!-- ฟาล์ว (บาส/ฟุตซอล) -->
-          <div id="panel-fouls" class="hidden col-span-12 grid grid-cols-2 gap-2">
-            <div class="p-1.5 bg-slate-800/80 rounded flex justify-between items-center px-4">
-              <span class="text-xs text-slate-400 font-bold">ฟาล์วทีมเหย้า (Home Fouls):</span>
-              <div class="flex items-center gap-2">
-                <button onclick="changeFoul('home', -1)" class="px-2 py-0.5 bg-rose-600 rounded font-bold text-xs">-</button>
-                <span id="ctrl-home-foul" class="text-lg font-bold text-red-500 min-w-[20px] text-center">0</span>
-                <button onclick="changeFoul('home', 1)" class="px-2 py-0.5 bg-rose-600 rounded font-bold text-xs">+</button>
+          <div id="panel-fouls" class="hidden col-span-12 grid grid-cols-2 gap-3">
+            <div class="p-2.5 bg-slate-800/80 rounded flex justify-between items-center px-4">
+              <span class="text-sm text-slate-400 font-bold">ฟาล์วทีมเหย้า (Home Fouls):</span>
+              <div class="flex items-center gap-3">
+                <button onclick="changeFoul('home', -1)" class="px-4 py-1.5 bg-rose-600 rounded font-black text-xl hover:bg-rose-500">-</button>
+                <span id="ctrl-home-foul" class="text-2xl font-bold text-red-500 min-w-[30px] text-center">0</span>
+                <button onclick="changeFoul('home', 1)" class="px-4 py-1.5 bg-rose-600 rounded font-black text-xl hover:bg-rose-500">+</button>
               </div>
             </div>
-            <div class="p-1.5 bg-slate-800/80 rounded flex justify-between items-center px-4">
-              <span class="text-xs text-slate-400 font-bold">ฟาล์วทีมเยือน (Away Fouls):</span>
-              <div class="flex items-center gap-2">
-                <button onclick="changeFoul('away', -1)" class="px-2 py-0.5 bg-rose-600 rounded font-bold text-xs">-</button>
-                <span id="ctrl-away-foul" class="text-lg font-bold text-red-500 min-w-[20px] text-center">0</span>
-                <button onclick="changeFoul('away', 1)" class="px-2 py-0.5 bg-rose-600 rounded font-bold text-xs">+</button>
+            <div class="p-2.5 bg-slate-800/80 rounded flex justify-between items-center px-4">
+              <span class="text-sm text-slate-400 font-bold">ฟาล์วทีมเยือน (Away Fouls):</span>
+              <div class="flex items-center gap-3">
+                <button onclick="changeFoul('away', -1)" class="px-4 py-1.5 bg-rose-600 rounded font-black text-xl hover:bg-rose-500">-</button>
+                <span id="ctrl-away-foul" class="text-2xl font-bold text-red-500 min-w-[30px] text-center">0</span>
+                <button onclick="changeFoul('away', 1)" class="px-4 py-1.5 bg-rose-600 rounded font-black text-xl hover:bg-rose-500">+</button>
               </div>
             </div>
           </div>
 
           <!-- เซ็ต (วอลเลย์บอล/แบดมินตัน) -->
-          <div id="panel-sets" class="hidden col-span-12 flex gap-3 p-1.5 bg-slate-800/80 rounded justify-center items-center">
-            <button onclick="endSet()" class="px-4 py-1 bg-amber-500 text-slate-950 font-bold rounded text-xs hover:bg-amber-400">📌 จบเซ็ต (บันทึกคะแนนเซ็ตนี้)</button>
-            <button onclick="resetSets()" class="px-3 py-1 bg-slate-700 font-bold rounded text-xs hover:bg-slate-600">รีเซ็ตเซ็ตทั้งหมด</button>
+          <div id="panel-sets" class="hidden col-span-12 flex gap-4 p-2 bg-slate-800/80 rounded justify-center items-center">
+            <button onclick="endSet()" class="px-6 py-2.5 bg-amber-500 text-slate-950 font-bold rounded text-sm hover:bg-amber-400">📌 จบเซ็ต (บันทึกคะแนนเซ็ตนี้)</button>
+            <button onclick="resetSets()" class="px-4 py-2.5 bg-slate-700 font-bold rounded text-sm hover:bg-slate-600">รีเซ็ตเซ็ตทั้งหมด</button>
           </div>
 
           <!-- เปลี่ยนตัว -->
-          <div class="col-span-12 flex flex-wrap items-center gap-2 pt-1 border-t border-slate-800">
-            <span class="text-xs font-bold text-slate-400">ระบบเปลี่ยนตัว:</span>
-            <select id="sub-team" class="p-1 rounded bg-slate-950 text-xs"><option value="home">Home</option><option value="away">Away</option></select>
-            <input type="text" id="sub-in" placeholder="เข้า 🟢" class="p-1 rounded bg-slate-950 w-24 text-xs">
-            <input type="text" id="sub-out" placeholder="ออก 🔴" class="p-1 rounded bg-slate-950 w-24 text-xs">
-            <button onclick="addSubstitute()" class="px-3 py-1 bg-blue-600 font-bold rounded text-xs hover:bg-blue-500">🔄 แจ้งเปลี่ยนตัว</button>
+          <div class="col-span-12 flex flex-wrap items-center gap-3 pt-2 border-t border-slate-800">
+            <span class="text-sm font-bold text-slate-400">ระบบเปลี่ยนตัว:</span>
+            <select id="sub-team" class="p-2 rounded bg-slate-950 text-sm"><option value="home">Home</option><option value="away">Away</option></select>
+            <input type="text" id="sub-in" placeholder="เข้า 🟢" class="p-2 rounded bg-slate-950 w-28 text-sm">
+            <input type="text" id="sub-out" placeholder="ออก 🔴" class="p-2 rounded bg-slate-950 w-28 text-sm">
+            <button onclick="addSubstitute()" class="px-4 py-2 bg-blue-600 font-bold rounded text-sm hover:bg-blue-500">🔄 แจ้งเปลี่ยนตัว</button>
           </div>
         </div>
 
@@ -268,14 +266,10 @@
             <span id="disp-away-score" class="text-[11rem] leading-none font-black text-emerald-400 led-glow-green w-1/2 text-left">0</span>
           </div>
           
-          <!-- Timer Section + Short Clock (จัดใหม่แยกออกจากกัน ไม่ให้ซ้อนทับ) -->
           <div class="relative w-full flex flex-col items-center justify-center gap-4">
-            
             <div id="disp-timer" class="text-[7.5rem] leading-none font-black text-amber-400 led-glow-yellow bg-slate-950 w-full text-center py-3 rounded-2xl border-4 border-slate-800 shadow-2xl">
               00:00
             </div>
-            
-            <!-- Shot Clock นำออกจากสถานะ Absolute เพื่อป้องกันการซ้อนทับเวลา -->
             <div id="disp-shotclock" class="hidden bg-red-600 text-white border-4 border-red-500 text-6xl font-black px-10 py-2 rounded-xl shadow-2xl">
               24
             </div>
@@ -319,7 +313,6 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    // นำเข้า createUserWithEmailAndPassword สำหรับการสร้างบัญชีผู้ใช้ใหม่
     import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getDatabase, ref, set, onValue, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
@@ -348,7 +341,6 @@
       showMarquee: true, marqueeText: 'ยินดีต้อนรับสู่การแข่งขัน', matchEvent: { text: '', timestamp: 0 }
     };
 
-    // กำหนดรูปแบบ Period ของแต่ละประเภทกีฬา
     const sportPeriods = {
       football: ['1ST HALF', '2ND HALF', 'EXTRA 1', 'EXTRA 2', 'PENALTY'],
       futsal: ['1ST HALF', '2ND HALF', 'EXTRA 1', 'EXTRA 2', 'PENALTY'],
@@ -371,36 +363,29 @@
       });
     }
 
-    // --- ส่วนของการ Login ---
     document.getElementById('login-form').addEventListener('submit', (e) => {
       e.preventDefault();
       let inputUser = document.getElementById('login-username').value.trim();
       const pass = document.getElementById('login-password').value;
       
-      // แปลง Username เป็น Email อัตโนมัติ หากไม่มี @ อยู่
       if (inputUser === 'suchart') inputUser = 'suchart@suchartstudio.com';
       else if (!inputUser.includes('@')) inputUser = `${inputUser}@suchartstudio.com`;
       
       signInWithEmailAndPassword(auth, inputUser, pass).catch(err => alert("Error: " + err.message));
     });
 
-    // --- ส่วนของการสร้าง User ใหม่ (Admin) ---
     const createUserForm = document.getElementById('create-user-form');
     if(createUserForm) {
       createUserForm.addEventListener('submit', (e) => {
         e.preventDefault();
         let newUsername = document.getElementById('new-user-username').value.trim();
         const newPassword = document.getElementById('new-user-password').value;
-        
-        // เติม @suchartstudio.com ให้ Username อัตโนมัติ หากไม่มี
         const newUserEmail = newUsername.includes('@') ? newUsername : `${newUsername}@suchartstudio.com`;
 
-        // สร้างผู้ใช้ใน Firebase Auth
         createUserWithEmailAndPassword(auth, newUserEmail, newPassword)
           .then((userCredential) => {
             alert(`สร้างผู้ใช้ ${newUsername} สำเร็จ!\n(ระบบอาจทำการเปลี่ยนสิทธิ์ Login ไปยังบัญชีที่เพิ่งสร้างใหม่)`);
             document.getElementById('create-user-form').reset();
-            // การบันทึกสิทธิ์ลง Database (Realtime DB) สามารถเพิ่มเติมได้ที่นี่
           })
           .catch((error) => alert("ไม่สามารถสร้างผู้ใช้ได้ Error: " + error.message));
       });
@@ -413,7 +398,6 @@
         document.getElementById('view-login').classList.add('hidden');
         document.getElementById('main-nav').classList.remove('hidden');
         
-        // โชว์แค่ส่วนชื่อ User (ตัด @suchartstudio.com ออกตอนแสดงผลเพื่อความสวยงาม)
         const displayEmail = user.email.replace('@suchartstudio.com', '');
         document.getElementById('user-info').innerText = `Logged in: ${displayEmail}`;
 
@@ -449,17 +433,14 @@
       container.innerHTML = '';
       sports.forEach(sport => {
         const btn = document.createElement('button');
-        btn.className = `px-2 py-0.5 rounded font-bold uppercase text-[10px] transition ${matchState.sport === sport ? 'bg-amber-500 text-slate-950 shadow' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`;
+        btn.className = `px-3 py-1.5 rounded font-bold uppercase text-xs transition ${matchState.sport === sport ? 'bg-amber-500 text-slate-950 shadow' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`;
         btn.innerText = sport;
         btn.onclick = () => { 
           matchState.sport = sport; 
-          
-          // กำหนดค่าเริ่มต้นของ Period หากเปลี่ยนกีฬาแล้วไม่อยู่ในประเภทนั้น
           const periods = sportPeriods[sport] || [];
           if (!periods.includes(matchState.period) && periods.length > 0) {
             matchState.period = periods[0];
           }
-
           renderScoreButtons(sport); 
           syncToDatabase(); 
           setupSportsSelector(sports); 
@@ -469,7 +450,6 @@
       renderScoreButtons(matchState.sport);
     }
 
-    // ฟังก์ชันสร้างปุ่มกดเลือก Period ตามกีฬาที่ใช้งานอยู่
     function renderPeriodButtons(sport) {
       const container = document.getElementById('period-selector-container');
       if (!container) return;
@@ -479,7 +459,7 @@
       periods.forEach(p => {
         const btn = document.createElement('button');
         const isActive = matchState.period === p;
-        btn.className = `px-2.5 py-1 text-[11px] font-bold rounded transition-colors ${isActive ? 'bg-amber-500 text-slate-950 shadow' : 'bg-slate-700 text-slate-200 hover:bg-slate-600'}`;
+        btn.className = `px-3.5 py-1.5 text-sm font-bold rounded transition-colors ${isActive ? 'bg-amber-500 text-slate-950 shadow' : 'bg-slate-700 text-slate-200 hover:bg-slate-600'}`;
         btn.innerText = p;
         btn.onclick = () => {
           matchState.period = p;
@@ -494,13 +474,14 @@
       const homeContainer = document.getElementById('home-score-controls');
       const awayContainer = document.getElementById('away-score-controls');
       
+      // ปรับขนาดปุ่ม Score ให้ใหญ่ขึ้นมาก
       let btns = sport === 'basketball' 
-        ? `<button onclick="changeScore('TEAM', 1)" class="px-2 py-1 bg-emerald-600 font-bold rounded text-xs hover:bg-emerald-500">+1</button>
-           <button onclick="changeScore('TEAM', 2)" class="px-2 py-1 bg-emerald-600 font-bold rounded text-xs hover:bg-emerald-500">+2</button>
-           <button onclick="changeScore('TEAM', 3)" class="px-2 py-1 bg-emerald-600 font-bold rounded text-xs hover:bg-emerald-500">+3</button>
-           <button onclick="changeScore('TEAM', -1)" class="px-2 py-1 bg-rose-600 font-bold rounded text-xs hover:bg-rose-500">-1</button>`
-        : `<button onclick="changeScore('TEAM', 1)" class="px-4 py-1 bg-emerald-600 font-bold rounded text-sm hover:bg-emerald-500">+1</button>
-           <button onclick="changeScore('TEAM', -1)" class="px-4 py-1 bg-rose-600 font-bold rounded text-sm hover:bg-rose-500">-1</button>`;
+        ? `<button onclick="changeScore('TEAM', 1)" class="px-5 py-3 bg-emerald-600 font-black rounded-lg text-lg hover:bg-emerald-500">+1</button>
+           <button onclick="changeScore('TEAM', 2)" class="px-5 py-3 bg-emerald-600 font-black rounded-lg text-lg hover:bg-emerald-500">+2</button>
+           <button onclick="changeScore('TEAM', 3)" class="px-5 py-3 bg-emerald-600 font-black rounded-lg text-lg hover:bg-emerald-500">+3</button>
+           <button onclick="changeScore('TEAM', -1)" class="px-5 py-3 bg-rose-600 font-black rounded-lg text-lg hover:bg-rose-500">-1</button>`
+        : `<button onclick="changeScore('TEAM', 1)" class="px-8 py-4 bg-emerald-600 font-black rounded-xl text-2xl hover:bg-emerald-500">+1</button>
+           <button onclick="changeScore('TEAM', -1)" class="px-8 py-4 bg-rose-600 font-black rounded-xl text-2xl hover:bg-rose-500">-1</button>`;
       
       homeContainer.innerHTML = btns.replace(/TEAM/g, 'home');
       awayContainer.innerHTML = btns.replace(/TEAM/g, 'away');
@@ -587,7 +568,6 @@
     document.getElementById('btn-timer-toggle').addEventListener('click', () => { matchState.timerRunning = !matchState.timerRunning; syncToDatabase(); });
     document.getElementById('btn-timer-reset').addEventListener('click', () => { matchState.timerSeconds = 0; matchState.timerRunning = false; matchState.shotClockSeconds = 24; syncToDatabase(); });
     
-    // Timer Count Loop
     setInterval(() => { 
       if (matchState.timerRunning) { 
         if (matchState.sport === 'basketball') {
@@ -601,7 +581,6 @@
       } 
     }, 1000);
 
-    // Live Input Listeners
     document.getElementById('input-comp-name').addEventListener('input', e => { matchState.compName = e.target.value; syncToDatabase(); });
     document.getElementById('input-home-name').addEventListener('input', e => { matchState.homeName = e.target.value; syncToDatabase(); });
     document.getElementById('input-away-name').addEventListener('input', e => { matchState.awayName = e.target.value; syncToDatabase(); });

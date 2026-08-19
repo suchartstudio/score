@@ -196,9 +196,9 @@
             <div><input type="text" id="fb-player" data-i18n-placeholder="playerPlaceholder" placeholder="ชื่อ/เบอร์นักเตะ" class="p-2 rounded bg-slate-950 w-36 text-sm"></div>
             <div>
               <select id="fb-event" class="p-2 rounded bg-slate-950 text-sm">
-                <option value="⚽ Goal" data-i18n="optGoal">⚽ ทำประตู</option>
-                <option value="🟨 Yellow Card" data-i18n="optYellow">🟨 ใบเหลือง</option>
-                <option value="🟥 Red Card" data-i18n="optRed">🟥 ใบแดง</option>
+                <option value="optGoal" data-i18n="optGoal">⚽ ทำประตู</option>
+                <option value="optYellow" data-i18n="optYellow">🟨 ใบเหลือง</option>
+                <option value="optRed" data-i18n="optRed">🟥 ใบแดง</option>
               </select>
             </div>
             <button onclick="addMatchEvent()" class="px-4 py-2 bg-emerald-600 font-bold rounded text-sm hover:bg-emerald-500" data-i18n="btnSaveEvent">บันทึกเหตุการณ์</button>
@@ -349,7 +349,9 @@
         marqueeDefault: "ยินดีต้อนรับสู่การแข่งขันนัดสำคัญประจำวันนี้", lblShortcuts: "🖮 คีย์บอร์ดชอร์ตคัต (Keyboard Shortcuts):",
         scTimer: "เริ่ม/หยุดเวลา", scReset: "รีเซ็ตเวลา", scHomeScore: "คะแนนเหย้า +", scHomeSub: "คะแนนเหย้า -1", 
         scShotclock: "Shotclock 24/14", scAwayScore: "คะแนนเยือน +", scAwaySub: "คะแนนเยือน -1", scHomeFoul: "ฟาล์วเหย้า +/-", 
-        scAwayFoul: "ฟาล์วเยือน +/-", scEndSet: "จบเซ็ต"
+        scAwayFoul: "ฟาล์วเยือน +/-", scEndSet: "จบเซ็ต",
+        subText: "เปลี่ยนตัว", subInLabel: "เข้า", subOutLabel: "ออก",
+        alertPlayerErr: "กรุณาใส่ชื่อหรือเบอร์นักเตะครับ", alertSubErr: "กรุณาระบุคนเข้าและคนออกให้ครบถ้วนครับ"
       },
       en: {
         subtitleLogin: "Scoreboard Control System / Admin Login", userPlaceholder: "Username (No @ needed)",
@@ -367,7 +369,9 @@
         marqueeDefault: "Welcome to today's match", lblShortcuts: "🖮 Keyboard Shortcuts:",
         scTimer: "Start/Pause Timer", scReset: "Reset Timer", scHomeScore: "Home Score +", scHomeSub: "Home Score -1", 
         scShotclock: "Shotclock 24/14", scAwayScore: "Away Score +", scAwaySub: "Away Score -1", scHomeFoul: "Home Foul +/-", 
-        scAwayFoul: "Away Foul +/-", scEndSet: "End Set"
+        scAwayFoul: "Away Foul +/-", scEndSet: "End Set",
+        subText: "Substitution", subInLabel: "IN", subOutLabel: "OUT",
+        alertPlayerErr: "Please enter player name/number.", alertSubErr: "Please fill in both players."
       }
     };
 
@@ -572,7 +576,7 @@
         const userCredential = await createUserWithEmailAndPassword(auth2, email, passField);
         await set(ref(db, `users/${userCredential.user.uid}`), { username: userField, email: email, role: 'user', sports: sports });
         await auth2.signOut();
-        alert('สร้างผู้ใช้งานสำเร็จ!');
+        alert(currentLang === 'th' ? 'สร้างผู้ใช้งานสำเร็จ!' : 'User created successfully!');
         document.getElementById('create-user-form').reset();
       } catch (err) {
         alert('Error: ' + err.message);
@@ -580,7 +584,8 @@
     });
 
     window.deleteUser = (uid) => {
-      if(confirm('ยืนยันการลบข้อมูล (เฉพาะจากฐานข้อมูล)?')) {
+      const confirmMsg = currentLang === 'th' ? 'ยืนยันการลบข้อมูล (เฉพาะจากฐานข้อมูล)?' : 'Confirm deletion from database?';
+      if(confirm(confirmMsg)) {
         remove(ref(db, `users/${uid}`));
         remove(ref(db, `scoreboards/${uid}`));
       }
@@ -680,18 +685,19 @@
     };
     window.resetSets = () => { matchState.setScoresHome = []; matchState.setScoresAway = []; syncToDatabase(); };
 
-    // ฟังก์ชัน Match Events
+    // ฟังก์ชัน Match Events (สลับภาษาถูกต้อง)
     window.addMatchEvent = () => {
       const team = document.getElementById('fb-team').value;
       const player = document.getElementById('fb-player').value.trim();
-      const eventType = document.getElementById('fb-event').value;
+      const eventKey = document.getElementById('fb-event').value;
       if (!player) {
-        alert("กรุณาใส่ชื่อหรือเบอร์นักเตะครับ");
+        alert(dict[currentLang].alertPlayerErr);
         return;
       }
       const teamName = team === 'home' ? matchState.homeName : matchState.awayName;
+      const eventLabel = dict[currentLang][eventKey] || eventKey;
       matchState.matchEvent = {
-        text: `${teamName}: ${eventType} - ${player}`,
+        text: `${teamName}: ${eventLabel} - ${player}`,
         timestamp: Date.now()
       };
       document.getElementById('fb-player').value = '';
@@ -708,12 +714,16 @@
       const subIn = document.getElementById('sub-in').value.trim();
       const subOut = document.getElementById('sub-out').value.trim();
       if (!subIn || !subOut) {
-        alert("กรุณาระบุคนเข้าและคนออกให้ครบถ้วนครับ");
+        alert(dict[currentLang].alertSubErr);
         return;
       }
       const teamName = team === 'home' ? matchState.homeName : matchState.awayName;
+      const subText = dict[currentLang].subText;
+      const inLabel = dict[currentLang].subInLabel;
+      const outLabel = dict[currentLang].subOutLabel;
+
       matchState.matchEvent = {
-        text: `🔄 ${teamName} เปลี่ยนตัว: เข้า 🟢 ${subIn} | ออก 🔴 ${subOut}`,
+        text: `🔄 ${teamName} ${subText}: ${inLabel} 🟢 ${subIn} | ${outLabel} 🔴 ${subOut}`,
         timestamp: Date.now()
       };
       document.getElementById('sub-in').value = '';
@@ -870,7 +880,7 @@
         setsContainer.classList.add('hidden');
       }
 
-      // ระบบแสดง Event บนจอ (แสดงผลในกล่องกลางใต้เวลา)
+      // ระบบแสดง Event บนจอ
       const eventOverlay = document.getElementById('disp-event-overlay');
       const eventText = document.getElementById('disp-event-text');
 

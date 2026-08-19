@@ -45,7 +45,7 @@
       <div class="flex items-center gap-3">
         <h1 class="text-lg font-bold text-amber-500">Stadium Scoreboard</h1>
         <span id="user-info" class="text-xs text-slate-400"></span>
-        <button id="btn-lang-toggle" class="ml-2 px-2 py-1 bg-slate-700 hover:bg-slate-600 rounded text-xs font-bold transition-colors">🌐 TH</button>
+        <button id="btn-lang-toggle" class="ml-2 px-2 py-1 bg-slate-700 hover:bg-slate-600 rounded text-xs font-bold transition-colors">🇹🇭 TH</button>
       </div>
       <div class="flex items-center gap-2">
         <button id="nav-btn-control" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 rounded text-xs font-semibold" data-i18n="navControl">🎮 หน้าควบคุม</button>
@@ -254,6 +254,23 @@
           </div>
         </div>
       </div>
+
+      <!-- Keyboard Shortcuts Info -->
+      <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 mt-2 text-slate-400 text-[11px]">
+        <span class="font-bold text-amber-400 block mb-2" data-i18n="lblShortcuts">🖮 คีย์บอร์ดชอร์ตคัต (Keyboard Shortcuts):</span>
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-2">
+            <div><b class="text-white px-1 bg-slate-700 rounded">[Space]</b> เริ่ม/หยุดเวลา</div>
+            <div><b class="text-white px-1 bg-slate-700 rounded">[R]</b> รีเซ็ตเวลา</div>
+            <div><b class="text-white px-1 bg-slate-700 rounded">[1, 2, 3]</b> คะแนนเหย้า +</div>
+            <div><b class="text-white px-1 bg-slate-700 rounded">[Q]</b> คะแนนเหย้า -1</div>
+            <div><b class="text-white px-1 bg-slate-700 rounded">[Z] / [X]</b> Shotclock 24/14</div>
+            <div><b class="text-white px-1 bg-slate-700 rounded">[8, 9, 0]</b> คะแนนเยือน +</div>
+            <div><b class="text-white px-1 bg-slate-700 rounded">[P]</b> คะแนนเยือน -1</div>
+            <div><b class="text-white px-1 bg-slate-700 rounded">[F] / [V]</b> ฟาล์วเหย้า +/-</div>
+            <div><b class="text-white px-1 bg-slate-700 rounded">[J] / [N]</b> ฟาล์วเยือน +/-</div>
+            <div><b class="text-white px-1 bg-slate-700 rounded">[Enter]</b> จบเซ็ต</div>
+        </div>
+      </div>
     </div>
 
     <!-- View: Display Window -->
@@ -344,7 +361,8 @@
         lblAwayFouls: "ฟาล์วทีมเยือน (Away Fouls):", btnEndSet: "📌 จบเซ็ต (บันทึกคะแนนเซ็ตนี้)", btnResetSets: "รีเซ็ตเซ็ตทั้งหมด",
         lblSub: "ระบบเปลี่ยนตัว:", subIn: "เข้า 🟢", subOut: "ออก 🔴", btnSub: "🔄 แจ้งเปลี่ยนตัว",
         alertCreateSuccess: "สร้างผู้ใช้และบันทึกข้อมูลเรียบร้อยแล้ว!", alertCreateFail: "ไม่สามารถสร้างผู้ใช้ได้ Error: ",
-        marqueeDefault: "ยินดีต้อนรับสู่การแข่งขันนัดสำคัญประจำวันนี้", txtSubEvent: "🔄 เปลี่ยนตัว", txtSubIn: "เข้า:", txtSubOut: "ออก:"
+        marqueeDefault: "ยินดีต้อนรับสู่การแข่งขันนัดสำคัญประจำวันนี้", txtSubEvent: "🔄 เปลี่ยนตัว", txtSubIn: "เข้า:", txtSubOut: "ออก:",
+        lblShortcuts: "🖮 คีย์บอร์ดชอร์ตคัต (Keyboard Shortcuts):"
       },
       en: {
         subtitleLogin: "Scoreboard Control System / Admin Login",
@@ -362,7 +380,8 @@
         lblAwayFouls: "Away Fouls:", btnEndSet: "📌 End Set (Save Score)", btnResetSets: "Reset All Sets",
         lblSub: "Substitution:", subIn: "In 🟢", subOut: "Out 🔴", btnSub: "🔄 Substitute",
         alertCreateSuccess: "User created & profile saved successfully!", alertCreateFail: "Failed to create user. Error: ",
-        marqueeDefault: "Welcome to today's match", txtSubEvent: "🔄 Substitution", txtSubIn: "In:", txtSubOut: "Out:"
+        marqueeDefault: "Welcome to today's match", txtSubEvent: "🔄 Substitution", txtSubIn: "In:", txtSubOut: "Out:",
+        lblShortcuts: "🖮 Keyboard Shortcuts:"
       }
     };
 
@@ -370,7 +389,7 @@
     const btnLangToggle = document.getElementById('btn-lang-toggle');
 
     function applyLanguage() {
-      btnLangToggle.innerText = currentLang === 'th' ? '🌐 TH' : '🌐 EN';
+      btnLangToggle.innerHTML = currentLang === 'th' ? '🇹🇭 TH' : '🇬🇧 EN';
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         if (dict[currentLang][key]) el.innerText = dict[currentLang][key];
@@ -386,9 +405,19 @@
         if(dict[currentLang].optRed) fbEvent.options[2].text = dict[currentLang].optRed;
       }
     }
+
     btnLangToggle.addEventListener('click', () => {
+      const oldLang = currentLang;
       currentLang = currentLang === 'th' ? 'en' : 'th';
       localStorage.setItem('scoreboard_lang', currentLang);
+      
+      // Auto Change Marquee if it matches the default of the previous language or is empty
+      if (matchState.marqueeText === dict[oldLang].marqueeDefault || matchState.marqueeText === ' ' || !matchState.marqueeText) {
+        matchState.marqueeText = dict[currentLang].marqueeDefault;
+        document.getElementById('input-marquee').value = matchState.marqueeText;
+        syncToDatabase();
+      }
+
       applyLanguage();
     });
     applyLanguage();
@@ -408,7 +437,7 @@
     const auth = getAuth(app);
     const db = getDatabase(app);
 
-    // Default State สำหรับรีเซ็ต
+    // Default State
     const defaultMatchState = {
       sport: '', compName: 'CHAMPIONSHIP 2026', homeName: 'HOME', awayName: 'AWAY', 
       homeScore: 0, awayScore: 0, timerSeconds: 0, timerRunning: false, shotClockSeconds: 24,
@@ -439,7 +468,6 @@
       document.getElementById('view-login').classList.add('hidden');
       document.getElementById('main-nav').classList.add('hidden');
       document.getElementById('view-display').classList.remove('hidden');
-      // หน้าจออ่านข้อมูลจาก UID ของคนที่เปิด
       onValue(ref(db, `scoreboards/${targetUid}`), (snapshot) => {
         if (snapshot.val()) renderDisplay(snapshot.val());
       });
@@ -454,84 +482,16 @@
       signInWithEmailAndPassword(auth, inputUser, pass).catch(err => alert("Error: " + err.message));
     });
 
-    const createUserForm = document.getElementById('create-user-form');
-    if(createUserForm) {
-      createUserForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        let newUsername = document.getElementById('new-user-username').value.trim();
-        const newPassword = document.getElementById('new-user-password').value;
-        const newUserEmail = newUsername.includes('@') ? newUsername : `${newUsername}@suchartstudio.com`;
-        const selectedSports = Array.from(document.querySelectorAll('.sport-checkbox:checked')).map(cb => cb.value);
-
-        createUserWithEmailAndPassword(auth, newUserEmail, newPassword)
-          .then((userCredential) => {
-            const newUid = userCredential.user.uid;
-            set(ref(db, `users/${newUid}`), {
-              username: newUsername,
-              email: newUserEmail,
-              role: 'user',
-              sports: selectedSports,
-              createdAt: Date.now()
-            }).then(() => {
-              alert(dict[currentLang].alertCreateSuccess);
-              document.getElementById('create-user-form').reset();
-            });
-          })
-          .catch((error) => alert(dict[currentLang].alertCreateFail + error.message));
-      });
-    }
-
-    // --- ส่วนควบคุม Auth และจัดการ State ---
     onAuthStateChanged(auth, (user) => {
       if (isDisplayMode) return;
       if (user) {
         currentUser = user;
-        // รีเซ็ตค่าเป็นหน้าว่างๆ ก่อนเสมอเพื่อกันข้อมูลข้ามบัญชี
         matchState = JSON.parse(JSON.stringify(defaultMatchState)); 
-        
         document.getElementById('view-login').classList.add('hidden');
         document.getElementById('main-nav').classList.remove('hidden');
-        
         const displayEmail = user.email.replace('@suchartstudio.com', '');
         document.getElementById('user-info').innerText = `Logged in: ${displayEmail}`;
 
-        const adminBtn = document.getElementById('nav-btn-admin');
-        if (user.email === 'suchart@suchartstudio.com') {
-          adminBtn.classList.remove('hidden');
-          onValue(ref(db, 'users'), (snapshot) => {
-            const tbody = document.getElementById('users-table-body');
-            tbody.innerHTML = '';
-            if (snapshot.exists()) {
-              snapshot.forEach((childSnapshot) => {
-                const uid = childSnapshot.key;
-                const userData = childSnapshot.val();
-                const sportsArray = userData.sports || [];
-                const sportsText = sportsArray.length > 0 ? sportsArray.join(', ') : '-';
-                const sportsJson = JSON.stringify(sportsArray).replace(/"/g, '&quot;');
-                
-                const tr = document.createElement('tr');
-                tr.className = "border-b border-slate-800 hover:bg-slate-800/50";
-                tr.innerHTML = `
-                  <td class="p-2 font-mono text-[10px] text-slate-500 truncate max-w-[80px]" title="${uid}">${uid}</td>
-                  <td class="p-2 font-bold text-amber-400">${userData.username || '-'}</td>
-                  <td class="p-2"><span class="px-2 py-0.5 bg-slate-700 rounded text-[10px] uppercase">${userData.role || 'user'}</span></td>
-                  <td class="p-2 text-[10px] text-slate-400 capitalize">${sportsText}</td>
-                  <td class="p-2">
-                    <button onclick="openEditModal('${uid}', '${userData.username || ''}', ${sportsJson})" class="bg-blue-600 hover:bg-blue-500 text-white px-2 py-1 rounded text-[10px]">แก้ไข</button>
-                    <button onclick="deleteUser('${uid}', '${userData.username || ''}')" class="bg-rose-600 hover:bg-rose-500 text-white px-2 py-1 rounded text-[10px] ml-1">ลบ</button>
-                  </td>
-                `;
-                tbody.appendChild(tr);
-              });
-            } else {
-              tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-500">ไม่มีข้อมูลผู้ใช้งานในระบบ</td></tr>';
-            }
-          });
-        } else {
-          adminBtn.classList.add('hidden');
-        }
-
-        // ดึงข้อมูลสิทธิ์และ Scoreboard เฉพาะบัญชีของผู้ใช้ปัจจุบัน
         onValue(ref(db, `users/${user.uid}`), (snapshot) => {
           const userData = snapshot.val();
           let allowedSports = [];
@@ -549,13 +509,11 @@
           onValue(currentMatchRef, (matchSnap) => {
             if (matchSnap.exists()) {
               matchState = { ...defaultMatchState, ...matchSnap.val() };
-              // ถ้ากีฬาในฐานข้อมูลไม่ใช่สิทธิ์ที่อนุญาต ให้บังคับใช้สิทธิ์แรกที่มี
               if (!allowedSports.includes(matchState.sport) && allowedSports.length > 0) {
                 matchState.sport = allowedSports[0];
                 syncToDatabase();
               }
             } else {
-              // เพิ่งใช้งานครั้งแรก สร้างข้อมูล Default
               if (allowedSports.length > 0) matchState.sport = allowedSports[0];
               syncToDatabase();
             }
@@ -567,41 +525,12 @@
         switchView('control');
       } else {
         currentUser = null;
-        matchState = JSON.parse(JSON.stringify(defaultMatchState)); // เคลียร์ State ตอนล็อกเอาท์
+        matchState = JSON.parse(JSON.stringify(defaultMatchState)); 
         document.getElementById('view-login').classList.remove('hidden');
         document.getElementById('main-nav').classList.add('hidden');
         document.getElementById('view-control').classList.add('hidden');
       }
     });
-
-    window.openEditModal = (uid, username, sportsList) => {
-      document.getElementById('edit-user-uid').value = uid;
-      document.getElementById('edit-user-username').value = username;
-      const checkboxes = document.querySelectorAll('.edit-sport-checkbox');
-      checkboxes.forEach(cb => { cb.checked = Array.isArray(sportsList) && sportsList.includes(cb.value); });
-      document.getElementById('modal-edit-user').classList.remove('hidden');
-    };
-
-    document.getElementById('btn-close-edit-modal').addEventListener('click', () => document.getElementById('modal-edit-user').classList.add('hidden'));
-
-    document.getElementById('btn-save-edit-user').addEventListener('click', () => {
-      const uid = document.getElementById('edit-user-uid').value;
-      const newUsername = document.getElementById('edit-user-username').value.trim();
-      const selectedSports = Array.from(document.querySelectorAll('.edit-sport-checkbox:checked')).map(cb => cb.value);
-      if (!newUsername) return alert('กรุณากรอก Username');
-      update(ref(db, `users/${uid}`), { username: newUsername, sports: selectedSports })
-        .then(() => { alert('อัปเดตข้อมูลผู้ใช้งานเรียบร้อยแล้ว'); document.getElementById('modal-edit-user').classList.add('hidden'); })
-        .catch(err => alert('เกิดข้อผิดพลาด: ' + err.message));
-    });
-
-    window.deleteUser = (uid, username) => {
-      if (confirm(`คุณต้องการลบผู้ใช้งาน "${username}" ใช่หรือไม่?`)) {
-        remove(ref(db, `users/${uid}`))
-          .then(() => remove(ref(db, `scoreboards/${uid}`)))
-          .then(() => alert('ลบผู้ใช้งานออกจากระบบเรียบร้อยแล้ว'))
-          .catch(err => alert('เกิดข้อผิดพลาดในการลบ: ' + err.message));
-      }
-    };
 
     window.switchView = (v) => {
       document.getElementById('view-control').classList.add('hidden');
@@ -609,10 +538,8 @@
       document.getElementById(`view-${v}`).classList.remove('hidden');
     };
     document.getElementById('nav-btn-control').addEventListener('click', () => switchView('control'));
-    document.getElementById('nav-btn-admin').addEventListener('click', () => switchView('admin'));
     document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
     
-    // เปิดจอ LED แบบผูกกับ UID
     document.getElementById('btn-extend-display').addEventListener('click', () => {
       if (currentUser) {
         window.open(`${window.location.origin}${window.location.pathname}?mode=display&uid=${currentUser.uid}`, 'Scoreboard', 'width=1280,height=720');
@@ -717,32 +644,39 @@
     };
     window.resetSets = () => { matchState.setScoresHome = []; matchState.setScoresAway = []; syncToDatabase(); };
 
-    window.addMatchEvent = () => {
-      const team = document.getElementById('fb-team').value;
-      const player = document.getElementById('fb-player').value || 'Unknown Player';
-      const eventDropdown = document.getElementById('fb-event');
-      const evtText = eventDropdown.options[eventDropdown.selectedIndex].text;
-      const teamName = team === 'home' ? matchState.homeName : matchState.awayName;
-      triggerEventDisplay(`${evtText} : ${player} (${teamName})`, team);
-      document.getElementById('fb-player').value = '';
-    };
+    // --- Keyboard Shortcuts Listener ---
+    window.addEventListener('keydown', (e) => {
+      // ยกเลิกการทำงานปุ่มลัด หากผู้ใช้กำลังพิมพ์ข้อความอยู่ในช่อง Input
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+      if (!currentUser || document.getElementById('view-control').classList.contains('hidden')) return;
 
-    window.addSubstitute = () => {
-      const team = document.getElementById('sub-team').value;
-      const pIn = document.getElementById('sub-in').value;
-      const pOut = document.getElementById('sub-out').value;
-      if(!pIn && !pOut) return;
-      const teamName = team === 'home' ? matchState.homeName : matchState.awayName;
-      triggerEventDisplay(`${dict[currentLang].txtSubEvent} (${teamName}) | ${dict[currentLang].txtSubIn} ${pIn || '-'} | ${dict[currentLang].txtSubOut} ${pOut || '-'}`, team);
-      document.getElementById('sub-in').value = ''; document.getElementById('sub-out').value = '';
-    };
-
-    window.clearMatchEvents = () => triggerEventDisplay('', '');
-
-    function triggerEventDisplay(text, teamInfo) {
-      matchState.matchEvent = { text, teamInfo, timestamp: Date.now() };
-      syncToDatabase();
-    }
+      switch (e.key.toLowerCase()) {
+        case ' ': // Spacebar
+          e.preventDefault(); // ป้องกันหน้าเลื่อน
+          matchState.timerRunning = !matchState.timerRunning;
+          syncToDatabase();
+          break;
+        case 'r': // Reset Timer
+          matchState.timerSeconds = 0; matchState.timerRunning = false; matchState.shotClockSeconds = 24;
+          syncToDatabase();
+          break;
+        case '1': changeScore('home', 1); break;
+        case '2': if(matchState.sport === 'basketball') changeScore('home', 2); break;
+        case '3': if(matchState.sport === 'basketball') changeScore('home', 3); break;
+        case 'q': changeScore('home', -1); break;
+        case '8': changeScore('away', 1); break;
+        case '9': if(matchState.sport === 'basketball') changeScore('away', 2); break;
+        case '0': if(matchState.sport === 'basketball') changeScore('away', 3); break;
+        case 'p': changeScore('away', -1); break;
+        case 'f': if(['basketball', 'futsal'].includes(matchState.sport)) changeFoul('home', 1); break;
+        case 'v': if(['basketball', 'futsal'].includes(matchState.sport)) changeFoul('home', -1); break;
+        case 'j': if(['basketball', 'futsal'].includes(matchState.sport)) changeFoul('away', 1); break;
+        case 'n': if(['basketball', 'futsal'].includes(matchState.sport)) changeFoul('away', -1); break;
+        case 'z': if(matchState.sport === 'basketball') resetShotClock(24); break;
+        case 'x': if(matchState.sport === 'basketball') resetShotClock(14); break;
+        case 'enter': if(['volleyball', 'badminton'].includes(matchState.sport)) endSet(); break;
+      }
+    });
 
     const handleImg = (el, k) => { document.getElementById(el).addEventListener('change', (e) => { const f = e.target.files[0]; if (f) { const r = new FileReader(); r.onload = ev => { matchState[k] = ev.target.result; syncToDatabase(); }; r.readAsDataURL(f); } }); };
     handleImg('input-home-logo', 'homeLogo'); handleImg('input-away-logo', 'awayLogo');
@@ -853,21 +787,6 @@
         });
       } else {
         setsContainer.classList.add('hidden');
-      }
-
-      if(data.matchEvent && data.matchEvent.timestamp !== lastEventTimestamp) {
-        lastEventTimestamp = data.matchEvent.timestamp;
-        const box = document.getElementById('disp-events-box');
-        const text = document.getElementById('disp-events-text');
-        if(data.matchEvent.text) {
-          text.innerText = data.matchEvent.text;
-          box.className = `absolute top-[10%] left-1/2 transform -translate-x-1/2 w-4/5 max-w-4xl bg-slate-900/95 border-4 rounded-2xl p-6 shadow-2xl z-50 transition-opacity duration-500 ${data.matchEvent.teamInfo === 'home' ? 'border-amber-400' : 'border-blue-400'}`;
-          box.classList.remove('hidden');
-          clearTimeout(eventTimeout);
-          eventTimeout = setTimeout(() => { box.classList.add('hidden'); }, 7000);
-        } else {
-          box.classList.add('hidden');
-        }
       }
     }
   </script>

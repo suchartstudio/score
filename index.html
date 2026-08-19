@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Stadium Scoreboard System</title>
+  <title>Stadium Scoreboard & Admin System</title>
   <link rel="manifest" href="manifest.json">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -21,67 +21,107 @@
   <div id="app" class="p-4">
     <!-- View: Login -->
     <div id="view-login" class="max-w-md mx-auto mt-20 bg-slate-900 p-6 rounded-xl border border-slate-800 shadow-2xl">
-      <h2 class="text-2xl font-bold mb-6 text-center text-amber-500">เข้าสู่ระบบ Scoreboard</h2>
+      <h2 class="text-2xl font-bold mb-2 text-center text-amber-500">Scoreboard System</h2>
+      <p class="text-xs text-slate-400 text-center mb-6">เข้าสู่ระบบควบคุมสกอร์บอร์ด / ผู้ดูแลระบบ</p>
       <form id="login-form" class="space-y-4">
         <div>
-          <label class="block text-sm mb-1">Email</label>
-          <input type="email" id="login-email" class="w-full p-2.5 rounded bg-slate-800 border border-slate-700 focus:outline-none focus:border-amber-500" required>
+          <label class="block text-sm mb-1 text-slate-300">Username / Email</label>
+          <input type="text" id="login-username" placeholder="suchart หรือ email@domain.com" class="w-full p-2.5 rounded bg-slate-800 border border-slate-700 focus:outline-none focus:border-amber-500" required>
         </div>
         <div>
-          <label class="block text-sm mb-1">Password</label>
-          <input type="password" id="login-password" class="w-full p-2.5 rounded bg-slate-800 border border-slate-700 focus:outline-none focus:border-amber-500" required>
+          <label class="block text-sm mb-1 text-slate-300">Password</label>
+          <input type="password" id="login-password" placeholder="••••••••" class="w-full p-2.5 rounded bg-slate-800 border border-slate-700 focus:outline-none focus:border-amber-500" required>
         </div>
         <button type="submit" class="w-full py-3 bg-amber-500 hover:bg-amber-600 font-bold rounded text-slate-950 transition">LOGIN</button>
       </form>
     </div>
 
-    <!-- View: Select Sport & Control Hub -->
+    <!-- Navigation Header (เมื่อ Login แล้ว) -->
+    <div id="main-nav" class="hidden max-w-6xl mx-auto flex justify-between items-center bg-slate-900 p-4 rounded-xl border border-slate-800 mb-6">
+      <div>
+        <h1 class="text-xl font-bold text-amber-500">Stadium Scoreboard System</h1>
+        <p id="user-info" class="text-xs text-slate-400"></p>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="nav-btn-control" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded text-sm font-semibold">🎮 หน้าควบคุม</button>
+        <button id="nav-btn-admin" class="hidden px-3 py-1.5 bg-amber-500 text-slate-950 hover:bg-amber-400 rounded text-sm font-bold">⚡ ระบบจัดการ User (Admin)</button>
+        <button id="btn-extend-display" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 rounded font-semibold text-sm">🖥️ เปิดจอ LED (16:9)</button>
+        <button id="btn-logout" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-500 rounded font-semibold text-sm">ออกจากระบบ</button>
+      </div>
+    </div>
+
+    <!-- View: Admin User Management -->
+    <div id="view-admin" class="hidden max-w-6xl mx-auto space-y-6">
+      <!-- Create User Card -->
+      <div class="bg-slate-900 p-6 rounded-xl border border-amber-500/30">
+        <h3 class="text-lg font-bold text-amber-400 mb-4">➕ เพิ่มผู้ใช้งานใหม่ (Create New User)</h3>
+        <form id="create-user-form" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs mb-1 text-slate-400">Email ผู้ใช้ใหม่</label>
+            <input type="email" id="new-user-email" placeholder="operator1@stadium.com" class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-sm" required>
+          </div>
+          <div>
+            <label class="block text-xs mb-1 text-slate-400">Password</label>
+            <input type="password" id="new-user-password" placeholder="อย่างน้อย 6 ตัวอักษร" class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-sm" required>
+          </div>
+          <div>
+            <label class="block text-xs mb-1 text-slate-400">สิทธิ์กีฬาที่เข้าถึงได้</label>
+            <div class="flex flex-wrap gap-2 text-xs pt-1">
+              <label class="flex items-center gap-1"><input type="checkbox" value="football" class="sport-checkbox" checked> ฟุตบอล</label>
+              <label class="flex items-center gap-1"><input type="checkbox" value="basketball" class="sport-checkbox" checked> บาสเกตบอล</label>
+              <label class="flex items-center gap-1"><input type="checkbox" value="volleyball" class="sport-checkbox"> วอลเลย์บอล</label>
+              <label class="flex items-center gap-1"><input type="checkbox" value="futsal" class="sport-checkbox"> ฟุตซอล</label>
+              <label class="flex items-center gap-1"><input type="checkbox" value="badminton" class="sport-checkbox"> แบดมินตัน</label>
+            </div>
+          </div>
+          <div class="md:col-span-3">
+            <button type="submit" class="bg-amber-500 text-slate-950 font-bold px-6 py-2 rounded text-sm hover:bg-amber-400 transition">บันทึกสร้างผู้ใช้งาน</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Users List -->
+      <div class="bg-slate-900 p-6 rounded-xl border border-slate-800">
+        <h3 class="text-lg font-bold text-slate-200 mb-4">📋 รายชื่อผู้ใช้งานทั้งหมดในระบบ</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm text-slate-300">
+            <thead class="bg-slate-800 text-amber-400">
+              <tr>
+                <th class="p-3">UID</th>
+                <th class="p-3">Email</th>
+                <th class="p-3">Role</th>
+                <th class="p-3">สิทธิ์กีฬาที่ได้รับ</th>
+                <th class="p-3">จัดการสิทธิ์</th>
+              </tr>
+            </thead>
+            <tbody id="users-table-body" class="divide-y divide-slate-800">
+              <!-- Render by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- View: Scoreboard Control Hub -->
     <div id="view-control" class="hidden max-w-6xl mx-auto space-y-6">
-      <div class="flex justify-between items-center bg-slate-900 p-4 rounded-xl border border-slate-800">
-        <div>
-          <h1 class="text-xl font-bold text-amber-500">Stadium Scoreboard Controller</h1>
-          <p id="user-info" class="text-xs text-slate-400"></p>
-        </div>
-        <div class="space-x-2">
-          <button id="btn-extend-display" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 rounded font-semibold text-sm transition">🖥️ ส่งภาพไปจอ LED (Extend)</button>
-          <button id="btn-logout" class="px-4 py-2 bg-rose-600 hover:bg-rose-500 rounded font-semibold text-sm transition">ออกจากระบบ</button>
-        </div>
-      </div>
-
-      <!-- Admin Panel for Permissions -->
-      <div id="admin-panel" class="hidden bg-slate-900 p-4 rounded-xl border border-amber-500/30">
-        <h3 class="font-bold text-amber-400 mb-2">⚡ ระบบจัดการผู้ใช้งาน (Admin Only)</h3>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
-          <input type="text" id="admin-target-uid" placeholder="User UID" class="p-2 rounded bg-slate-800 border border-slate-700">
-          <select id="admin-sport-select" class="p-2 rounded bg-slate-800 border border-slate-700" multiple>
-            <option value="football">ฟุตบอล (Football)</option>
-            <option value="basketball">บาสเกตบอล (Basketball)</option>
-            <option value="volleyball">วอลเลย์บอล (Volleyball)</option>
-            <option value="futsal">ฟุตซอล (Futsal)</option>
-            <option value="badminton">แบดมินตัน (Badminton)</option>
-          </select>
-          <button id="btn-grant-permission" class="bg-amber-500 text-slate-950 font-bold rounded p-2">บันทึกสิทธิ์ผู้ใช้</button>
-        </div>
-      </div>
-
       <!-- Sports Selection -->
       <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
-        <label class="block font-semibold mb-2 text-slate-300">เลือกประเภทกีฬา:</label>
+        <label class="block font-semibold mb-2 text-slate-300">เลือกประเภทกีฬาที่กำลังแข่งขัน:</label>
         <div id="sports-selector" class="flex flex-wrap gap-2"></div>
       </div>
 
-      <!-- Match Info & File Settings -->
+      <!-- Match Info & Local Image Uploads -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-900 p-4 rounded-xl border border-slate-800">
         <div class="space-y-3">
           <h3 class="font-bold text-amber-400 border-b border-slate-800 pb-1">ตั้งค่าทีม Home</h3>
           <input type="text" id="input-home-name" placeholder="ชื่อทีม Home" class="w-full p-2 rounded bg-slate-800 border border-slate-700">
-          <label class="block text-xs text-slate-400">โลโก้ทีม (จากเครื่อง Local):</label>
+          <label class="block text-xs text-slate-400">โลโก้ทีม (อ่านจาก Localhost/เครื่องตนเอง):</label>
           <input type="file" id="input-home-logo" accept="image/*" class="w-full text-xs text-slate-400 bg-slate-800 p-1.5 rounded">
         </div>
         <div class="space-y-3">
           <h3 class="font-bold text-amber-400 border-b border-slate-800 pb-1">ตั้งค่าทีม Away</h3>
           <input type="text" id="input-away-name" placeholder="ชื่อทีม Away" class="w-full p-2 rounded bg-slate-800 border border-slate-700">
-          <label class="block text-xs text-slate-400">โลโก้ทีม (จากเครื่อง Local):</label>
+          <label class="block text-xs text-slate-400">โลโก้ทีม (อ่านจาก Localhost/เครื่องตนเอง):</label>
           <input type="file" id="input-away-logo" accept="image/*" class="w-full text-xs text-slate-400 bg-slate-800 p-1.5 rounded">
         </div>
       </div>
@@ -93,10 +133,10 @@
           <div id="ctrl-home-name" class="text-2xl font-bold">HOME</div>
           <div id="ctrl-home-score" class="text-6xl font-digital text-emerald-400 bg-slate-950 py-4 rounded border border-slate-800">0</div>
           <div class="flex justify-center gap-2">
-            <button onclick="changeScore('home', 1)" class="px-4 py-2 bg-emerald-600 font-bold rounded">+1</button>
-            <button onclick="changeScore('home', 2)" class="px-4 py-2 bg-emerald-600 font-bold rounded">+2</button>
-            <button onclick="changeScore('home', 3)" class="px-4 py-2 bg-emerald-600 font-bold rounded">+3</button>
-            <button onclick="changeScore('home', -1)" class="px-4 py-2 bg-rose-600 font-bold rounded">-1</button>
+            <button onclick="changeScore('home', 1)" class="px-3 py-2 bg-emerald-600 font-bold rounded">+1</button>
+            <button onclick="changeScore('home', 2)" class="px-3 py-2 bg-emerald-600 font-bold rounded">+2</button>
+            <button onclick="changeScore('home', 3)" class="px-3 py-2 bg-emerald-600 font-bold rounded">+3</button>
+            <button onclick="changeScore('home', -1)" class="px-3 py-2 bg-rose-600 font-bold rounded">-1</button>
           </div>
         </div>
 
@@ -115,10 +155,10 @@
           <div id="ctrl-away-name" class="text-2xl font-bold">AWAY</div>
           <div id="ctrl-away-score" class="text-6xl font-digital text-emerald-400 bg-slate-950 py-4 rounded border border-slate-800">0</div>
           <div class="flex justify-center gap-2">
-            <button onclick="changeScore('away', 1)" class="px-4 py-2 bg-emerald-600 font-bold rounded">+1</button>
-            <button onclick="changeScore('away', 2)" class="px-4 py-2 bg-emerald-600 font-bold rounded">+2</button>
-            <button onclick="changeScore('away', 3)" class="px-4 py-2 bg-emerald-600 font-bold rounded">+3</button>
-            <button onclick="changeScore('away', -1)" class="px-4 py-2 bg-rose-600 font-bold rounded">-1</button>
+            <button onclick="changeScore('away', 1)" class="px-3 py-2 bg-emerald-600 font-bold rounded">+1</button>
+            <button onclick="changeScore('away', 2)" class="px-3 py-2 bg-emerald-600 font-bold rounded">+2</button>
+            <button onclick="changeScore('away', 3)" class="px-3 py-2 bg-emerald-600 font-bold rounded">+3</button>
+            <button onclick="changeScore('away', -1)" class="px-3 py-2 bg-rose-600 font-bold rounded">-1</button>
           </div>
         </div>
       </div>
@@ -126,54 +166,47 @@
 
     <!-- View: 16:9 Display Window (For LED Screen) -->
     <div id="view-display" class="hidden fixed inset-0 bg-black w-screen h-screen flex flex-col justify-between p-6 select-none overflow-hidden" style="aspect-ratio: 16/9;">
-      <!-- Top Bar: Competition Logo & Title -->
       <div class="h-[15%] flex justify-between items-center border-b-4 border-slate-800 pb-2">
         <div class="flex items-center space-x-4">
-          <img id="disp-match-logo" src="" class="h-16 w-16 object-contain hidden">
           <span id="disp-sport-title" class="text-2xl font-bold uppercase tracking-widest text-slate-400">STADIUM DISPLAY</span>
         </div>
         <div id="disp-period" class="text-3xl font-bold bg-amber-500 text-slate-950 px-6 py-1 rounded">1ST HALF</div>
       </div>
 
-      <!-- Main Scoreboard Area -->
       <div class="h-[70%] grid grid-cols-12 items-center gap-4">
-        <!-- Home -->
         <div class="col-span-5 flex items-center justify-between bg-slate-900/80 p-6 rounded-2xl led-border h-full">
           <div class="flex items-center space-x-4">
-            <img id="disp-home-logo" src="" class="w-28 h-28 object-contain rounded">
+            <img id="disp-home-logo" src="" class="w-24 h-24 object-contain rounded hidden">
             <span id="disp-home-name" class="text-4xl font-extrabold tracking-wider truncate max-w-[200px]">HOME</span>
           </div>
           <span id="disp-home-score" class="text-8xl font-digital font-black text-emerald-400 led-glow-green">0</span>
         </div>
 
-        <!-- Timer / Center Status -->
         <div class="col-span-2 flex flex-col items-center justify-center h-full">
           <div id="disp-timer" class="text-6xl font-digital font-black text-amber-400 led-glow-yellow bg-slate-950 w-full text-center py-6 rounded-xl border-2 border-slate-800">
             00:00
           </div>
         </div>
 
-        <!-- Away -->
         <div class="col-span-5 flex items-center justify-between bg-slate-900/80 p-6 rounded-2xl led-border h-full">
           <span id="disp-away-score" class="text-8xl font-digital font-black text-emerald-400 led-glow-green">0</span>
           <div class="flex items-center space-x-4 text-right">
             <span id="disp-away-name" class="text-4xl font-extrabold tracking-wider truncate max-w-[200px]">AWAY</span>
-            <img id="disp-away-logo" src="" class="w-28 h-28 object-contain rounded">
+            <img id="disp-away-logo" src="" class="w-24 h-24 object-contain rounded hidden">
           </div>
         </div>
       </div>
 
-      <!-- Bottom Bar / Extra Info -->
       <div class="h-[10%] bg-slate-900/50 rounded-lg flex items-center justify-around text-slate-400 text-xl font-semibold">
         <div>LIVE STADIUM TRANSMISSION</div>
-        <div id="disp-sub-info">MATCH DAY</div>
+        <div>MATCH DAY</div>
       </div>
     </div>
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getDatabase, ref, set, onValue, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = {
@@ -187,12 +220,19 @@
       measurementId: "G-P8J0LYXW9C"
     };
 
+    // Primary Firebase App (สำหรับ Auth ปัจจุบัน และ Database)
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getDatabase(app);
 
+    // Secondary Firebase App (ไว้สร้าง User ใหม่โดยที่ Admin ไม่ถูกสลับ Account)
+    const secondaryApp = initializeApp(firebaseConfig, "SecondaryApp");
+    const secondaryAuth = getAuth(secondaryApp);
+
     let currentUser = null;
+    let currentUserData = null;
     let currentMatchRef = null;
+
     let matchState = {
       sport: 'football',
       homeName: 'HOME',
@@ -206,42 +246,76 @@
       awayLogo: ''
     };
 
-    // Mode Detection (Control or Extended Display Display)
+    // ตรวจสอบ Mode จอ LED
     const urlParams = new URLSearchParams(window.location.search);
     const isDisplayMode = urlParams.get('mode') === 'display';
     const targetUid = urlParams.get('uid');
 
     if (isDisplayMode && targetUid) {
       document.getElementById('view-login').classList.add('hidden');
-      document.getElementById('view-control').classList.add('hidden');
+      document.getElementById('main-nav').classList.add('hidden');
       document.getElementById('view-display').classList.remove('hidden');
       
-      // Bind Realtime DB for Display
       onValue(ref(db, `scoreboards/${targetUid}`), (snapshot) => {
         const data = snapshot.val();
         if (data) renderDisplay(data);
       });
     }
 
-    // Authentication Logic
+    // Login Handle
+    document.getElementById('login-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      let inputUser = document.getElementById('login-username').value.trim();
+      const pass = document.getElementById('login-password').value;
+
+      // แปลง username 'suchart' ให้กลายเป็น Email อัตโนมัติหากไม่ได้กรอก @
+      if (inputUser === 'suchart') {
+        inputUser = 'suchart@suchartstudio.com';
+      } else if (!inputUser.includes('@')) {
+        inputUser = `${inputUser}@suchartstudio.com`;
+      }
+
+      signInWithEmailAndPassword(auth, inputUser, pass)
+        .catch(err => alert("เข้าสู่ระบบไม่สำเร็จ: " + err.message));
+    });
+
+    // Auth State Changed
     onAuthStateChanged(auth, (user) => {
       if (isDisplayMode) return;
       if (user) {
         currentUser = user;
         document.getElementById('view-login').classList.add('hidden');
-        document.getElementById('view-control').classList.remove('hidden');
-        document.getElementById('user-info').innerText = `Logged in: ${user.email} (${user.uid})`;
-        
-        currentMatchRef = ref(db, `scoreboards/${user.uid}`);
-        
-        // Fetch User Permissions
+        document.getElementById('main-nav').classList.remove('hidden');
+        document.getElementById('user-info').innerText = `Logged in: ${user.email}`;
+
+        // โหลดข้อมูลสิทธิ์ User จาก Database
         onValue(ref(db, `users/${user.uid}`), (snapshot) => {
-          const userData = snapshot.val() || {};
-          setupSportsSelector(userData.allowedSports || ['football']);
-          if(userData.isAdmin) document.getElementById('admin-panel').classList.remove('hidden');
+          let userData = snapshot.val();
+          
+          // Auto-bootstrap สำหรับ Master Admin
+          if (user.email === 'suchart@suchartstudio.com') {
+            userData = {
+              email: user.email,
+              role: 'admin',
+              allowedSports: ['football', 'basketball', 'volleyball', 'futsal', 'badminton']
+            };
+            set(ref(db, `users/${user.uid}`), userData);
+          }
+
+          currentUserData = userData || {};
+          
+          // ควบคุมการแสดงผลตามสิทธิ์ Role
+          if (currentUserData.role === 'admin') {
+            document.getElementById('nav-btn-admin').classList.remove('hidden');
+          } else {
+            document.getElementById('nav-btn-admin').classList.add('hidden');
+            switchView('control');
+          }
+
+          setupSportsSelector(currentUserData.allowedSports || ['football']);
         });
 
-        // Sync Match Data
+        currentMatchRef = ref(db, `scoreboards/${user.uid}`);
         onValue(currentMatchRef, (snapshot) => {
           const data = snapshot.val();
           if (data) {
@@ -249,21 +323,102 @@
             updateControlUI();
           }
         });
+
+        // ดึงรายชื่อ User ทั้งหมดมาโชว์ในตาราง Admin
+        onValue(ref(db, `users`), (snapshot) => {
+          const allUsers = snapshot.val() || {};
+          renderUsersTable(allUsers);
+        });
+
+        switchView('control');
       } else {
         document.getElementById('view-login').classList.remove('hidden');
+        document.getElementById('main-nav').classList.add('hidden');
         document.getElementById('view-control').classList.add('hidden');
+        document.getElementById('view-admin').classList.add('hidden');
       }
     });
 
-    // Login Form
-    document.getElementById('login-form').addEventListener('submit', (e) => {
+    // Navigation Switcher
+    window.switchView = (viewName) => {
+      document.getElementById('view-control').classList.add('hidden');
+      document.getElementById('view-admin').classList.add('hidden');
+      if (viewName === 'control') document.getElementById('view-control').classList.remove('hidden');
+      if (viewName === 'admin') document.getElementById('view-admin').classList.remove('hidden');
+    };
+
+    document.getElementById('nav-btn-control').addEventListener('click', () => switchView('control'));
+    document.getElementById('nav-btn-admin').addEventListener('click', () => switchView('admin'));
+    document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
+
+    // Admin: สร้าง User ใหม่
+    document.getElementById('create-user-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const email = document.getElementById('login-email').value;
-      const pass = document.getElementById('login-password').value;
-      signInWithEmailAndPassword(auth, email, pass).catch(err => alert(err.message));
+      const email = document.getElementById('new-user-email').value.trim();
+      const password = document.getElementById('new-user-password').value;
+      
+      const checkboxes = document.querySelectorAll('.sport-checkbox:checked');
+      const allowedSports = Array.from(checkboxes).map(cb => cb.value);
+
+      try {
+        // ใช้ secondaryAuth เพื่อไม่ให้ Admin ถูก Logout
+        const userCredential = await createUserWithEmailAndPassword(secondaryAuth, email, password);
+        const newUid = userCredential.user.uid;
+
+        // บันทึกลง Realtime Database
+        await set(ref(db, `users/${newUid}`), {
+          email: email,
+          role: 'operator',
+          allowedSports: allowedSports,
+          createdAt: Date.now()
+        });
+
+        await secondaryAuth.signOut();
+        alert(`สร้างผู้ใช้ ${email} สำเร็จ!`);
+        document.getElementById('create-user-form').reset();
+      } catch (err) {
+        alert("ไม่สามารถสร้างผู้ใช้ได้: " + err.message);
+      }
     });
 
-    document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
+    // Render ตารางรายชื่อ User
+    function renderUsersTable(usersObj) {
+      const tbody = document.getElementById('users-table-body');
+      tbody.innerHTML = '';
+
+      Object.keys(usersObj).forEach(uid => {
+        const u = usersObj[uid];
+        const tr = document.createElement('tr');
+        tr.className = "border-b border-slate-800 hover:bg-slate-800/50";
+        
+        const sportsText = (u.allowedSports || []).join(', ');
+        const isAdmin = u.role === 'admin';
+
+        tr.innerHTML = `
+          <td class="p-3 text-xs font-mono text-slate-500">${uid.substring(0, 8)}...</td>
+          <td class="p-3 font-semibold text-white">${u.email}</td>
+          <td class="p-3"><span class="px-2 py-0.5 rounded text-xs ${isAdmin ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40' : 'bg-slate-700 text-slate-300'}">${u.role || 'operator'}</span></td>
+          <td class="p-3 text-xs text-emerald-400">${sportsText}</td>
+          <td class="p-3">
+            ${!isAdmin ? `<button onclick="editUserSports('${uid}', '${sportsText}')" class="text-xs bg-slate-700 hover:bg-slate-600 px-2 py-1 rounded text-amber-300">แก้ไขสิทธิ์</button>` : '<span class="text-xs text-slate-500">Master</span>'}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // แก้ไขสิทธิ์กีฬาของ User
+    window.editUserSports = (targetUid, currentSportsStr) => {
+      const allSports = ['football', 'basketball', 'volleyball', 'futsal', 'badminton'];
+      const newSportsStr = prompt(`กำหนดสิทธิ์กีฬาสำหรับ User นี้ (แยกด้วยเครื่องหมายจุลภาค ,):\nตัวเลือก: ${allSports.join(', ')}`, currentSportsStr);
+      
+      if (newSportsStr !== null) {
+        const updatedSports = newSportsStr.split(',').map(s => s.trim().toLowerCase()).filter(s => allSports.includes(s));
+        update(ref(db, `users/${targetUid}`), {
+          allowedSports: updatedSports
+        }).then(() => alert("อัปเดตสิทธิ์สำเร็จ!"));
+      }
+    };
 
     // Open Extended Display Window
     document.getElementById('btn-extend-display').addEventListener('click', () => {
@@ -272,7 +427,7 @@
       window.open(url, 'ScoreboardWindow', 'width=1280,height=720');
     });
 
-    // Handle Local Image Links (Base64 Object URLs without uploading to Firebase)
+    // Local Image Handling
     const handleLocalImage = (elementId, stateKey) => {
       document.getElementById(elementId).addEventListener('change', (e) => {
         const file = e.target.files[0];
@@ -289,15 +444,13 @@
     handleLocalImage('input-home-logo', 'homeLogo');
     handleLocalImage('input-away-logo', 'awayLogo');
 
-    // Score Control Handlers
+    // Scoreboard Operations
     window.changeScore = (team, delta) => {
       if (team === 'home') matchState.homeScore = Math.max(0, matchState.homeScore + delta);
       if (team === 'away') matchState.awayScore = Math.max(0, matchState.awayScore + delta);
       syncToDatabase();
     };
 
-    // Timer Logic
-    let timerInterval = null;
     document.getElementById('btn-timer-toggle').addEventListener('click', () => {
       matchState.timerRunning = !matchState.timerRunning;
       syncToDatabase();
@@ -319,11 +472,8 @@
       }
     }, 1000);
 
-    // Sync UI Updates
     function syncToDatabase() {
-      if (currentUser && currentMatchRef) {
-        set(currentMatchRef, matchState);
-      }
+      if (currentUser && currentMatchRef) set(currentMatchRef, matchState);
     }
 
     function updateControlUI() {
@@ -381,7 +531,6 @@
       });
     }
 
-    // Name Inputs Listeners
     document.getElementById('input-home-name').addEventListener('input', (e) => {
       matchState.homeName = e.target.value || 'HOME';
       syncToDatabase();

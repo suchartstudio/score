@@ -1,401 +1,622 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stadium LED Scoreboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Teko:wght@400;600;700&display=swap');
-        
-        :root {
-            --led-glow: 0 0 10px rgba(255, 255, 255, 0.5);
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stadium Scoreboard & Admin System</title>
+  <link rel="manifest" href="manifest.json">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&display=swap');
+    
+    body { font-family: 'Chakra Petch', sans-serif; }
+    .led-border { border: 4px solid #1e293b; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
+    .led-glow-red { text-shadow: 0 0 15px #ef4444; }
+    .led-glow-yellow { text-shadow: 0 0 15px #eab308; }
+    .led-glow-green { text-shadow: 0 0 15px #22c55e; }
 
-        body {
-            font-family: 'Teko', sans-serif;
-            background-color: #000;
-            color: #fff;
-            margin: 0;
-            overflow: hidden; 
-        }
-
-        .led-text {
-            text-shadow: var(--led-glow);
-        }
-
-        .marquee-container {
-            overflow: hidden;
-            white-space: nowrap;
-            width: 100%;
-            background: linear-gradient(90deg, #111, #333, #111);
-            border-top: 2px solid #555;
-            padding: 5px 0;
-        }
-
-        .marquee-content {
-            display: inline-block;
-            animation: marquee 15s linear infinite;
-            font-size: 1.5rem;
-            letter-spacing: 2px;
-        }
-
-        @keyframes marquee {
-            0% { transform: translateX(100vw); }
-            100% { transform: translateX(-100%); }
-        }
-
-        /* 16:9 Display Aspect Ratio */
-        .display-screen {
-            aspect-ratio: 16 / 9;
-            background-image: radial-gradient(circle, #1a1a1a 0%, #000000 100%);
-            border: 4px solid #333;
-            box-shadow: 0 0 40px rgba(0, 0, 0, 0.8) inset;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        /* ปรับแต่ง Scrollbar ใน Control Panel */
-        .control-panel {
-            height: calc(100vh - 50px);
-            overflow-y: auto;
-        }
-        .control-panel::-webkit-scrollbar { width: 6px; }
-        .control-panel::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
-    </style>
+    /* CSS สำหรับตัวหนังสือวิ่ง (Marquee) */
+    .marquee-container { overflow: hidden; white-space: nowrap; width: 100%; display: flex; align-items: center; }
+    .marquee-content { display: inline-block; animation: marquee 20s linear infinite; padding-left: 100%; }
+    @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+  </style>
 </head>
-<body class="bg-gray-900 text-white">
+<body class="bg-slate-950 text-white min-h-screen">
 
-    <!-- Navigation -->
-    <nav class="bg-gray-800 p-2 flex justify-between items-center h-[50px] shadow-lg border-b border-gray-700">
-        <div class="font-bold text-2xl text-yellow-400 tracking-wider"><i class="fas fa-desktop"></i> STADIUM UI</div>
-        <div class="flex gap-4">
-            <button onclick="switchView('control')" class="px-4 py-1 bg-blue-600 hover:bg-blue-500 rounded text-lg transition">Control Panel</button>
-            <button onclick="switchView('display')" class="px-4 py-1 bg-green-600 hover:bg-green-500 rounded text-lg transition">LED Display</button>
+  <div id="app" class="p-4">
+    <!-- View: Login -->
+    <div id="view-login" class="max-w-md mx-auto mt-20 bg-slate-900 p-6 rounded-xl border border-slate-800 shadow-2xl">
+      <h2 class="text-2xl font-bold mb-2 text-center text-amber-500">Scoreboard System</h2>
+      <p class="text-xs text-slate-400 text-center mb-6">เข้าสู่ระบบควบคุมสกอร์บอร์ด / ผู้ดูแลระบบ</p>
+      <form id="login-form" class="space-y-4">
+        <div><label class="block text-sm mb-1">Username / Email</label><input type="text" id="login-username" class="w-full p-2.5 rounded bg-slate-800 border border-slate-700" required></div>
+        <div><label class="block text-sm mb-1">Password</label><input type="password" id="login-password" class="w-full p-2.5 rounded bg-slate-800 border border-slate-700" required></div>
+        <button type="submit" class="w-full py-3 bg-amber-500 hover:bg-amber-600 font-bold rounded text-slate-950 text-lg">LOGIN</button>
+      </form>
+    </div>
+
+    <!-- Navigation Header -->
+    <div id="main-nav" class="hidden max-w-6xl mx-auto flex justify-between items-center bg-slate-900 p-4 rounded-xl border border-slate-800 mb-6">
+      <div>
+        <h1 class="text-xl font-bold text-amber-500">Stadium Scoreboard System</h1>
+        <p id="user-info" class="text-xs text-slate-400"></p>
+      </div>
+      <div class="flex flex-wrap items-center gap-2">
+        <button id="nav-btn-control" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded text-sm font-semibold">🎮 หน้าควบคุม</button>
+        <button id="nav-btn-admin" class="hidden px-3 py-1.5 bg-amber-500 text-slate-950 hover:bg-amber-400 rounded text-sm font-bold">⚡ จัดการ User</button>
+        <button id="btn-extend-display" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 rounded font-semibold text-sm">🖥️ เปิดจอ LED</button>
+        <button id="btn-logout" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-500 rounded font-semibold text-sm">ออกจากระบบ</button>
+      </div>
+    </div>
+
+    <!-- View: Admin -->
+    <div id="view-admin" class="hidden max-w-6xl mx-auto space-y-6">
+      <div class="bg-slate-900 p-6 rounded-xl border border-amber-500/30">
+        <h3 class="text-lg font-bold text-amber-400 mb-4">➕ เพิ่มผู้ใช้งานใหม่</h3>
+        <form id="create-user-form" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div><label class="block text-xs mb-1 text-slate-400">Email</label><input type="email" id="new-user-email" class="w-full p-2 rounded bg-slate-800" required></div>
+          <div><label class="block text-xs mb-1 text-slate-400">Password</label><input type="password" id="new-user-password" class="w-full p-2 rounded bg-slate-800" required></div>
+          <div><label class="block text-xs mb-1 text-slate-400">สิทธิ์กีฬา</label>
+            <div class="flex flex-wrap gap-2 text-xs pt-1">
+              <label><input type="checkbox" value="football" class="sport-checkbox" checked> ฟุตบอล</label>
+              <label><input type="checkbox" value="basketball" class="sport-checkbox" checked> บาส</label>
+              <label><input type="checkbox" value="volleyball" class="sport-checkbox"> วอลเลย์</label>
+              <label><input type="checkbox" value="futsal" class="sport-checkbox"> ฟุตซอล</label>
+              <label><input type="checkbox" value="badminton" class="sport-checkbox"> แบดฯ</label>
+            </div>
+          </div>
+          <div class="md:col-span-3"><button type="submit" class="bg-amber-500 text-slate-950 font-bold px-6 py-2 rounded hover:bg-amber-400">สร้างผู้ใช้งาน</button></div>
+        </form>
+      </div>
+      <div class="bg-slate-900 p-6 rounded-xl border border-slate-800">
+        <table class="w-full text-left text-sm text-slate-300">
+          <thead class="bg-slate-800 text-amber-400"><tr><th class="p-3">UID</th><th class="p-3">Email</th><th class="p-3">Role</th><th class="p-3">สิทธิ์</th><th class="p-3">จัดการ</th></tr></thead>
+          <tbody id="users-table-body" class="divide-y divide-slate-800"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- View: Scoreboard Control Hub -->
+    <div id="view-control" class="hidden max-w-6xl mx-auto space-y-6">
+      
+      <!-- โหมดกีฬา & Marquee & ชื่อการแข่งขัน -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+          <label class="block font-bold mb-2 text-slate-300 text-sm">เลือกโหมดกีฬา:</label>
+          <div id="sports-selector" class="flex flex-wrap gap-2"></div>
         </div>
-    </nav>
+        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+          <!-- ข้อ 5: ใส่ชื่อการแข่งขัน -->
+          <label class="block font-bold mb-2 text-slate-300 text-sm">🏆 ชื่อรายการแข่งขัน (กลางจอ):</label>
+          <input type="text" id="input-comp-name" placeholder="CHAMPIONSHIP 2026" class="w-full p-2 rounded bg-slate-800 border border-slate-700 font-bold text-amber-400">
+        </div>
+        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+          <label class="block font-bold mb-2 text-slate-300 text-sm">📢 ข้อความตัววิ่ง (Marquee):</label>
+          <input type="text" id="input-marquee" placeholder="ยินดีต้อนรับสู่การแข่งขัน..." class="w-full p-2 rounded bg-slate-800 border border-slate-700">
+        </div>
+      </div>
 
-    <!-- Main Container -->
-    <div id="app" class="w-full flex justify-center items-center h-[calc(100vh-50px)]"></div>
+      <!-- Match Info -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-900 p-4 rounded-xl border border-slate-800">
+        <div class="space-y-3">
+          <h3 class="font-bold text-amber-400 text-lg">ทีมเหย้า (Home)</h3>
+          <input type="text" id="input-home-name" placeholder="ชื่อทีม" class="w-full p-2 rounded bg-slate-800 font-bold text-lg">
+          <input type="file" id="input-home-logo" accept="image/*" class="w-full text-sm">
+        </div>
+        <div class="space-y-3">
+          <h3 class="font-bold text-amber-400 text-lg">ทีมเยือน (Away)</h3>
+          <input type="text" id="input-away-name" placeholder="ชื่อทีม" class="w-full p-2 rounded bg-slate-800 font-bold text-lg">
+          <input type="file" id="input-away-logo" accept="image/*" class="w-full text-sm">
+        </div>
+      </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+      <!-- Match Controller Interface (Score & Timer) -->
+      <div class="bg-slate-900 p-6 rounded-xl border border-slate-800 grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+        <div class="space-y-4">
+          <div id="ctrl-home-name" class="text-2xl font-bold">HOME</div>
+          <div id="ctrl-home-score" class="text-7xl font-bold text-emerald-400 bg-slate-950 py-4 rounded border border-slate-800">0</div>
+          <div id="home-score-controls" class="flex justify-center gap-2 flex-wrap"></div>
+        </div>
 
-        // *** ใส่ Config Firebase ของคุณที่นี่ ***
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_AUTH_DOMAIN",
-            databaseURL: "YOUR_DATABASE_URL",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
-        };
+        <div class="space-y-3">
+          <div id="ctrl-timer" class="text-5xl font-bold text-amber-400 bg-slate-950 py-3 rounded border border-slate-800">00:00</div>
+          
+          <div class="flex justify-center gap-2">
+            <button id="btn-timer-toggle" class="px-5 py-1.5 bg-amber-500 text-slate-950 font-bold rounded text-md">START</button>
+            <button id="btn-timer-reset" class="px-4 py-1.5 bg-slate-700 font-bold rounded text-md">RESET</button>
+          </div>
 
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-        const matchRef = ref(db, 'currentMatch');
+          <!-- ข้อ 3: เพิ่มเวลาแบบ Manual -->
+          <div class="bg-slate-800 p-2 rounded border border-slate-700 space-y-1">
+            <span class="text-xs text-slate-400 block font-semibold">⏱️ ปรับเวลาแข่งขัน Manual</span>
+            <div class="flex justify-center gap-1 items-center">
+              <input type="number" id="input-manual-min" placeholder="นาที" class="w-16 p-1 text-center bg-slate-950 rounded text-sm font-bold">
+              <span>:</span>
+              <input type="number" id="input-manual-sec" placeholder="วิ" class="w-16 p-1 text-center bg-slate-950 rounded text-sm font-bold">
+              <button onclick="setManualTime()" class="px-3 py-1 bg-amber-500 text-slate-950 font-bold rounded text-xs">ตั้งเวลา</button>
+            </div>
+          </div>
 
-        // State เริ่มต้น
-        let matchState = {
-            competitionName: "CHAMPIONSHIP FINALS 2026",
-            sport: "basketball", // basketball, football, futsal, volleyball, badminton, takraw
-            period: 1,
-            timer: { time: "10:00", shotClock: "24", running: false },
-            home: { name: "HOME TEAM", score: 0, sets: 0, color: "#1d4ed8", fouls: 0, logo: "" },
-            away: { name: "AWAY TEAM", score: 0, sets: 0, color: "#b91c1c", fouls: 0, logo: "" },
-            marquee: { text: "WELCOME TO THE CHAMPIONSHIP FINALS | SPONSORED BY YOUR BRAND", visible: true },
-        };
+          <!-- ข้อ 4: Shot Clock 24 วิสำหรับบาส -->
+          <div id="panel-shotclock-ctrl" class="hidden bg-red-950/50 p-2 rounded border border-red-800 flex justify-center items-center gap-2">
+            <span class="text-xs font-bold text-red-400">SHOT CLOCK:</span>
+            <button onclick="resetShotClock(24)" class="px-3 py-1 bg-red-600 hover:bg-red-500 text-white font-bold rounded text-xs">24s</button>
+            <button onclick="resetShotClock(14)" class="px-3 py-1 bg-red-600 hover:bg-red-500 text-white font-bold rounded text-xs">14s</button>
+          </div>
 
-        let currentView = 'control'; // 'control' หรือ 'display'
+          <input type="text" id="input-period" placeholder="ครึ่งเวลา / ควอเตอร์ / เซต" class="w-full p-2 text-center rounded bg-slate-800 text-lg font-bold">
+        </div>
 
-        // ฟังก์ชันสำหรับสลับหน้าจอ
-        window.switchView = (view) => {
-            currentView = view;
-            renderApp();
-        };
+        <div class="space-y-4">
+          <div id="ctrl-away-name" class="text-2xl font-bold">AWAY</div>
+          <div id="ctrl-away-score" class="text-7xl font-bold text-emerald-400 bg-slate-950 py-4 rounded border border-slate-800">0</div>
+          <div id="away-score-controls" class="flex justify-center gap-2 flex-wrap"></div>
+        </div>
+      </div>
 
-        // ฟังก์ชันอัปเดต State Global
-        window.updateState = (key, subKey, value) => {
-            if(subKey) {
-                matchState[key][subKey] = value;
-            } else {
-                matchState[key] = value;
-            }
-            syncToFirebase();
-            renderApp();
-        };
+      <!-- Dynamic Control Panel (เปลี่ยนตามกีฬา) -->
+      <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+        <h3 class="font-bold text-slate-300 text-lg mb-4">🛠️ แผงควบคุมเสริม (Match Events)</h3>
+        
+        <!-- ข้อ 1: ฟุตบอล/ฟุตซอล (ประตู, ใบเหลือง, ใบแดง) -->
+        <div id="panel-football" class="hidden flex flex-wrap items-end gap-3 mb-4 p-3 bg-slate-800 rounded">
+          <div><label class="block text-xs mb-1 text-slate-400">ทีม</label><select id="fb-team" class="p-2 rounded bg-slate-950"><option value="home">Home</option><option value="away">Away</option></select></div>
+          <div><label class="block text-xs mb-1 text-slate-400">ชื่อนักเตะ / เบอร์</label><input type="text" id="fb-player" class="p-2 rounded bg-slate-950 w-32"></div>
+          <div><label class="block text-xs mb-1 text-slate-400">เหตุการณ์</label>
+            <select id="fb-event" class="p-2 rounded bg-slate-950">
+              <option value="⚽ Goal">⚽ ทำประตู</option><option value="🟨 Yellow Card">🟨 ใบเหลือง</option><option value="🟥 Red Card">🟥 ใบแดง</option>
+            </select>
+          </div>
+          <button onclick="addMatchEvent()" class="px-4 py-2 bg-emerald-600 font-bold rounded">บันทึกเหตุการณ์</button>
+          <button onclick="clearMatchEvents()" class="px-4 py-2 bg-slate-700 font-bold rounded text-sm">ล้าง Log</button>
+        </div>
 
-        window.adjustScore = (team, amount) => {
-            matchState[team].score = Math.max(0, matchState[team].score + amount);
-            syncToFirebase();
-        };
+        <!-- แผงบาสเกตบอล/ฟุตซอล (การทำฟาล์ว) -->
+        <div id="panel-fouls" class="hidden grid grid-cols-2 gap-4 mb-4">
+          <div class="p-3 bg-slate-800 rounded text-center">
+            <span class="block text-sm text-slate-400 mb-2">ฟาล์วทีมเหย้า (Home Fouls)</span>
+            <div class="flex justify-center items-center gap-4">
+              <button onclick="changeFoul('home', -1)" class="px-3 py-1 bg-rose-600 rounded font-bold">-</button>
+              <span id="ctrl-home-foul" class="text-3xl font-bold text-red-500">0</span>
+              <button onclick="changeFoul('home', 1)" class="px-3 py-1 bg-rose-600 rounded font-bold">+</button>
+            </div>
+          </div>
+          <div class="p-3 bg-slate-800 rounded text-center">
+            <span class="block text-sm text-slate-400 mb-2">ฟาล์วทีมเยือน (Away Fouls)</span>
+            <div class="flex justify-center items-center gap-4">
+              <button onclick="changeFoul('away', -1)" class="px-3 py-1 bg-rose-600 rounded font-bold">-</button>
+              <span id="ctrl-away-foul" class="text-3xl font-bold text-red-500">0</span>
+              <button onclick="changeFoul('away', 1)" class="px-3 py-1 bg-rose-600 rounded font-bold">+</button>
+            </div>
+          </div>
+        </div>
 
-        window.adjustSet = (team, amount) => {
-            matchState[team].sets = Math.max(0, matchState[team].sets + amount);
-            syncToFirebase();
-        };
+        <!-- แผงวอลเลย์บอล/แบดมินตัน (จบเซ็ต) -->
+        <div id="panel-sets" class="hidden flex gap-4 mb-4 p-3 bg-slate-800 rounded justify-center items-center">
+          <button onclick="endSet()" class="px-6 py-2 bg-amber-500 text-slate-950 font-bold rounded text-lg">📌 จบเซ็ต (บันทึกคะแนน)</button>
+          <button onclick="resetSets()" class="px-4 py-2 bg-slate-700 font-bold rounded">รีเซ็ตเซ็ตทั้งหมด</button>
+        </div>
 
-        // Firebase Sync
-        function syncToFirebase() {
-            set(matchRef, matchState);
-        }
+        <!-- ระบบเปลี่ยนตัว (ทุกโหมด) -->
+        <div class="flex flex-wrap items-end gap-3 pt-4 border-t border-slate-700">
+          <div><label class="block text-xs mb-1 text-slate-400">ทีม</label><select id="sub-team" class="p-2 rounded bg-slate-950"><option value="home">Home</option><option value="away">Away</option></select></div>
+          <div><label class="block text-xs mb-1 text-slate-400">ผู้เล่นเข้า 🟢</label><input type="text" id="sub-in" class="p-2 rounded bg-slate-950 w-32"></div>
+          <div><label class="block text-xs mb-1 text-slate-400">ผู้เล่นออก 🔴</label><input type="text" id="sub-out" class="p-2 rounded bg-slate-950 w-32"></div>
+          <button onclick="addSubstitute()" class="px-4 py-2 bg-blue-600 font-bold rounded">🔄 เปลี่ยนตัว</button>
+        </div>
 
-        onValue(matchRef, (snapshot) => {
-            const data = snapshot.val();
-            if (data) {
-                matchState = data;
-                renderApp();
-            }
+      </div>
+    </div>
+
+    <!-- View: 16:9 Display Window (For LED Screen) -->
+    <div id="view-display" class="hidden fixed inset-0 bg-[#0a0f1d] w-screen h-screen flex flex-col justify-between p-8 select-none overflow-hidden" style="aspect-ratio: 16/9;">
+      
+      <!-- Top Bar (ข้อ 5 & 6: แสดงชื่อการแข่งขันตรงกลาง ลบชื่อโหมดกีฬามุมซ้ายออก) -->
+      <div class="h-[8%] flex justify-center items-center border-b-4 border-slate-800 pb-2 relative">
+        <span id="disp-comp-name" class="text-4xl font-bold uppercase tracking-widest text-amber-400 text-center">CHAMPIONSHIP 2026</span>
+      </div>
+
+      <!-- Main Scoreboard -->
+      <div class="h-[74%] flex justify-between items-center w-full gap-8 relative">
+        
+        <!-- Home Team Block -->
+        <div class="flex-1 flex flex-col items-center justify-start bg-slate-900/60 p-8 rounded-3xl led-border h-full overflow-hidden relative">
+          <div class="h-[50%] w-full flex items-center justify-center mb-2 mt-2">
+            <img id="disp-home-logo" src="" class="max-h-full max-w-full object-contain drop-shadow-2xl hidden">
+          </div>
+          <span id="disp-home-name" class="text-6xl font-bold tracking-wide break-words whitespace-normal text-center leading-tight flex-1 flex items-center w-full justify-center">HOME</span>
+          <!-- ฟาล์ว -->
+          <div id="disp-home-fouls-container" class="hidden absolute bottom-4 left-0 w-full text-center">
+            <span class="bg-red-600 text-white font-bold text-3xl px-6 py-2 rounded-xl shadow-lg border-2 border-red-800">FOULS: <span id="disp-home-fouls">0</span></span>
+          </div>
+        </div>
+
+        <!-- Center Block -->
+        <div class="flex-[1.2] flex flex-col items-center justify-center h-full shrink-0 gap-4">
+          
+          <!-- ข้อ 6: ย้ายเลขบอกเซต / ครึ่งเวลา มาไว้เหนือเลข Score -->
+          <div id="disp-period" class="text-3xl font-bold bg-amber-500 text-slate-950 px-8 py-2 rounded-xl shadow-lg border-2 border-amber-300">1ST HALF</div>
+
+          <div class="flex items-center justify-center gap-8 w-full bg-slate-900/50 py-4 px-10 rounded-3xl border-4 border-slate-800 shadow-2xl relative">
+            <span id="disp-home-score" class="text-[11rem] leading-none font-black text-emerald-400 led-glow-green w-1/2 text-right">0</span>
+            <span class="text-[8rem] leading-none font-black text-slate-500 pb-4">-</span>
+            <span id="disp-away-score" class="text-[11rem] leading-none font-black text-emerald-400 led-glow-green w-1/2 text-left">0</span>
+          </div>
+          
+          <!-- Timer Section + Short clock -->
+          <div class="relative w-full">
+            <div id="disp-timer" class="text-[7.5rem] leading-none font-black text-amber-400 led-glow-yellow bg-slate-950 w-full text-center py-3 rounded-2xl border-4 border-slate-800 shadow-2xl">
+              00:00
+            </div>
+            <!-- ข้อ 4: Short Clock 24 วิ ตัวหนังสือขาว พื้นกรอบสีแดง -->
+            <div id="disp-shotclock" class="hidden absolute -bottom-5 right-4 bg-red-600 text-white border-4 border-red-500 text-5xl font-black px-4 py-1 rounded-xl shadow-2xl">
+              24
+            </div>
+          </div>
+
+          <!-- ข้อ 2: ตารางแสดงคะแนนเซ็ตที่ผ่านมา (ใหญ่ ชัดเจน) -->
+          <div id="disp-set-scores-container" class="hidden w-full bg-slate-900 border-2 border-slate-700 p-3 rounded-2xl shadow-2xl">
+            <div class="text-xs text-slate-400 text-center uppercase font-bold tracking-widest mb-1">SCORE BY SETS</div>
+            <div id="disp-set-scores" class="grid grid-cols-5 gap-2 text-center"></div>
+          </div>
+
+        </div>
+
+        <!-- Away Team Block -->
+        <div class="flex-1 flex flex-col items-center justify-start bg-slate-900/60 p-8 rounded-3xl led-border h-full overflow-hidden relative">
+          <div class="h-[50%] w-full flex items-center justify-center mb-2 mt-2">
+            <img id="disp-away-logo" src="" class="max-h-full max-w-full object-contain drop-shadow-2xl hidden">
+          </div>
+          <span id="disp-away-name" class="text-6xl font-bold tracking-wide break-words whitespace-normal text-center leading-tight flex-1 flex items-center w-full justify-center">AWAY</span>
+          <!-- ฟาล์ว -->
+          <div id="disp-away-fouls-container" class="hidden absolute bottom-4 left-0 w-full text-center">
+            <span class="bg-red-600 text-white font-bold text-3xl px-6 py-2 rounded-xl shadow-lg border-2 border-red-800">FOULS: <span id="disp-away-fouls">0</span></span>
+          </div>
+        </div>
+
+        <!-- Events Log Popup -->
+        <div id="disp-events-box" class="hidden absolute top-[10%] left-1/2 transform -translate-x-1/2 w-4/5 max-w-4xl bg-slate-900/95 border-4 border-emerald-500 rounded-2xl p-6 shadow-2xl z-50 transition-opacity duration-500">
+          <div id="disp-events-text" class="text-4xl font-bold text-center text-white break-words"></div>
+        </div>
+
+      </div>
+
+      <!-- Bottom Bar (Marquee ตัวหนังสือวิ่ง) -->
+      <div class="h-[10%] bg-slate-900/80 rounded-xl flex items-center border border-slate-800 text-amber-400 text-4xl font-bold shadow-2xl">
+        <div class="marquee-container h-full">
+          <div id="disp-marquee" class="marquee-content h-full flex items-center">
+            ยินดีต้อนรับสู่การแข่งขันนัดสำคัญประจำวันนี้
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getDatabase, ref, set, onValue, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDMptdLpLEdbeVFKZj82M0gyoV2m_2y5Pk",
+      authDomain: "suchartstudio-9a78d.firebaseapp.com",
+      databaseURL: "https://suchartstudio-9a78d-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "suchartstudio-9a78d",
+      storageBucket: "suchartstudio-9a78d.firebasestorage.app",
+      messagingSenderId: "953369646185",
+      appId: "1:953369646185:web:8e1dce40dd448f3d6ebef8",
+      measurementId: "G-P8J0LYXW9C"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+
+    let currentUser = null;
+    let currentMatchRef = null;
+    let matchState = {
+      sport: 'football', compName: 'CHAMPIONSHIP 2026', homeName: 'HOME', awayName: 'AWAY', 
+      homeScore: 0, awayScore: 0, timerSeconds: 0, timerRunning: false, shotClockSeconds: 24,
+      period: '1ST HALF', homeLogo: '', awayLogo: '',
+      homeFouls: 0, awayFouls: 0, setScoresHome: [], setScoresAway: [],
+      marqueeText: 'ยินดีต้อนรับสู่การแข่งขัน', matchEvent: { text: '', timestamp: 0 }
+    };
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const isDisplayMode = urlParams.get('mode') === 'display';
+    const targetUid = urlParams.get('uid');
+    let lastEventTimestamp = 0;
+
+    if (isDisplayMode && targetUid) {
+      document.getElementById('view-login').classList.add('hidden');
+      document.getElementById('main-nav').classList.add('hidden');
+      document.getElementById('view-display').classList.remove('hidden');
+      onValue(ref(db, `scoreboards/${targetUid}`), (snapshot) => {
+        if (snapshot.val()) renderDisplay(snapshot.val());
+      });
+    }
+
+    // --- Auth Logic ---
+    document.getElementById('login-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      let inputUser = document.getElementById('login-username').value.trim();
+      const pass = document.getElementById('login-password').value;
+      if (inputUser === 'suchart') inputUser = 'suchart@suchartstudio.com';
+      else if (!inputUser.includes('@')) inputUser = `${inputUser}@suchartstudio.com`;
+      signInWithEmailAndPassword(auth, inputUser, pass).catch(err => alert("Error: " + err.message));
+    });
+
+    onAuthStateChanged(auth, (user) => {
+      if (isDisplayMode) return;
+      if (user) {
+        currentUser = user;
+        document.getElementById('view-login').classList.add('hidden');
+        document.getElementById('main-nav').classList.remove('hidden');
+        document.getElementById('user-info').innerText = `Logged in: ${user.email}`;
+
+        currentMatchRef = ref(db, `scoreboards/${user.uid}`);
+        onValue(currentMatchRef, (snapshot) => {
+          if (snapshot.val()) { matchState = { ...matchState, ...snapshot.val() }; updateControlUI(); }
         });
 
-        // ==========================
-        // RENDER LOGIC
-        // ==========================
-        function renderApp() {
-            const appDiv = document.getElementById('app');
-            if (currentView === 'control') {
-                appDiv.innerHTML = renderControlPanel();
-                appDiv.className = "w-full h-[calc(100vh-50px)]";
-            } else {
-                appDiv.innerHTML = renderDisplayPanel();
-                appDiv.className = "w-full h-[calc(100vh-50px)] flex justify-center items-center bg-black p-4";
-            }
-            attachControlListeners();
+        setupSportsSelector(['football', 'basketball', 'volleyball', 'futsal', 'badminton']);
+        switchView('control');
+      } else {
+        document.getElementById('view-login').classList.remove('hidden');
+        document.getElementById('main-nav').classList.add('hidden');
+        document.getElementById('view-control').classList.add('hidden');
+      }
+    });
+
+    window.switchView = (v) => {
+      document.getElementById('view-control').classList.add('hidden');
+      document.getElementById('view-admin').classList.add('hidden');
+      document.getElementById(`view-${v}`).classList.remove('hidden');
+    };
+    document.getElementById('nav-btn-control').addEventListener('click', () => switchView('control'));
+    document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
+    document.getElementById('btn-extend-display').addEventListener('click', () => {
+      if (currentUser) window.open(`${window.location.origin}${window.location.pathname}?mode=display&uid=${currentUser.uid}`, 'Scoreboard', 'width=1280,height=720');
+    });
+
+    function syncToDatabase() { if (currentUser && currentMatchRef) set(currentMatchRef, matchState); }
+
+    function setupSportsSelector(sports) {
+      const container = document.getElementById('sports-selector');
+      container.innerHTML = '';
+      sports.forEach(sport => {
+        const btn = document.createElement('button');
+        btn.className = `px-3 py-1.5 rounded font-bold uppercase text-xs transition ${matchState.sport === sport ? 'bg-amber-500 text-slate-950 shadow-lg' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`;
+        btn.innerText = sport;
+        btn.onclick = () => { matchState.sport = sport; renderScoreButtons(sport); syncToDatabase(); setupSportsSelector(sports); };
+        container.appendChild(btn);
+      });
+      renderScoreButtons(matchState.sport);
+    }
+
+    function renderScoreButtons(sport) {
+      const homeContainer = document.getElementById('home-score-controls');
+      const awayContainer = document.getElementById('away-score-controls');
+      
+      let btns = sport === 'basketball' 
+        ? `<button onclick="changeScore('TEAM', 1)" class="px-3 py-2 bg-emerald-600 font-bold rounded text-lg">+1</button>
+           <button onclick="changeScore('TEAM', 2)" class="px-3 py-2 bg-emerald-600 font-bold rounded text-lg">+2</button>
+           <button onclick="changeScore('TEAM', 3)" class="px-3 py-2 bg-emerald-600 font-bold rounded text-lg">+3</button>
+           <button onclick="changeScore('TEAM', -1)" class="px-3 py-2 bg-rose-600 font-bold rounded text-lg">-1</button>`
+        : `<button onclick="changeScore('TEAM', 1)" class="px-6 py-2 bg-emerald-600 font-bold rounded text-2xl">+1</button>
+           <button onclick="changeScore('TEAM', -1)" class="px-6 py-2 bg-rose-600 font-bold rounded text-2xl">-1</button>`;
+      
+      homeContainer.innerHTML = btns.replace(/TEAM/g, 'home');
+      awayContainer.innerHTML = btns.replace(/TEAM/g, 'away');
+
+      document.getElementById('panel-football').classList.add('hidden');
+      document.getElementById('panel-fouls').classList.add('hidden');
+      document.getElementById('panel-sets').classList.add('hidden');
+      document.getElementById('panel-shotclock-ctrl').classList.add('hidden');
+
+      // ข้อ 1: ฟุตซอลใช้ระบบเหตุการณ์ (ใบเหลือง/แดง/ประตู) เหมือนฟุตบอล
+      if (sport === 'football' || sport === 'futsal') document.getElementById('panel-football').classList.remove('hidden');
+      if (sport === 'basketball' || sport === 'futsal') document.getElementById('panel-fouls').classList.remove('hidden');
+      if (sport === 'volleyball' || sport === 'badminton') document.getElementById('panel-sets').classList.remove('hidden');
+      if (sport === 'basketball') document.getElementById('panel-shotclock-ctrl').classList.remove('hidden');
+    }
+
+    window.changeScore = (t, d) => {
+      if (t === 'home') matchState.homeScore = Math.max(0, matchState.homeScore + d);
+      if (t === 'away') matchState.awayScore = Math.max(0, matchState.awayScore + d);
+      syncToDatabase();
+    };
+    
+    window.changeFoul = (t, d) => {
+      if (t === 'home') matchState.homeFouls = Math.max(0, matchState.homeFouls + d);
+      if (t === 'away') matchState.awayFouls = Math.max(0, matchState.awayFouls + d);
+      syncToDatabase();
+    };
+
+    // ข้อ 3: ฟังก์ชันปรับเวลาแบบ Manual
+    window.setManualTime = () => {
+      const min = parseInt(document.getElementById('input-manual-min').value) || 0;
+      const sec = parseInt(document.getElementById('input-manual-sec').value) || 0;
+      matchState.timerSeconds = (min * 60) + sec;
+      document.getElementById('input-manual-min').value = '';
+      document.getElementById('input-manual-sec').value = '';
+      syncToDatabase();
+    };
+
+    // ข้อ 4: รีเซ็ต Shot clock 24 วิ
+    window.resetShotClock = (sec) => {
+      matchState.shotClockSeconds = sec;
+      syncToDatabase();
+    };
+
+    window.endSet = () => {
+      if(!matchState.setScoresHome) matchState.setScoresHome = [];
+      if(!matchState.setScoresAway) matchState.setScoresAway = [];
+      matchState.setScoresHome.push(matchState.homeScore);
+      matchState.setScoresAway.push(matchState.awayScore);
+      matchState.homeScore = 0; matchState.awayScore = 0;
+      matchState.period = `SET ${matchState.setScoresHome.length + 1}`;
+      syncToDatabase();
+    };
+    window.resetSets = () => { matchState.setScoresHome = []; matchState.setScoresAway = []; syncToDatabase(); };
+
+    window.addMatchEvent = () => {
+      const team = document.getElementById('fb-team').value;
+      const player = document.getElementById('fb-player').value || 'Unknown Player';
+      const evt = document.getElementById('fb-event').value;
+      const teamName = team === 'home' ? matchState.homeName : matchState.awayName;
+      triggerEventDisplay(`${evt} : ${player} (${teamName})`, team);
+      document.getElementById('fb-player').value = '';
+    };
+
+    window.addSubstitute = () => {
+      const team = document.getElementById('sub-team').value;
+      const pIn = document.getElementById('sub-in').value;
+      const pOut = document.getElementById('sub-out').value;
+      if(!pIn && !pOut) return;
+      const teamName = team === 'home' ? matchState.homeName : matchState.awayName;
+      triggerEventDisplay(`🔄 เปลี่ยนตัว (${teamName}) | เข้า: ${pIn || '-'} | ออก: ${pOut || '-'}`, team);
+      document.getElementById('sub-in').value = ''; document.getElementById('sub-out').value = '';
+    };
+
+    window.clearMatchEvents = () => triggerEventDisplay('', '');
+
+    function triggerEventDisplay(text, teamInfo) {
+      matchState.matchEvent = { text, teamInfo, timestamp: Date.now() };
+      syncToDatabase();
+    }
+
+    const handleImg = (el, k) => { document.getElementById(el).addEventListener('change', (e) => { const f = e.target.files[0]; if (f) { const r = new FileReader(); r.onload = ev => { matchState[k] = ev.target.result; syncToDatabase(); }; r.readAsDataURL(f); } }); };
+    handleImg('input-home-logo', 'homeLogo'); handleImg('input-away-logo', 'awayLogo');
+
+    document.getElementById('btn-timer-toggle').addEventListener('click', () => { matchState.timerRunning = !matchState.timerRunning; syncToDatabase(); });
+    document.getElementById('btn-timer-reset').addEventListener('click', () => { matchState.timerSeconds = 0; matchState.timerRunning = false; matchState.shotClockSeconds = 24; syncToDatabase(); });
+    
+    // Timer Count Loop
+    setInterval(() => { 
+      if (matchState.timerRunning) { 
+        // ข้อ 4: ถ้าเป็นบาสเก็ตบอลให้นับถอยหลัง
+        if (matchState.sport === 'basketball') {
+          if (matchState.timerSeconds > 0) matchState.timerSeconds--;
+          if (matchState.shotClockSeconds > 0) matchState.shotClockSeconds--;
+        } else {
+          matchState.timerSeconds++;
         }
+        updateControlTimerUI(); 
+        if (currentUser) update(currentMatchRef, { timerSeconds: matchState.timerSeconds, shotClockSeconds: matchState.shotClockSeconds }); 
+      } 
+    }, 1000);
 
-        // --- 1. CONTROL PANEL ---
-        function renderControlPanel() {
-            const sports = ['basketball', 'football', 'futsal', 'volleyball', 'badminton', 'takraw'];
-            const isNoTimerSport = ['volleyball', 'badminton', 'takraw'].includes(matchState.sport);
-            
-            return `
-            <div class="control-panel w-full p-4 bg-gray-900 text-sm">
-                <!-- แถวบนสุด: กีฬา, ชื่อรายการ, Marquee -->
-                <div class="grid grid-cols-12 gap-4 mb-4 bg-gray-800 p-4 rounded-lg border border-gray-700 shadow-lg">
-                    <div class="col-span-3 flex flex-col">
-                        <label class="text-gray-400 text-xs font-bold mb-1">Sport Type</label>
-                        <select id="input-sport" class="bg-gray-700 text-white rounded p-2 border border-gray-600 focus:border-blue-500 outline-none">
-                            ${sports.map(s => `<option value="${s}" ${matchState.sport === s ? 'selected' : ''}>${s.toUpperCase()}</option>`).join('')}
-                        </select>
-                    </div>
-                    <div class="col-span-4 flex flex-col">
-                        <label class="text-gray-400 text-xs font-bold mb-1">Competition Name</label>
-                        <input id="input-comp" type="text" class="bg-gray-700 text-white rounded p-2 border border-gray-600" value="${matchState.competitionName}">
-                    </div>
-                    <div class="col-span-5 flex flex-col">
-                        <div class="flex justify-between items-center mb-1">
-                            <label class="text-gray-400 text-xs font-bold">Marquee Text</label>
-                            <label class="flex items-center gap-2 text-xs cursor-pointer bg-gray-700 px-2 py-1 rounded">
-                                <input type="checkbox" id="input-marquee-visible" ${matchState.marquee.visible ? 'checked' : ''} class="w-4 h-4">
-                                Show Marquee
-                            </label>
-                        </div>
-                        <input id="input-marquee" type="text" class="bg-gray-700 text-white rounded p-2 border border-gray-600" value="${matchState.marquee.text}">
-                    </div>
-                </div>
+    // Live Input Listeners
+    document.getElementById('input-comp-name').addEventListener('input', e => { matchState.compName = e.target.value; syncToDatabase(); });
+    document.getElementById('input-home-name').addEventListener('input', e => { matchState.homeName = e.target.value; syncToDatabase(); });
+    document.getElementById('input-away-name').addEventListener('input', e => { matchState.awayName = e.target.value; syncToDatabase(); });
+    document.getElementById('input-period').addEventListener('input', e => { matchState.period = e.target.value; syncToDatabase(); });
+    document.getElementById('input-marquee').addEventListener('input', e => { matchState.marqueeText = e.target.value || ' '; syncToDatabase(); });
 
-                <!-- แถวกลาง: กระดานคะแนน Home / Center / Away -->
-                <div class="grid grid-cols-3 gap-4 h-full">
-                    
-                    <!-- HOME TEAM -->
-                    <div class="bg-gray-800 p-4 rounded-lg border-t-4 shadow-lg flex flex-col gap-4" style="border-color: ${matchState.home.color}">
-                        <div class="text-center font-bold text-lg border-b border-gray-700 pb-2" style="color: ${matchState.home.color}">HOME TEAM</div>
-                        <input id="input-home-name" type="text" class="bg-gray-700 rounded p-2 text-center font-bold text-xl" value="${matchState.home.name}">
-                        <div class="flex items-center justify-between">
-                            <label class="text-gray-400 text-xs font-bold">Team Color:</label>
-                            <input id="input-home-color" type="color" value="${matchState.home.color}" class="bg-gray-700 h-8 w-16 cursor-pointer rounded">
-                        </div>
-                        <div class="flex-1 flex flex-col justify-center items-center bg-gray-900 rounded-lg p-4">
-                            <div class="text-6xl font-bold mb-4">${matchState.home.score}</div>
-                            <div class="flex gap-2 flex-wrap justify-center">
-                                <button onclick="adjustScore('home', -1)" class="bg-red-900 hover:bg-red-700 px-4 py-2 rounded font-bold">-1</button>
-                                <button onclick="adjustScore('home', 1)" class="bg-green-700 hover:bg-green-600 px-4 py-2 rounded font-bold">+1</button>
-                                ${matchState.sport === 'basketball' ? `<button onclick="adjustScore('home', 2)" class="bg-green-700 hover:bg-green-600 px-4 py-2 rounded font-bold">+2</button><button onclick="adjustScore('home', 3)" class="bg-green-700 hover:bg-green-600 px-4 py-2 rounded font-bold">+3</button>` : ''}
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="bg-gray-900 p-2 rounded text-center">
-                                <label class="text-gray-400 text-xs font-bold block mb-1">Sets / Games</label>
-                                <div class="flex items-center justify-center gap-2">
-                                    <button onclick="adjustSet('home', -1)" class="bg-gray-700 px-2 rounded">-</button>
-                                    <span class="text-xl font-bold">${matchState.home.sets}</span>
-                                    <button onclick="adjustSet('home', 1)" class="bg-gray-700 px-2 rounded">+</button>
-                                </div>
-                            </div>
-                            <div class="bg-gray-900 p-2 rounded text-center ${isNoTimerSport ? 'opacity-30 pointer-events-none' : ''}">
-                                <label class="text-gray-400 text-xs font-bold block mb-1">Fouls</label>
-                                <input id="input-home-fouls" type="number" class="w-full bg-gray-700 rounded p-1 text-center font-bold" value="${matchState.home.fouls}">
-                            </div>
-                        </div>
-                    </div>
+    function updateControlUI() {
+      if(document.activeElement.id !== 'input-comp-name') document.getElementById('input-comp-name').value = matchState.compName || '';
+      if(document.activeElement.id !== 'input-home-name') document.getElementById('input-home-name').value = matchState.homeName;
+      if(document.activeElement.id !== 'input-away-name') document.getElementById('input-away-name').value = matchState.awayName;
+      if(document.activeElement.id !== 'input-period') document.getElementById('input-period').value = matchState.period;
+      if(document.activeElement.id !== 'input-marquee') document.getElementById('input-marquee').value = matchState.marqueeText;
+      
+      document.getElementById('ctrl-home-name').innerText = matchState.homeName;
+      document.getElementById('ctrl-away-name').innerText = matchState.awayName;
+      document.getElementById('ctrl-home-score').innerText = matchState.homeScore;
+      document.getElementById('ctrl-away-score').innerText = matchState.awayScore;
+      document.getElementById('btn-timer-toggle').innerText = matchState.timerRunning ? 'PAUSE' : 'START';
+      
+      document.getElementById('ctrl-home-foul').innerText = matchState.homeFouls || 0;
+      document.getElementById('ctrl-away-foul').innerText = matchState.awayFouls || 0;
+      updateControlTimerUI();
+    }
+    function updateControlTimerUI() {
+      const m = String(Math.floor(matchState.timerSeconds / 60)).padStart(2, '0');
+      const s = String(matchState.timerSeconds % 60).padStart(2, '0');
+      document.getElementById('ctrl-timer').innerText = `${m}:${s}`;
+    }
 
-                    <!-- CENTER (Timer & Period) -->
-                    <div class="bg-gray-800 p-4 rounded-lg border border-gray-700 shadow-lg flex flex-col gap-4 items-center">
-                        <div class="w-full bg-gray-900 p-3 rounded text-center">
-                            <label class="text-gray-400 text-xs font-bold block mb-1">Period / Quarter / Set</label>
-                            <input id="input-period" type="text" class="bg-gray-700 rounded p-2 text-center w-32 font-bold text-2xl mx-auto" value="${matchState.period}">
-                        </div>
-                        
-                        <div class="w-full bg-gray-900 p-4 rounded text-center flex-1 flex flex-col justify-center ${isNoTimerSport ? 'opacity-30 pointer-events-none' : ''}">
-                            <label class="text-gray-400 text-xs font-bold block mb-2">Main Timer (MM:SS)</label>
-                            <input id="input-timer" type="text" class="bg-black text-yellow-400 rounded p-2 text-center text-5xl font-mono w-full border border-gray-700 tracking-widest" value="${matchState.timer.time}">
-                            
-                            ${matchState.sport === 'basketball' ? `
-                            <div class="mt-6 border-t border-gray-700 pt-4">
-                                <label class="text-red-400 text-xs font-bold block mb-2">Shot Clock</label>
-                                <input id="input-shotclock" type="text" class="bg-black text-red-500 rounded p-2 text-center text-4xl font-mono w-32 mx-auto border border-red-900" value="${matchState.timer.shotClock}">
-                            </div>
-                            ` : ''}
-                        </div>
-                    </div>
+    // --- [Display Rendering] ---
+    let eventTimeout = null;
+    function renderDisplay(data) {
+      // ข้อ 5: แสดงชื่อการแข่งขันตรงกลางจอ
+      document.getElementById('disp-comp-name').innerText = data.compName || 'CHAMPIONSHIP 2026';
+      
+      document.getElementById('disp-home-name').innerText = data.homeName || 'HOME';
+      document.getElementById('disp-away-name').innerText = data.awayName || 'AWAY';
+      document.getElementById('disp-home-score').innerText = data.homeScore || 0;
+      document.getElementById('disp-away-score').innerText = data.awayScore || 0;
+      
+      // ข้อ 6: เลขบอกเซต / ครึ่งเวลา อยู่เหนือ Score
+      document.getElementById('disp-period').innerText = data.period || '1ST HALF';
+      
+      document.getElementById('disp-marquee').innerText = data.marqueeText || ' ';
 
-                    <!-- AWAY TEAM -->
-                    <div class="bg-gray-800 p-4 rounded-lg border-t-4 shadow-lg flex flex-col gap-4" style="border-color: ${matchState.away.color}">
-                        <div class="text-center font-bold text-lg border-b border-gray-700 pb-2" style="color: ${matchState.away.color}">AWAY TEAM</div>
-                        <input id="input-away-name" type="text" class="bg-gray-700 rounded p-2 text-center font-bold text-xl" value="${matchState.away.name}">
-                        <div class="flex items-center justify-between">
-                            <label class="text-gray-400 text-xs font-bold">Team Color:</label>
-                            <input id="input-away-color" type="color" value="${matchState.away.color}" class="bg-gray-700 h-8 w-16 cursor-pointer rounded">
-                        </div>
-                        <div class="flex-1 flex flex-col justify-center items-center bg-gray-900 rounded-lg p-4">
-                            <div class="text-6xl font-bold mb-4">${matchState.away.score}</div>
-                            <div class="flex gap-2 flex-wrap justify-center">
-                                <button onclick="adjustScore('away', -1)" class="bg-red-900 hover:bg-red-700 px-4 py-2 rounded font-bold">-1</button>
-                                <button onclick="adjustScore('away', 1)" class="bg-green-700 hover:bg-green-600 px-4 py-2 rounded font-bold">+1</button>
-                                ${matchState.sport === 'basketball' ? `<button onclick="adjustScore('away', 2)" class="bg-green-700 hover:bg-green-600 px-4 py-2 rounded font-bold">+2</button><button onclick="adjustScore('away', 3)" class="bg-green-700 hover:bg-green-600 px-4 py-2 rounded font-bold">+3</button>` : ''}
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="bg-gray-900 p-2 rounded text-center">
-                                <label class="text-gray-400 text-xs font-bold block mb-1">Sets / Games</label>
-                                <div class="flex items-center justify-center gap-2">
-                                    <button onclick="adjustSet('away', -1)" class="bg-gray-700 px-2 rounded">-</button>
-                                    <span class="text-xl font-bold">${matchState.away.sets}</span>
-                                    <button onclick="adjustSet('away', 1)" class="bg-gray-700 px-2 rounded">+</button>
-                                </div>
-                            </div>
-                            <div class="bg-gray-900 p-2 rounded text-center ${isNoTimerSport ? 'opacity-30 pointer-events-none' : ''}">
-                                <label class="text-gray-400 text-xs font-bold block mb-1">Fouls</label>
-                                <input id="input-away-fouls" type="number" class="w-full bg-gray-700 rounded p-1 text-center font-bold" value="${matchState.away.fouls}">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>`;
+      // Timer
+      const m = String(Math.floor((data.timerSeconds || 0) / 60)).padStart(2, '0');
+      const s = String((data.timerSeconds || 0) % 60).padStart(2, '0');
+      document.getElementById('disp-timer').innerText = `${m}:${s}`;
+
+      // ข้อ 4: Shot clock 24 วิ ตัวหนังสือขาว พื้นกรอบแดง
+      const shotClockEl = document.getElementById('disp-shotclock');
+      if (data.sport === 'basketball') {
+        shotClockEl.innerText = data.shotClockSeconds !== undefined ? data.shotClockSeconds : 24;
+        shotClockEl.classList.remove('hidden');
+      } else {
+        shotClockEl.classList.add('hidden');
+      }
+
+      // Logos
+      const hLogo = document.getElementById('disp-home-logo');
+      if (data.homeLogo) { hLogo.src = data.homeLogo; hLogo.classList.remove('hidden'); } else { hLogo.classList.add('hidden'); }
+      const aLogo = document.getElementById('disp-away-logo');
+      if (data.awayLogo) { aLogo.src = data.awayLogo; aLogo.classList.remove('hidden'); } else { aLogo.classList.add('hidden'); }
+
+      // Fouls Display
+      const isFoulSport = data.sport === 'basketball' || data.sport === 'futsal';
+      document.getElementById('disp-home-fouls-container').classList.toggle('hidden', !isFoulSport);
+      document.getElementById('disp-away-fouls-container').classList.toggle('hidden', !isFoulSport);
+      if(isFoulSport) {
+        document.getElementById('disp-home-fouls').innerText = data.homeFouls || 0;
+        document.getElementById('disp-away-fouls').innerText = data.awayFouls || 0;
+      }
+
+      // ข้อ 2: คะแนนเซ็ตที่ผ่านมา แสดงรูปแบบตารางสี่เหลี่ยม ใหญ่ เห็นชัดเจน
+      const isSetSport = data.sport === 'volleyball' || data.sport === 'badminton';
+      const setsContainer = document.getElementById('disp-set-scores-container');
+      const setsContent = document.getElementById('disp-set-scores');
+      
+      if(isSetSport && data.setScoresHome && data.setScoresHome.length > 0) {
+        setsContainer.classList.remove('hidden');
+        setsContent.innerHTML = '';
+        data.setScoresHome.forEach((scoreH, idx) => {
+          const scoreA = data.setScoresAway[idx];
+          const card = document.createElement('div');
+          card.className = 'bg-slate-950 p-2 rounded-xl border border-slate-700 font-bold';
+          card.innerHTML = `<div class="text-[10px] text-slate-400">SET ${idx+1}</div><div class="text-xl text-amber-400">${scoreH} - ${scoreA}</div>`;
+          setsContent.appendChild(card);
+        });
+      } else {
+        setsContainer.classList.add('hidden');
+      }
+
+      // Event Notification Popup
+      if(data.matchEvent && data.matchEvent.timestamp !== lastEventTimestamp) {
+        lastEventTimestamp = data.matchEvent.timestamp;
+        const box = document.getElementById('disp-events-box');
+        const text = document.getElementById('disp-events-text');
+        if(data.matchEvent.text) {
+          text.innerText = data.matchEvent.text;
+          box.className = `absolute top-[10%] left-1/2 transform -translate-x-1/2 w-4/5 max-w-4xl bg-slate-900/95 border-4 rounded-2xl p-6 shadow-2xl z-50 transition-opacity duration-500 ${data.matchEvent.teamInfo === 'home' ? 'border-amber-400' : 'border-blue-400'}`;
+          box.classList.remove('hidden');
+          clearTimeout(eventTimeout);
+          eventTimeout = setTimeout(() => { box.classList.add('hidden'); }, 7000);
+        } else {
+          box.classList.add('hidden');
         }
-
-        // --- 2. LED DISPLAY PANEL ---
-        function renderDisplayPanel() {
-            const isNoTimerSport = ['volleyball', 'badminton', 'takraw'].includes(matchState.sport);
-            
-            return `
-            <div class="display-screen w-full max-w-[1400px] relative rounded-lg p-6">
-                <!-- Header -->
-                <div class="text-center bg-black bg-opacity-60 p-2 rounded-lg border border-gray-800 mx-auto w-4/5 mb-2 shadow-lg">
-                    <h1 class="text-4xl text-yellow-400 led-text font-bold tracking-widest uppercase">${matchState.competitionName}</h1>
-                    <h2 class="text-2xl text-gray-300 mt-1 uppercase">PERIOD / SET: ${matchState.period}</h2>
-                </div>
-
-                <!-- Main Score Area -->
-                <div class="flex justify-between items-stretch flex-1 w-full px-8 gap-8 mt-4">
-                    
-                    <!-- Home Team -->
-                    <div class="flex-1 bg-black bg-opacity-70 p-6 rounded-2xl border-l-[12px] flex flex-col items-center justify-between shadow-2xl relative" style="border-color: ${matchState.home.color}">
-                        <div class="text-5xl font-bold text-white led-text truncate w-full text-center tracking-wide uppercase">${matchState.home.name}</div>
-                        <div class="text-[16rem] leading-none font-bold led-text my-auto" style="color: ${matchState.home.color}">${matchState.home.score}</div>
-                        ${!isNoTimerSport ? `<div class="text-4xl text-red-500 led-text font-bold bg-gray-900 px-6 py-2 rounded-lg">FOULS: ${matchState.home.fouls}</div>` : ''}
-                    </div>
-
-                    <!-- Center Area -->
-                    <div class="flex flex-col items-center justify-center w-1/4">
-                        ${isNoTimerSport ? `
-                            <!-- Layout สำหรับ วอลเลย์บอล / แบดมินตัน (ไม่มีเวลา, เน้นเซ็ต) -->
-                            <div class="bg-black bg-opacity-80 p-8 rounded-2xl border border-gray-700 w-full text-center shadow-2xl">
-                                <div class="text-4xl text-yellow-400 led-text mb-6 tracking-widest">SETS</div>
-                                <div class="flex justify-center items-center gap-6">
-                                    <div class="text-[8rem] leading-none font-bold text-white led-text">${matchState.home.sets}</div>
-                                    <div class="text-6xl font-bold text-gray-600">-</div>
-                                    <div class="text-[8rem] leading-none font-bold text-white led-text">${matchState.away.sets}</div>
-                                </div>
-                            </div>
-                        ` : `
-                            <!-- Layout สำหรับ บาส / ฟุตบอล / ฟุตซอล (มีเวลา) -->
-                            <div class="text-3xl text-gray-400 mb-2 font-bold tracking-widest">TIME</div>
-                            <div class="text-[7rem] leading-none font-mono font-bold text-yellow-400 led-text bg-black bg-opacity-80 px-8 py-4 rounded-xl border border-gray-800 shadow-2xl">${matchState.timer.time}</div>
-                            
-                            ${matchState.sport === 'basketball' ? `
-                            <div class="mt-12 mb-2 text-2xl text-red-400 font-bold tracking-widest">SHOT CLOCK</div>
-                            <div class="text-[8rem] leading-none font-mono font-bold text-red-500 led-text bg-black bg-opacity-80 px-8 py-2 rounded-xl border-4 border-red-900 shadow-2xl">${matchState.timer.shotClock}</div>
-                            ` : `
-                            <div class="mt-12 text-2xl text-yellow-400 font-bold tracking-widest">SETS</div>
-                            <div class="text-6xl font-bold text-white led-text bg-black bg-opacity-60 px-8 py-4 rounded-lg mt-2">${matchState.home.sets} - ${matchState.away.sets}</div>
-                            `}
-                        `}
-                    </div>
-
-                    <!-- Away Team -->
-                    <div class="flex-1 bg-black bg-opacity-70 p-6 rounded-2xl border-r-[12px] flex flex-col items-center justify-between shadow-2xl relative" style="border-color: ${matchState.away.color}">
-                        <div class="text-5xl font-bold text-white led-text truncate w-full text-center tracking-wide uppercase">${matchState.away.name}</div>
-                        <div class="text-[16rem] leading-none font-bold led-text my-auto" style="color: ${matchState.away.color}">${matchState.away.score}</div>
-                        ${!isNoTimerSport ? `<div class="text-4xl text-red-500 led-text font-bold bg-gray-900 px-6 py-2 rounded-lg">FOULS: ${matchState.away.fouls}</div>` : ''}
-                    </div>
-                </div>
-
-                <!-- Marquee -->
-                ${matchState.marquee.visible ? `
-                <div class="marquee-container mt-6 rounded-lg shadow-lg">
-                    <div class="marquee-content text-yellow-300 led-text">${matchState.marquee.text}</div>
-                </div>
-                ` : '<div class="h-[46px] mt-6"></div>'}
-            </div>`;
-        }
-
-        // --- 3. EVENT LISTENERS สำหรับ Control Panel ---
-        function attachControlListeners() {
-            if (currentView !== 'control') return;
-            
-            // Map ID ของ input เข้ากับ Object State
-            const bindings = [
-                { id: 'input-sport', key: 'sport' },
-                { id: 'input-comp', key: 'competitionName' },
-                { id: 'input-marquee', key: 'marquee', subKey: 'text' },
-                { id: 'input-period', key: 'period' },
-                { id: 'input-timer', key: 'timer', subKey: 'time' },
-                { id: 'input-shotclock', key: 'timer', subKey: 'shotClock' },
-                { id: 'input-home-name', key: 'home', subKey: 'name' },
-                { id: 'input-home-color', key: 'home', subKey: 'color' },
-                { id: 'input-home-fouls', key: 'home', subKey: 'fouls' },
-                { id: 'input-away-name', key: 'away', subKey: 'name' },
-                { id: 'input-away-color', key: 'away', subKey: 'color' },
-                { id: 'input-away-fouls', key: 'away', subKey: 'fouls' },
-            ];
-
-            bindings.forEach(b => {
-                const el = document.getElementById(b.id);
-                if (el) {
-                    el.addEventListener('change', (e) => {
-                        let val = e.target.value;
-                        if (e.target.type === 'number') val = parseInt(val) || 0;
-                        updateState(b.key, b.subKey, val);
-                    });
-                }
-            });
-
-            // จัดการ Checkbox แยกต่างหาก
-            const marqueeVisibleCheckbox = document.getElementById('input-marquee-visible');
-            if (marqueeVisibleCheckbox) {
-                marqueeVisibleCheckbox.addEventListener('change', (e) => {
-                    updateState('marquee', 'visible', e.target.checked);
-                });
-            }
-        }
-
-        // Render ครั้งแรกตอนโหลด
-        renderApp();
-    </script>
+      }
+    }
+  </script>
 </body>
 </html>

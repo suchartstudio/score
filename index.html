@@ -512,6 +512,15 @@
         const displayEmail = user.email.replace('@suchartstudio.com', '');
         document.getElementById('user-info').innerText = `Logged in: ${displayEmail}`;
 
+        // --- เพิ่มเงื่อนไขตรวจสอบ Admin ตรงนี้ เพื่อให้ปุ่ม จัดการ User แสดง ---
+        const adminBtn = document.getElementById('nav-btn-admin');
+        if (user.email === 'suchart@suchartstudio.com') {
+          adminBtn.classList.remove('hidden');
+        } else {
+          adminBtn.classList.add('hidden');
+        }
+        // -----------------------------------------------------------
+
         currentMatchRef = ref(db, `scoreboards/${user.uid}`);
         onValue(currentMatchRef, (snapshot) => {
           if (snapshot.val()) { matchState = { ...matchState, ...snapshot.val() }; updateControlUI(); }

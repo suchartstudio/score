@@ -18,6 +18,10 @@
     .marquee-container { overflow: hidden; white-space: nowrap; width: 100%; display: flex; align-items: center; }
     .marquee-content { display: inline-block; animation: marquee 20s linear infinite; padding-left: 100%; }
     @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+    
+    /* สไตล์สำหรับปุ่มอัพโหลดไฟล์แบบกำหนดเอง */
+    .custom-file-upload { display: inline-block; position: relative; cursor: pointer; }
+    .custom-file-upload input[type="file"] { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 10; }
   </style>
 </head>
 <body class="bg-slate-950 text-white min-h-screen">
@@ -49,6 +53,7 @@
       </div>
       <div class="flex items-center gap-2">
         <button id="nav-btn-control" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 rounded text-xs font-semibold" data-i18n="navControl">🎮 หน้าควบคุม</button>
+        <!-- ปุ่ม Admin กลับมาแล้ว -->
         <button id="nav-btn-admin" class="hidden px-3 py-1 bg-amber-500 text-slate-950 hover:bg-amber-400 rounded text-xs font-bold" data-i18n="navAdmin">⚡ จัดการ User</button>
         <button id="btn-extend-display" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 rounded font-semibold text-xs" data-i18n="navLed">🖥️ เปิดจอ LED</button>
         <button id="btn-logout" class="px-3 py-1 bg-rose-600 hover:bg-rose-500 rounded font-semibold text-xs" data-i18n="navLogout">ออกจากระบบ</button>
@@ -124,7 +129,11 @@
         <div class="col-span-4 space-y-3 bg-slate-950/60 p-3 rounded-lg">
           <div class="flex gap-2 items-center">
             <input type="text" id="input-home-name" data-i18n-placeholder="homePlaceholder" placeholder="ชื่อทีมเหย้า" class="w-full p-2 rounded bg-slate-800 font-bold text-amber-400 text-base">
-            <input type="file" id="input-home-logo" accept="image/*" class="w-24 text-[10px] text-slate-400">
+            <!-- Custom File Upload Button for Home -->
+            <div class="custom-file-upload w-24">
+              <input type="file" id="input-home-logo" accept="image/*">
+              <div id="lbl-home-logo" class="bg-slate-700 hover:bg-slate-600 text-slate-200 text-[10px] py-1.5 px-1 rounded truncate border border-slate-600 font-semibold" data-i18n="lblUploadLogo">อัพโหลดโลโก้</div>
+            </div>
           </div>
           <div id="ctrl-home-score" class="text-7xl font-black text-emerald-400 bg-slate-950 py-2 rounded leading-none">0</div>
           <div id="home-score-controls" class="flex justify-center gap-2 flex-wrap mt-2"></div>
@@ -168,15 +177,19 @@
 
         <div class="col-span-4 space-y-3 bg-slate-950/60 p-3 rounded-lg">
           <div class="flex gap-2 items-center">
+            <!-- Custom File Upload Button for Away -->
+            <div class="custom-file-upload w-24">
+              <input type="file" id="input-away-logo" accept="image/*">
+              <div id="lbl-away-logo" class="bg-slate-700 hover:bg-slate-600 text-slate-200 text-[10px] py-1.5 px-1 rounded truncate border border-slate-600 font-semibold" data-i18n="lblUploadLogo">อัพโหลดโลโก้</div>
+            </div>
             <input type="text" id="input-away-name" data-i18n-placeholder="awayPlaceholder" placeholder="ชื่อทีมเยือน" class="w-full p-2 rounded bg-slate-800 font-bold text-amber-400 text-base">
-            <input type="file" id="input-away-logo" accept="image/*" class="w-24 text-[10px] text-slate-400">
           </div>
           <div id="ctrl-away-score" class="text-7xl font-black text-emerald-400 bg-slate-950 py-2 rounded leading-none">0</div>
           <div id="away-score-controls" class="flex justify-center gap-2 flex-wrap mt-2"></div>
         </div>
       </div>
 
-      <!-- Dynamic Control Panel -->
+      <!-- ส่วนควบคุมเสริม (คงเดิม) -->
       <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 mt-2">
         <h3 class="font-bold text-slate-300 text-sm mb-3" data-i18n="lblEvents">🛠️ แผงควบคุมเสริม (Match Events)</h3>
         
@@ -247,8 +260,9 @@
       </div>
     </div>
 
-    <!-- View: Display Window -->
+    <!-- View: Display Window (คงเดิม) -->
     <div id="view-display" class="hidden fixed inset-0 bg-[#0a0f1d] w-screen h-screen flex flex-col justify-between p-8 select-none overflow-hidden" style="aspect-ratio: 16/9;">
+      <!-- ... ส่วนจอแสดงผลโค้ดเดิมทั้งหมด ... -->
       <div class="h-[8%] flex justify-center items-center border-b-4 border-slate-800 pb-2 relative">
         <span id="disp-comp-name" class="text-4xl font-bold uppercase tracking-widest text-amber-400 text-center">CHAMPIONSHIP 2026</span>
       </div>
@@ -314,51 +328,43 @@
     import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getDatabase, ref, set, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-    // 1. เพิ่มชุดข้อความสำหรับอธิบายปุ่มคีย์ลัดแยก 2 ภาษา
+    // เพิ่มคำแปลสำหรับปุ่มอัพโหลดรูป
     const dict = {
       th: {
-        subtitleLogin: "เข้าสู่ระบบควบคุมสกอร์บอร์ด / ผู้ดูแลระบบ",
-        userPlaceholder: "ชื่อผู้ใช้งาน (ไม่ต้องใส่ @)",
+        subtitleLogin: "เข้าสู่ระบบควบคุมสกอร์บอร์ด / ผู้ดูแลระบบ", userPlaceholder: "ชื่อผู้ใช้งาน (ไม่ต้องใส่ @)",
         navControl: "🎮 หน้าควบคุม", navAdmin: "⚡ จัดการ User", navLed: "🖥️ เปิดจอ LED", navLogout: "ออกจากระบบ",
-        adminAddUser: "➕ เพิ่มผู้ใช้งานใหม่", adminSportPerm: "สิทธิ์กีฬา",
-        sportFBall: "ฟุตบอล", sportBball: "บาส", sportVball: "วอลเลย์", sportFutsal: "ฟุตซอล", sportBad: "แบดฯ",
-        btnCreateUser: "สร้างผู้ใช้งาน", thPerm: "สิทธิ์กีฬา", thManage: "จัดการ",
-        lblSelectSport: "เลือกโหมดกีฬา:", lblCompName: "🏆 ชื่อรายการแข่งขัน:", lblMarquee: "📢 ข้อความตัววิ่ง (Marquee):",
-        lblShowMarquee: "แสดงตัววิ่ง", homePlaceholder: "ชื่อทีมเหย้า", awayPlaceholder: "ชื่อทีมเยือน",
-        lblSetTime: "⏱️ ตั้งเวลา", placeholderMin: "น.", placeholderSec: "วิ", btnSet: "ตั้ง",
-        lblPeriod: "🎯 เลือกช่วงการแข่งขัน", lblEvents: "🛠️ แผงควบคุมเสริม (Match Events)",
-        playerPlaceholder: "ชื่อ/เบอร์นักเตะ", optGoal: "⚽ ทำประตู", optYellow: "🟨 ใบเหลือง", optRed: "🟥 ใบแดง",
-        btnSaveEvent: "บันทึกเหตุการณ์", btnClearLog: "ล้าง Log", lblHomeFouls: "ฟาล์วทีมเหย้า (Home Fouls):",
-        lblAwayFouls: "ฟาล์วทีมเยือน (Away Fouls):", btnEndSet: "📌 จบเซ็ต (บันทึกคะแนนเซ็ตนี้)", btnResetSets: "รีเซ็ตเซ็ตทั้งหมด",
-        lblSub: "ระบบเปลี่ยนตัว:", subIn: "เข้า 🟢", subOut: "ออก 🔴", btnSub: "🔄 แจ้งเปลี่ยนตัว",
-        alertCreateSuccess: "สร้างผู้ใช้และบันทึกข้อมูลเรียบร้อยแล้ว!", alertCreateFail: "ไม่สามารถสร้างผู้ใช้ได้ Error: ",
-        marqueeDefault: "ยินดีต้อนรับสู่การแข่งขันนัดสำคัญประจำวันนี้", txtSubEvent: "🔄 เปลี่ยนตัว", txtSubIn: "เข้า:", txtSubOut: "ออก:",
-        lblShortcuts: "🖮 คีย์บอร์ดชอร์ตคัต (Keyboard Shortcuts):",
-        scTimer: "เริ่ม/หยุดเวลา", scReset: "รีเซ็ตเวลา", scHomeScore: "คะแนนเหย้า +",
-        scHomeSub: "คะแนนเหย้า -1", scShotclock: "Shotclock 24/14", scAwayScore: "คะแนนเยือน +",
-        scAwaySub: "คะแนนเยือน -1", scHomeFoul: "ฟาล์วเหย้า +/-", scAwayFoul: "ฟาล์วเยือน +/-", scEndSet: "จบเซ็ต"
+        adminAddUser: "➕ เพิ่มผู้ใช้งานใหม่", adminSportPerm: "สิทธิ์กีฬา", sportFBall: "ฟุตบอล", sportBball: "บาส", 
+        sportVball: "วอลเลย์", sportFutsal: "ฟุตซอล", sportBad: "แบดฯ", btnCreateUser: "สร้างผู้ใช้งาน", 
+        thPerm: "สิทธิ์กีฬา", thManage: "จัดการ", lblSelectSport: "เลือกโหมดกีฬา:", lblCompName: "🏆 ชื่อรายการแข่งขัน:", 
+        lblMarquee: "📢 ข้อความตัววิ่ง (Marquee):", lblShowMarquee: "แสดงตัววิ่ง", homePlaceholder: "ชื่อทีมเหย้า", 
+        awayPlaceholder: "ชื่อทีมเยือน", lblSetTime: "⏱️ ตั้งเวลา", placeholderMin: "น.", placeholderSec: "วิ", btnSet: "ตั้ง",
+        lblPeriod: "🎯 เลือกช่วงการแข่งขัน", lblEvents: "🛠️ แผงควบคุมเสริม (Match Events)", playerPlaceholder: "ชื่อ/เบอร์นักเตะ", 
+        optGoal: "⚽ ทำประตู", optYellow: "🟨 ใบเหลือง", optRed: "🟥 ใบแดง", btnSaveEvent: "บันทึกเหตุการณ์", 
+        btnClearLog: "ล้าง Log", lblHomeFouls: "ฟาล์วทีมเหย้า (Home Fouls):", lblAwayFouls: "ฟาล์วทีมเยือน (Away Fouls):", 
+        btnEndSet: "📌 จบเซ็ต (บันทึกคะแนนเซ็ตนี้)", btnResetSets: "รีเซ็ตเซ็ตทั้งหมด", lblSub: "ระบบเปลี่ยนตัว:", 
+        subIn: "เข้า 🟢", subOut: "ออก 🔴", btnSub: "🔄 แจ้งเปลี่ยนตัว", lblUploadLogo: "อัพโหลดโลโก้", // <--- เพิ่มคำแปล
+        marqueeDefault: "ยินดีต้อนรับสู่การแข่งขันนัดสำคัญประจำวันนี้", lblShortcuts: "🖮 คีย์บอร์ดชอร์ตคัต (Keyboard Shortcuts):",
+        scTimer: "เริ่ม/หยุดเวลา", scReset: "รีเซ็ตเวลา", scHomeScore: "คะแนนเหย้า +", scHomeSub: "คะแนนเหย้า -1", 
+        scShotclock: "Shotclock 24/14", scAwayScore: "คะแนนเยือน +", scAwaySub: "คะแนนเยือน -1", scHomeFoul: "ฟาล์วเหย้า +/-", 
+        scAwayFoul: "ฟาล์วเยือน +/-", scEndSet: "จบเซ็ต"
       },
       en: {
-        subtitleLogin: "Scoreboard Control System / Admin Login",
-        userPlaceholder: "Username (No @ needed)",
+        subtitleLogin: "Scoreboard Control System / Admin Login", userPlaceholder: "Username (No @ needed)",
         navControl: "🎮 Control Panel", navAdmin: "⚡ Manage Users", navLed: "🖥️ Open LED", navLogout: "Logout",
-        adminAddUser: "➕ Add New User", adminSportPerm: "Sport Permissions",
-        sportFBall: "Football", sportBball: "Basketball", sportVball: "Volleyball", sportFutsal: "Futsal", sportBad: "Badminton",
-        btnCreateUser: "Create User", thPerm: "Sports Perm", thManage: "Action",
-        lblSelectSport: "Select Sport Mode:", lblCompName: "🏆 Competition Name:", lblMarquee: "📢 Marquee Text:",
-        lblShowMarquee: "Show Marquee", homePlaceholder: "Home Team Name", awayPlaceholder: "Away Team Name",
-        lblSetTime: "⏱️ Set Time", placeholderMin: "Min", placeholderSec: "Sec", btnSet: "Set",
-        lblPeriod: "🎯 Select Match Period", lblEvents: "🛠️ Match Events Panel",
-        playerPlaceholder: "Player Name/No.", optGoal: "⚽ Goal", optYellow: "🟨 Yellow Card", optRed: "🟥 Red Card",
-        btnSaveEvent: "Save Event", btnClearLog: "Clear Log", lblHomeFouls: "Home Fouls:",
-        lblAwayFouls: "Away Fouls:", btnEndSet: "📌 End Set (Save Score)", btnResetSets: "Reset All Sets",
-        lblSub: "Substitution:", subIn: "In 🟢", subOut: "Out 🔴", btnSub: "🔄 Substitute",
-        alertCreateSuccess: "User created & profile saved successfully!", alertCreateFail: "Failed to create user. Error: ",
-        marqueeDefault: "Welcome to today's match", txtSubEvent: "🔄 Substitution", txtSubIn: "In:", txtSubOut: "Out:",
-        lblShortcuts: "🖮 Keyboard Shortcuts:",
-        scTimer: "Start/Pause Timer", scReset: "Reset Timer", scHomeScore: "Home Score +",
-        scHomeSub: "Home Score -1", scShotclock: "Shotclock 24/14", scAwayScore: "Away Score +",
-        scAwaySub: "Away Score -1", scHomeFoul: "Home Foul +/-", scAwayFoul: "Away Foul +/-", scEndSet: "End Set"
+        adminAddUser: "➕ Add New User", adminSportPerm: "Sport Permissions", sportFBall: "Football", sportBball: "Basketball", 
+        sportVball: "Volleyball", sportFutsal: "Futsal", sportBad: "Badminton", btnCreateUser: "Create User", 
+        thPerm: "Sports Perm", thManage: "Action", lblSelectSport: "Select Sport Mode:", lblCompName: "🏆 Competition Name:", 
+        lblMarquee: "📢 Marquee Text:", lblShowMarquee: "Show Marquee", homePlaceholder: "Home Team Name", 
+        awayPlaceholder: "Away Team Name", lblSetTime: "⏱️ Set Time", placeholderMin: "Min", placeholderSec: "Sec", btnSet: "Set",
+        lblPeriod: "🎯 Select Match Period", lblEvents: "🛠️ Match Events Panel", playerPlaceholder: "Player Name/No.", 
+        optGoal: "⚽ Goal", optYellow: "🟨 Yellow Card", optRed: "🟥 Red Card", btnSaveEvent: "Save Event", 
+        btnClearLog: "Clear Log", lblHomeFouls: "Home Fouls:", lblAwayFouls: "Away Fouls:", 
+        btnEndSet: "📌 End Set (Save Score)", btnResetSets: "Reset All Sets", lblSub: "Substitution:", 
+        subIn: "In 🟢", subOut: "Out 🔴", btnSub: "🔄 Substitute", lblUploadLogo: "Upload Logo", // <--- เพิ่มคำแปล
+        marqueeDefault: "Welcome to today's match", lblShortcuts: "🖮 Keyboard Shortcuts:",
+        scTimer: "Start/Pause Timer", scReset: "Reset Timer", scHomeScore: "Home Score +", scHomeSub: "Home Score -1", 
+        scShotclock: "Shotclock 24/14", scAwayScore: "Away Score +", scAwaySub: "Away Score -1", scHomeFoul: "Home Foul +/-", 
+        scAwayFoul: "Away Foul +/-", scEndSet: "End Set"
       }
     };
 
@@ -375,11 +381,15 @@
         const key = el.getAttribute('data-i18n-placeholder');
         if (dict[currentLang][key]) el.placeholder = dict[currentLang][key];
       });
-      const fbEvent = document.getElementById('fb-event');
-      if (fbEvent) {
-        if(dict[currentLang].optGoal) fbEvent.options[0].text = dict[currentLang].optGoal;
-        if(dict[currentLang].optYellow) fbEvent.options[1].text = dict[currentLang].optYellow;
-        if(dict[currentLang].optRed) fbEvent.options[2].text = dict[currentLang].optRed;
+      
+      // Update label texts for file uploads if no file selected
+      const lblHome = document.getElementById('lbl-home-logo');
+      const lblAway = document.getElementById('lbl-away-logo');
+      if (lblHome.innerText === dict['th'].lblUploadLogo || lblHome.innerText === dict['en'].lblUploadLogo) {
+          lblHome.innerText = dict[currentLang].lblUploadLogo;
+      }
+      if (lblAway.innerText === dict['th'].lblUploadLogo || lblAway.innerText === dict['en'].lblUploadLogo) {
+          lblAway.innerText = dict[currentLang].lblUploadLogo;
       }
     }
 
@@ -393,7 +403,6 @@
         document.getElementById('input-marquee').value = matchState.marqueeText;
         syncToDatabase();
       }
-
       applyLanguage();
     });
     applyLanguage();
@@ -461,6 +470,14 @@
         const displayEmail = user.email.replace('@suchartstudio.com', '');
         document.getElementById('user-info').innerText = `Logged in: ${displayEmail}`;
 
+        // 1. เพิ่มโค้ดตรวจสอบสิทธิ์ Admin กลับมา
+        if (user.email === 'suchart@suchartstudio.com') {
+          document.getElementById('nav-btn-admin').classList.remove('hidden');
+          loadUsersList(); // โหลดรายชื่อผู้ใช้งาน
+        } else {
+          document.getElementById('nav-btn-admin').classList.add('hidden');
+        }
+
         onValue(ref(db, `users/${user.uid}`), (snapshot) => {
           const userData = snapshot.val();
           let allowedSports = [];
@@ -498,6 +515,7 @@
         document.getElementById('view-login').classList.remove('hidden');
         document.getElementById('main-nav').classList.add('hidden');
         document.getElementById('view-control').classList.add('hidden');
+        document.getElementById('view-admin').classList.add('hidden');
       }
     });
 
@@ -507,6 +525,8 @@
       document.getElementById(`view-${v}`).classList.remove('hidden');
     };
     document.getElementById('nav-btn-control').addEventListener('click', () => switchView('control'));
+    // เพิ่ม Listener ให้ปุ่ม Admin
+    document.getElementById('nav-btn-admin').addEventListener('click', () => switchView('admin'));
     document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
     
     document.getElementById('btn-extend-display').addEventListener('click', () => {
@@ -516,6 +536,58 @@
     });
 
     function syncToDatabase() { if (currentUser && currentMatchRef) set(currentMatchRef, matchState); }
+
+    // คืนค่าระบบจัดการ User ให้แอดมิน
+    function loadUsersList() {
+      onValue(ref(db, 'users'), (snapshot) => {
+        const tbody = document.getElementById('users-table-body');
+        tbody.innerHTML = '';
+        if (snapshot.exists()) {
+          Object.entries(snapshot.val()).forEach(([uid, userData]) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td class="p-2 border-b border-slate-800 text-slate-400 text-[10px]">${uid.substring(0,8)}...</td>
+              <td class="p-2 border-b border-slate-800 font-bold">${userData.username || 'N/A'}</td>
+              <td class="p-2 border-b border-slate-800">${userData.role || 'user'}</td>
+              <td class="p-2 border-b border-slate-800">${(userData.sports || []).join(', ')}</td>
+              <td class="p-2 border-b border-slate-800">
+                <button onclick="deleteUser('${uid}')" class="text-rose-500 hover:text-rose-400 font-bold">ลบ</button>
+              </td>
+            `;
+            tbody.appendChild(tr);
+          });
+        }
+      });
+    }
+
+    document.getElementById('create-user-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const userField = document.getElementById('new-user-username').value.trim();
+      const passField = document.getElementById('new-user-password').value;
+      const email = userField.includes('@') ? userField : `${userField}@suchartstudio.com`;
+      const sports = Array.from(document.querySelectorAll('.sport-checkbox:checked')).map(cb => cb.value);
+      
+      try {
+        const app2 = initializeApp(firebaseConfig, "Secondary");
+        const auth2 = getAuth(app2);
+        const userCredential = await createUserWithEmailAndPassword(auth2, email, passField);
+        await set(ref(db, `users/${userCredential.user.uid}`), { username: userField, email: email, role: 'user', sports: sports });
+        await auth2.signOut();
+        alert('สร้างผู้ใช้งานสำเร็จ!');
+        document.getElementById('create-user-form').reset();
+      } catch (err) {
+        alert('Error: ' + err.message);
+      }
+    });
+
+    window.deleteUser = (uid) => {
+      if(confirm('ยืนยันการลบข้อมูล (เฉพาะจากฐานข้อมูล)?')) {
+        remove(ref(db, `users/${uid}`));
+        remove(ref(db, `scoreboards/${uid}`));
+      }
+    };
+
+    // ... [โค้ดส่วนควบคุมคะแนน, กีฬา, คีย์บอร์ด เหมือนเดิมทั้งหมด] ...
 
     function setupSportsSelector(sports) {
       const container = document.getElementById('sports-selector');
@@ -528,9 +600,7 @@
           matchState.sport = sport; 
           const periods = sportPeriods[sport] || [];
           if (!periods.includes(matchState.period) && periods.length > 0) matchState.period = periods[0];
-          renderScoreButtons(sport); 
-          syncToDatabase(); 
-          setupSportsSelector(sports); 
+          renderScoreButtons(sport); syncToDatabase(); setupSportsSelector(sports); 
         };
         container.appendChild(btn);
       });
@@ -613,35 +683,21 @@
     };
     window.resetSets = () => { matchState.setScoresHome = []; matchState.setScoresAway = []; syncToDatabase(); };
 
-    // 2. ระบบ Keyboard Shortcuts ฉบับตัวอักษร ล้วน (Letters Only)
     window.addEventListener('keydown', (e) => {
       if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
       if (!currentUser || document.getElementById('view-control').classList.contains('hidden')) return;
-
       switch (e.key.toLowerCase()) {
-        // --- ส่วนควบคุมหลัก (จับเวลา) ---
-        case 'g': 
-          e.preventDefault(); 
-          matchState.timerRunning = !matchState.timerRunning; 
-          syncToDatabase(); 
-          break;
-        case 'h': 
-          matchState.timerSeconds = 0; matchState.timerRunning = false; matchState.shotClockSeconds = 24; 
-          syncToDatabase(); 
-          break;
+        case 'g': e.preventDefault(); matchState.timerRunning = !matchState.timerRunning; syncToDatabase(); break;
+        case 'h': matchState.timerSeconds = 0; matchState.timerRunning = false; matchState.shotClockSeconds = 24; syncToDatabase(); break;
         case 'c': if(matchState.sport === 'basketball') resetShotClock(24); break;
         case 'v': if(matchState.sport === 'basketball') resetShotClock(14); break;
         case 'b': if(['volleyball', 'badminton'].includes(matchState.sport)) endSet(); break;
-
-        // --- ส่วนควบคุมทีมเหย้า (มือซ้าย) ---
         case 'q': changeScore('home', 1); break;
         case 'w': if(matchState.sport === 'basketball') changeScore('home', 2); break;
         case 'e': if(matchState.sport === 'basketball') changeScore('home', 3); break;
         case 'a': changeScore('home', -1); break;
         case 'z': if(['basketball', 'futsal'].includes(matchState.sport)) changeFoul('home', 1); break;
         case 'x': if(['basketball', 'futsal'].includes(matchState.sport)) changeFoul('home', -1); break;
-
-        // --- ส่วนควบคุมทีมเยือน (มือขวา) ---
         case 'i': changeScore('away', 1); break;
         case 'o': if(matchState.sport === 'basketball') changeScore('away', 2); break;
         case 'p': if(matchState.sport === 'basketball') changeScore('away', 3); break;
@@ -651,8 +707,23 @@
       }
     });
 
-    const handleImg = (el, k) => { document.getElementById(el).addEventListener('change', (e) => { const f = e.target.files[0]; if (f) { const r = new FileReader(); r.onload = ev => { matchState[k] = ev.target.result; syncToDatabase(); }; r.readAsDataURL(f); } }); };
-    handleImg('input-home-logo', 'homeLogo'); handleImg('input-away-logo', 'awayLogo');
+    // 2. จัดการอัพโหลดรูป พร้อมอัพเดทชื่อไฟล์ลงบนปุ่ม
+    const handleImg = (el, k, lblId) => { 
+      document.getElementById(el).addEventListener('change', (e) => { 
+        const f = e.target.files[0]; 
+        const labelEl = document.getElementById(lblId);
+        if (f) { 
+          labelEl.innerText = f.name; // เปลี่ยนชื่อปุ่มเป็นชื่อไฟล์
+          const r = new FileReader(); 
+          r.onload = ev => { matchState[k] = ev.target.result; syncToDatabase(); }; 
+          r.readAsDataURL(f); 
+        } else {
+          labelEl.innerText = dict[currentLang].lblUploadLogo; // คืนค่าข้อความตั้งต้นถ้ากดยกเลิก
+        }
+      }); 
+    };
+    handleImg('input-home-logo', 'homeLogo', 'lbl-home-logo'); 
+    handleImg('input-away-logo', 'awayLogo', 'lbl-away-logo');
 
     document.getElementById('btn-timer-toggle').addEventListener('click', () => { matchState.timerRunning = !matchState.timerRunning; syncToDatabase(); });
     document.getElementById('btn-timer-reset').addEventListener('click', () => { matchState.timerSeconds = 0; matchState.timerRunning = false; matchState.shotClockSeconds = 24; syncToDatabase(); });

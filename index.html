@@ -95,32 +95,6 @@
       </div>
     </div>
 
-    <!-- Modal: Edit User -->
-    <div id="modal-edit-user" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div class="bg-slate-900 border border-slate-700 p-6 rounded-xl max-w-md w-full space-y-4 shadow-2xl">
-        <h3 class="text-base font-bold text-amber-400 flex items-center gap-2">✏️ แก้ไขข้อมูลผู้ใช้งาน</h3>
-        <input type="hidden" id="edit-user-uid">
-        <div>
-          <label class="block text-xs mb-1 text-slate-400">Username</label>
-          <input type="text" id="edit-user-username" class="w-full p-2 rounded bg-slate-800 text-sm border border-slate-700" required>
-        </div>
-        <div>
-          <label class="block text-xs mb-1 text-slate-400">สิทธิ์กีฬาที่อนุญาต</label>
-          <div class="flex flex-wrap gap-2 text-xs pt-1">
-            <label><input type="checkbox" value="football" class="edit-sport-checkbox"> ฟุตบอล</label>
-            <label><input type="checkbox" value="basketball" class="edit-sport-checkbox"> บาส</label>
-            <label><input type="checkbox" value="volleyball" class="edit-sport-checkbox"> วอลเลย์</label>
-            <label><input type="checkbox" value="futsal" class="edit-sport-checkbox"> ฟุตซอล</label>
-            <label><input type="checkbox" value="badminton" class="edit-sport-checkbox"> แบดฯ</label>
-          </div>
-        </div>
-        <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
-          <button id="btn-close-edit-modal" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-xs font-bold rounded">ยกเลิก</button>
-          <button id="btn-save-edit-user" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold rounded">บันทึกการเปลี่ยนแปลง</button>
-        </div>
-      </div>
-    </div>
-
     <!-- View: Scoreboard Control Hub -->
     <div id="view-control" class="hidden max-w-[98%] mx-auto space-y-2 text-xs">
       <div class="grid grid-cols-12 gap-2 bg-slate-900 p-2.5 rounded-xl border border-slate-800 items-center">
@@ -259,16 +233,16 @@
       <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 mt-2 text-slate-400 text-[11px]">
         <span class="font-bold text-amber-400 block mb-2" data-i18n="lblShortcuts">🖮 คีย์บอร์ดชอร์ตคัต (Keyboard Shortcuts):</span>
         <div class="grid grid-cols-2 md:grid-cols-5 gap-2">
-            <div><b class="text-white px-1 bg-slate-700 rounded">[Space]</b> เริ่ม/หยุดเวลา</div>
-            <div><b class="text-white px-1 bg-slate-700 rounded">[R]</b> รีเซ็ตเวลา</div>
-            <div><b class="text-white px-1 bg-slate-700 rounded">[1, 2, 3]</b> คะแนนเหย้า +</div>
-            <div><b class="text-white px-1 bg-slate-700 rounded">[Q]</b> คะแนนเหย้า -1</div>
-            <div><b class="text-white px-1 bg-slate-700 rounded">[Z] / [X]</b> Shotclock 24/14</div>
-            <div><b class="text-white px-1 bg-slate-700 rounded">[8, 9, 0]</b> คะแนนเยือน +</div>
-            <div><b class="text-white px-1 bg-slate-700 rounded">[P]</b> คะแนนเยือน -1</div>
-            <div><b class="text-white px-1 bg-slate-700 rounded">[F] / [V]</b> ฟาล์วเหย้า +/-</div>
-            <div><b class="text-white px-1 bg-slate-700 rounded">[J] / [N]</b> ฟาล์วเยือน +/-</div>
-            <div><b class="text-white px-1 bg-slate-700 rounded">[Enter]</b> จบเซ็ต</div>
+            <div><b class="text-white px-1.5 py-0.5 bg-slate-700 rounded">[ G ]</b> <span data-i18n="scTimer">เริ่ม/หยุดเวลา</span></div>
+            <div><b class="text-white px-1.5 py-0.5 bg-slate-700 rounded">[ H ]</b> <span data-i18n="scReset">รีเซ็ตเวลา</span></div>
+            <div><b class="text-white px-1.5 py-0.5 bg-slate-700 rounded">[ Q, W, E ]</b> <span data-i18n="scHomeScore">คะแนนเหย้า +</span></div>
+            <div><b class="text-white px-1.5 py-0.5 bg-slate-700 rounded">[ A ]</b> <span data-i18n="scHomeSub">คะแนนเหย้า -1</span></div>
+            <div><b class="text-white px-1.5 py-0.5 bg-slate-700 rounded">[ C, V ]</b> <span data-i18n="scShotclock">Shotclock 24/14</span></div>
+            <div><b class="text-white px-1.5 py-0.5 bg-slate-700 rounded">[ I, O, P ]</b> <span data-i18n="scAwayScore">คะแนนเยือน +</span></div>
+            <div><b class="text-white px-1.5 py-0.5 bg-slate-700 rounded">[ K ]</b> <span data-i18n="scAwaySub">คะแนนเยือน -1</span></div>
+            <div><b class="text-white px-1.5 py-0.5 bg-slate-700 rounded">[ Z, X ]</b> <span data-i18n="scHomeFoul">ฟาล์วเหย้า +/-</span></div>
+            <div><b class="text-white px-1.5 py-0.5 bg-slate-700 rounded">[ N, M ]</b> <span data-i18n="scAwayFoul">ฟาล์วเยือน +/-</span></div>
+            <div><b class="text-white px-1.5 py-0.5 bg-slate-700 rounded">[ B ]</b> <span data-i18n="scEndSet">จบเซ็ต</span></div>
         </div>
       </div>
     </div>
@@ -323,10 +297,6 @@
             <span class="bg-red-600 text-white font-bold text-3xl px-6 py-2 rounded-xl shadow-lg border-2 border-red-800">FOULS: <span id="disp-away-fouls">0</span></span>
           </div>
         </div>
-
-        <div id="disp-events-box" class="hidden absolute top-[10%] left-1/2 transform -translate-x-1/2 w-4/5 max-w-4xl bg-slate-900/95 border-4 border-emerald-500 rounded-2xl p-6 shadow-2xl z-50 transition-opacity duration-500">
-          <div id="disp-events-text" class="text-4xl font-bold text-center text-white break-words"></div>
-        </div>
       </div>
 
       <div id="disp-marquee-bar" class="h-[10%] bg-slate-900/80 rounded-xl flex items-center border border-slate-800 text-amber-400 text-4xl font-bold shadow-2xl">
@@ -344,6 +314,7 @@
     import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getDatabase, ref, set, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
+    // 1. เพิ่มชุดข้อความสำหรับอธิบายปุ่มคีย์ลัดแยก 2 ภาษา
     const dict = {
       th: {
         subtitleLogin: "เข้าสู่ระบบควบคุมสกอร์บอร์ด / ผู้ดูแลระบบ",
@@ -362,7 +333,10 @@
         lblSub: "ระบบเปลี่ยนตัว:", subIn: "เข้า 🟢", subOut: "ออก 🔴", btnSub: "🔄 แจ้งเปลี่ยนตัว",
         alertCreateSuccess: "สร้างผู้ใช้และบันทึกข้อมูลเรียบร้อยแล้ว!", alertCreateFail: "ไม่สามารถสร้างผู้ใช้ได้ Error: ",
         marqueeDefault: "ยินดีต้อนรับสู่การแข่งขันนัดสำคัญประจำวันนี้", txtSubEvent: "🔄 เปลี่ยนตัว", txtSubIn: "เข้า:", txtSubOut: "ออก:",
-        lblShortcuts: "🖮 คีย์บอร์ดชอร์ตคัต (Keyboard Shortcuts):"
+        lblShortcuts: "🖮 คีย์บอร์ดชอร์ตคัต (Keyboard Shortcuts):",
+        scTimer: "เริ่ม/หยุดเวลา", scReset: "รีเซ็ตเวลา", scHomeScore: "คะแนนเหย้า +",
+        scHomeSub: "คะแนนเหย้า -1", scShotclock: "Shotclock 24/14", scAwayScore: "คะแนนเยือน +",
+        scAwaySub: "คะแนนเยือน -1", scHomeFoul: "ฟาล์วเหย้า +/-", scAwayFoul: "ฟาล์วเยือน +/-", scEndSet: "จบเซ็ต"
       },
       en: {
         subtitleLogin: "Scoreboard Control System / Admin Login",
@@ -381,7 +355,10 @@
         lblSub: "Substitution:", subIn: "In 🟢", subOut: "Out 🔴", btnSub: "🔄 Substitute",
         alertCreateSuccess: "User created & profile saved successfully!", alertCreateFail: "Failed to create user. Error: ",
         marqueeDefault: "Welcome to today's match", txtSubEvent: "🔄 Substitution", txtSubIn: "In:", txtSubOut: "Out:",
-        lblShortcuts: "🖮 Keyboard Shortcuts:"
+        lblShortcuts: "🖮 Keyboard Shortcuts:",
+        scTimer: "Start/Pause Timer", scReset: "Reset Timer", scHomeScore: "Home Score +",
+        scHomeSub: "Home Score -1", scShotclock: "Shotclock 24/14", scAwayScore: "Away Score +",
+        scAwaySub: "Away Score -1", scHomeFoul: "Home Foul +/-", scAwayFoul: "Away Foul +/-", scEndSet: "End Set"
       }
     };
 
@@ -411,7 +388,6 @@
       currentLang = currentLang === 'th' ? 'en' : 'th';
       localStorage.setItem('scoreboard_lang', currentLang);
       
-      // Auto Change Marquee if it matches the default of the previous language or is empty
       if (matchState.marqueeText === dict[oldLang].marqueeDefault || matchState.marqueeText === ' ' || !matchState.marqueeText) {
         matchState.marqueeText = dict[currentLang].marqueeDefault;
         document.getElementById('input-marquee').value = matchState.marqueeText;
@@ -426,18 +402,13 @@
       apiKey: "AIzaSyDMptdLpLEdbeVFKZj82M0gyoV2m_2y5Pk",
       authDomain: "suchartstudio-9a78d.firebaseapp.com",
       databaseURL: "https://suchartstudio-9a78d-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "suchartstudio-9a78d",
-      storageBucket: "suchartstudio-9a78d.firebasestorage.app",
-      messagingSenderId: "953369646185",
-      appId: "1:953369646185:web:8e1dce40dd448f3d6ebef8",
-      measurementId: "G-P8J0LYXW9C"
+      projectId: "suchartstudio-9a78d"
     };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getDatabase(app);
 
-    // Default State
     const defaultMatchState = {
       sport: '', compName: 'CHAMPIONSHIP 2026', homeName: 'HOME', awayName: 'AWAY', 
       homeScore: 0, awayScore: 0, timerSeconds: 0, timerRunning: false, shotClockSeconds: 24,
@@ -461,8 +432,6 @@
     const urlParams = new URLSearchParams(window.location.search);
     const isDisplayMode = urlParams.get('mode') === 'display';
     const targetUid = urlParams.get('uid');
-    let lastEventTimestamp = 0;
-    let eventTimeout;
 
     if (isDisplayMode && targetUid) {
       document.getElementById('view-login').classList.add('hidden');
@@ -644,37 +613,41 @@
     };
     window.resetSets = () => { matchState.setScoresHome = []; matchState.setScoresAway = []; syncToDatabase(); };
 
-    // --- Keyboard Shortcuts Listener ---
+    // 2. ระบบ Keyboard Shortcuts ฉบับตัวอักษร ล้วน (Letters Only)
     window.addEventListener('keydown', (e) => {
-      // ยกเลิกการทำงานปุ่มลัด หากผู้ใช้กำลังพิมพ์ข้อความอยู่ในช่อง Input
       if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
       if (!currentUser || document.getElementById('view-control').classList.contains('hidden')) return;
 
       switch (e.key.toLowerCase()) {
-        case ' ': // Spacebar
-          e.preventDefault(); // ป้องกันหน้าเลื่อน
-          matchState.timerRunning = !matchState.timerRunning;
-          syncToDatabase();
+        // --- ส่วนควบคุมหลัก (จับเวลา) ---
+        case 'g': 
+          e.preventDefault(); 
+          matchState.timerRunning = !matchState.timerRunning; 
+          syncToDatabase(); 
           break;
-        case 'r': // Reset Timer
-          matchState.timerSeconds = 0; matchState.timerRunning = false; matchState.shotClockSeconds = 24;
-          syncToDatabase();
+        case 'h': 
+          matchState.timerSeconds = 0; matchState.timerRunning = false; matchState.shotClockSeconds = 24; 
+          syncToDatabase(); 
           break;
-        case '1': changeScore('home', 1); break;
-        case '2': if(matchState.sport === 'basketball') changeScore('home', 2); break;
-        case '3': if(matchState.sport === 'basketball') changeScore('home', 3); break;
-        case 'q': changeScore('home', -1); break;
-        case '8': changeScore('away', 1); break;
-        case '9': if(matchState.sport === 'basketball') changeScore('away', 2); break;
-        case '0': if(matchState.sport === 'basketball') changeScore('away', 3); break;
-        case 'p': changeScore('away', -1); break;
-        case 'f': if(['basketball', 'futsal'].includes(matchState.sport)) changeFoul('home', 1); break;
-        case 'v': if(['basketball', 'futsal'].includes(matchState.sport)) changeFoul('home', -1); break;
-        case 'j': if(['basketball', 'futsal'].includes(matchState.sport)) changeFoul('away', 1); break;
-        case 'n': if(['basketball', 'futsal'].includes(matchState.sport)) changeFoul('away', -1); break;
-        case 'z': if(matchState.sport === 'basketball') resetShotClock(24); break;
-        case 'x': if(matchState.sport === 'basketball') resetShotClock(14); break;
-        case 'enter': if(['volleyball', 'badminton'].includes(matchState.sport)) endSet(); break;
+        case 'c': if(matchState.sport === 'basketball') resetShotClock(24); break;
+        case 'v': if(matchState.sport === 'basketball') resetShotClock(14); break;
+        case 'b': if(['volleyball', 'badminton'].includes(matchState.sport)) endSet(); break;
+
+        // --- ส่วนควบคุมทีมเหย้า (มือซ้าย) ---
+        case 'q': changeScore('home', 1); break;
+        case 'w': if(matchState.sport === 'basketball') changeScore('home', 2); break;
+        case 'e': if(matchState.sport === 'basketball') changeScore('home', 3); break;
+        case 'a': changeScore('home', -1); break;
+        case 'z': if(['basketball', 'futsal'].includes(matchState.sport)) changeFoul('home', 1); break;
+        case 'x': if(['basketball', 'futsal'].includes(matchState.sport)) changeFoul('home', -1); break;
+
+        // --- ส่วนควบคุมทีมเยือน (มือขวา) ---
+        case 'i': changeScore('away', 1); break;
+        case 'o': if(matchState.sport === 'basketball') changeScore('away', 2); break;
+        case 'p': if(matchState.sport === 'basketball') changeScore('away', 3); break;
+        case 'k': changeScore('away', -1); break;
+        case 'n': if(['basketball', 'futsal'].includes(matchState.sport)) changeFoul('away', 1); break;
+        case 'm': if(['basketball', 'futsal'].includes(matchState.sport)) changeFoul('away', -1); break;
       }
     });
 

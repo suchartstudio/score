@@ -7,7 +7,7 @@
   <link rel="manifest" href="manifest.json">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700;800;900&display=swap');
     
     body { font-family: 'Chakra Petch', sans-serif; }
     .led-border { border: 4px solid #1e293b; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
@@ -23,7 +23,7 @@
 </head>
 <body class="bg-slate-950 text-white min-h-screen">
 
-  <div id="app" class="p-4">
+  <div id="app" class="p-2 md:p-3">
     <!-- View: Login -->
     <div id="view-login" class="max-w-md mx-auto mt-20 bg-slate-900 p-6 rounded-xl border border-slate-800 shadow-2xl">
       <h2 class="text-2xl font-bold mb-2 text-center text-amber-500">Scoreboard System</h2>
@@ -36,26 +36,26 @@
     </div>
 
     <!-- Navigation Header -->
-    <div id="main-nav" class="hidden max-w-6xl mx-auto flex justify-between items-center bg-slate-900 p-4 rounded-xl border border-slate-800 mb-6">
-      <div>
-        <h1 class="text-xl font-bold text-amber-500">Stadium Scoreboard System</h1>
-        <p id="user-info" class="text-xs text-slate-400"></p>
+    <div id="main-nav" class="hidden max-w-[98%] mx-auto flex justify-between items-center bg-slate-900 px-4 py-2 rounded-xl border border-slate-800 mb-2">
+      <div class="flex items-center gap-3">
+        <h1 class="text-lg font-bold text-amber-500">Stadium Scoreboard</h1>
+        <span id="user-info" class="text-xs text-slate-400"></span>
       </div>
-      <div class="flex flex-wrap items-center gap-2">
-        <button id="nav-btn-control" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded text-sm font-semibold">🎮 หน้าควบคุม</button>
-        <button id="nav-btn-admin" class="hidden px-3 py-1.5 bg-amber-500 text-slate-950 hover:bg-amber-400 rounded text-sm font-bold">⚡ จัดการ User</button>
-        <button id="btn-extend-display" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 rounded font-semibold text-sm">🖥️ เปิดจอ LED</button>
-        <button id="btn-logout" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-500 rounded font-semibold text-sm">ออกจากระบบ</button>
+      <div class="flex items-center gap-2">
+        <button id="nav-btn-control" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 rounded text-xs font-semibold">🎮 หน้าควบคุม</button>
+        <button id="nav-btn-admin" class="hidden px-3 py-1 bg-amber-500 text-slate-950 hover:bg-amber-400 rounded text-xs font-bold">⚡ จัดการ User</button>
+        <button id="btn-extend-display" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 rounded font-semibold text-xs">🖥️ เปิดจอ LED</button>
+        <button id="btn-logout" class="px-3 py-1 bg-rose-600 hover:bg-rose-500 rounded font-semibold text-xs">ออกจากระบบ</button>
       </div>
     </div>
 
     <!-- View: Admin -->
-    <div id="view-admin" class="hidden max-w-6xl mx-auto space-y-6">
-      <div class="bg-slate-900 p-6 rounded-xl border border-amber-500/30">
-        <h3 class="text-lg font-bold text-amber-400 mb-4">➕ เพิ่มผู้ใช้งานใหม่</h3>
-        <form id="create-user-form" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div><label class="block text-xs mb-1 text-slate-400">Email</label><input type="email" id="new-user-email" class="w-full p-2 rounded bg-slate-800" required></div>
-          <div><label class="block text-xs mb-1 text-slate-400">Password</label><input type="password" id="new-user-password" class="w-full p-2 rounded bg-slate-800" required></div>
+    <div id="view-admin" class="hidden max-w-6xl mx-auto space-y-4">
+      <div class="bg-slate-900 p-4 rounded-xl border border-amber-500/30">
+        <h3 class="text-sm font-bold text-amber-400 mb-3">➕ เพิ่มผู้ใช้งานใหม่</h3>
+        <form id="create-user-form" class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div><label class="block text-xs mb-1 text-slate-400">Email</label><input type="email" id="new-user-email" class="w-full p-1.5 rounded bg-slate-800 text-sm" required></div>
+          <div><label class="block text-xs mb-1 text-slate-400">Password</label><input type="password" id="new-user-password" class="w-full p-1.5 rounded bg-slate-800 text-sm" required></div>
           <div><label class="block text-xs mb-1 text-slate-400">สิทธิ์กีฬา</label>
             <div class="flex flex-wrap gap-2 text-xs pt-1">
               <label><input type="checkbox" value="football" class="sport-checkbox" checked> ฟุตบอล</label>
@@ -65,144 +65,157 @@
               <label><input type="checkbox" value="badminton" class="sport-checkbox"> แบดฯ</label>
             </div>
           </div>
-          <div class="md:col-span-3"><button type="submit" class="bg-amber-500 text-slate-950 font-bold px-6 py-2 rounded hover:bg-amber-400">สร้างผู้ใช้งาน</button></div>
+          <div class="md:col-span-3"><button type="submit" class="bg-amber-500 text-slate-950 font-bold px-4 py-1.5 rounded text-sm hover:bg-amber-400">สร้างผู้ใช้งาน</button></div>
         </form>
       </div>
-      <div class="bg-slate-900 p-6 rounded-xl border border-slate-800">
-        <table class="w-full text-left text-sm text-slate-300">
-          <thead class="bg-slate-800 text-amber-400"><tr><th class="p-3">UID</th><th class="p-3">Email</th><th class="p-3">Role</th><th class="p-3">สิทธิ์</th><th class="p-3">จัดการ</th></tr></thead>
+      <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+        <table class="w-full text-left text-xs text-slate-300">
+          <thead class="bg-slate-800 text-amber-400"><tr><th class="p-2">UID</th><th class="p-2">Email</th><th class="p-2">Role</th><th class="p-2">สิทธิ์</th><th class="p-2">จัดการ</th></tr></thead>
           <tbody id="users-table-body" class="divide-y divide-slate-800"></tbody>
         </table>
       </div>
     </div>
 
-    <!-- View: Scoreboard Control Hub -->
-    <div id="view-control" class="hidden max-w-6xl mx-auto space-y-6">
+    <!-- View: Scoreboard Control Hub (ปรับให้ Compact สมส่วนกับหน้าจอแนวนอน) -->
+    <div id="view-control" class="hidden max-w-[98%] mx-auto space-y-2 text-xs">
       
-      <!-- โหมดกีฬา & Marquee & ชื่อการแข่งขัน -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
-          <label class="block font-bold mb-2 text-slate-300 text-sm">เลือกโหมดกีฬา:</label>
-          <div id="sports-selector" class="flex flex-wrap gap-2"></div>
+      <!-- โหมดกีฬา & ชื่อการแข่งขัน & ตัววิ่ง (รวมอยู่ในแถวเดียว) -->
+      <div class="grid grid-cols-12 gap-2 bg-slate-900 p-2.5 rounded-xl border border-slate-800 items-center">
+        <div class="col-span-3 border-r border-slate-800 pr-2">
+          <label class="block font-bold mb-1 text-slate-300 text-[11px]">เลือกโหมดกีฬา:</label>
+          <div id="sports-selector" class="flex flex-wrap gap-1"></div>
         </div>
-        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
-          <!-- ข้อ 5: ใส่ชื่อการแข่งขัน -->
-          <label class="block font-bold mb-2 text-slate-300 text-sm">🏆 ชื่อรายการแข่งขัน (กลางจอ):</label>
-          <input type="text" id="input-comp-name" placeholder="CHAMPIONSHIP 2026" class="w-full p-2 rounded bg-slate-800 border border-slate-700 font-bold text-amber-400">
+        <div class="col-span-3 border-r border-slate-800 px-2">
+          <label class="block font-bold mb-1 text-slate-300 text-[11px]">🏆 ชื่อรายการแข่งขัน:</label>
+          <input type="text" id="input-comp-name" placeholder="CHAMPIONSHIP 2026" class="w-full p-1.5 rounded bg-slate-800 border border-slate-700 font-bold text-amber-400 text-xs">
         </div>
-        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
-          <label class="block font-bold mb-2 text-slate-300 text-sm">📢 ข้อความตัววิ่ง (Marquee):</label>
-          <input type="text" id="input-marquee" placeholder="ยินดีต้อนรับสู่การแข่งขัน..." class="w-full p-2 rounded bg-slate-800 border border-slate-700">
+        <div class="col-span-6 pl-2">
+          <div class="flex justify-between items-center mb-1">
+            <label class="font-bold text-slate-300 text-[11px]">📢 ข้อความตัววิ่ง (Marquee):</label>
+            <!-- ข้อ 3: สวิตช์ เปิด/ปิด ตัววิ่ง -->
+            <label class="flex items-center cursor-pointer text-amber-400 font-bold text-[11px]">
+              <input type="checkbox" id="input-toggle-marquee" class="sr-only peer" checked>
+              <div class="relative w-7 h-4 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-amber-500"></div>
+              <span class="ms-1.5">แสดงตัววิ่ง</span>
+            </label>
+          </div>
+          <input type="text" id="input-marquee" placeholder="ยินดีต้อนรับสู่การแข่งขัน..." class="w-full p-1.5 rounded bg-slate-800 border border-slate-700 text-xs">
         </div>
       </div>
 
-      <!-- Match Info -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-900 p-4 rounded-xl border border-slate-800">
-        <div class="space-y-3">
-          <h3 class="font-bold text-amber-400 text-lg">ทีมเหย้า (Home)</h3>
-          <input type="text" id="input-home-name" placeholder="ชื่อทีม" class="w-full p-2 rounded bg-slate-800 font-bold text-lg">
-          <input type="file" id="input-home-logo" accept="image/*" class="w-full text-sm">
-        </div>
-        <div class="space-y-3">
-          <h3 class="font-bold text-amber-400 text-lg">ทีมเยือน (Away)</h3>
-          <input type="text" id="input-away-name" placeholder="ชื่อทีม" class="w-full p-2 rounded bg-slate-800 font-bold text-lg">
-          <input type="file" id="input-away-logo" accept="image/*" class="w-full text-sm">
-        </div>
-      </div>
-
-      <!-- Match Controller Interface (Score & Timer) -->
-      <div class="bg-slate-900 p-6 rounded-xl border border-slate-800 grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-        <div class="space-y-4">
-          <div id="ctrl-home-name" class="text-2xl font-bold">HOME</div>
-          <div id="ctrl-home-score" class="text-7xl font-bold text-emerald-400 bg-slate-950 py-4 rounded border border-slate-800">0</div>
-          <div id="home-score-controls" class="flex justify-center gap-2 flex-wrap"></div>
-        </div>
-
-        <div class="space-y-3">
-          <div id="ctrl-timer" class="text-5xl font-bold text-amber-400 bg-slate-950 py-3 rounded border border-slate-800">00:00</div>
-          
-          <div class="flex justify-center gap-2">
-            <button id="btn-timer-toggle" class="px-5 py-1.5 bg-amber-500 text-slate-950 font-bold rounded text-md">START</button>
-            <button id="btn-timer-reset" class="px-4 py-1.5 bg-slate-700 font-bold rounded text-md">RESET</button>
-          </div>
-
-          <!-- ข้อ 3: เพิ่มเวลาแบบ Manual -->
-          <div class="bg-slate-800 p-2 rounded border border-slate-700 space-y-1">
-            <span class="text-xs text-slate-400 block font-semibold">⏱️ ปรับเวลาแข่งขัน Manual</span>
-            <div class="flex justify-center gap-1 items-center">
-              <input type="number" id="input-manual-min" placeholder="นาที" class="w-16 p-1 text-center bg-slate-950 rounded text-sm font-bold">
-              <span>:</span>
-              <input type="number" id="input-manual-sec" placeholder="วิ" class="w-16 p-1 text-center bg-slate-950 rounded text-sm font-bold">
-              <button onclick="setManualTime()" class="px-3 py-1 bg-amber-500 text-slate-950 font-bold rounded text-xs">ตั้งเวลา</button>
-            </div>
-          </div>
-
-          <!-- ข้อ 4: Shot Clock 24 วิสำหรับบาส -->
-          <div id="panel-shotclock-ctrl" class="hidden bg-red-950/50 p-2 rounded border border-red-800 flex justify-center items-center gap-2">
-            <span class="text-xs font-bold text-red-400">SHOT CLOCK:</span>
-            <button onclick="resetShotClock(24)" class="px-3 py-1 bg-red-600 hover:bg-red-500 text-white font-bold rounded text-xs">24s</button>
-            <button onclick="resetShotClock(14)" class="px-3 py-1 bg-red-600 hover:bg-red-500 text-white font-bold rounded text-xs">14s</button>
-          </div>
-
-          <input type="text" id="input-period" placeholder="ครึ่งเวลา / ควอเตอร์ / เซต" class="w-full p-2 text-center rounded bg-slate-800 text-lg font-bold">
-        </div>
-
-        <div class="space-y-4">
-          <div id="ctrl-away-name" class="text-2xl font-bold">AWAY</div>
-          <div id="ctrl-away-score" class="text-7xl font-bold text-emerald-400 bg-slate-950 py-4 rounded border border-slate-800">0</div>
-          <div id="away-score-controls" class="flex justify-center gap-2 flex-wrap"></div>
-        </div>
-      </div>
-
-      <!-- Dynamic Control Panel (เปลี่ยนตามกีฬา) -->
-      <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
-        <h3 class="font-bold text-slate-300 text-lg mb-4">🛠️ แผงควบคุมเสริม (Match Events)</h3>
+      <!-- Main Match Controller (Home, Timer, Away Display & Controls) -->
+      <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 grid grid-cols-12 gap-3 text-center items-center">
         
-        <!-- ข้อ 1: ฟุตบอล/ฟุตซอล (ประตู, ใบเหลือง, ใบแดง) -->
-        <div id="panel-football" class="hidden flex flex-wrap items-end gap-3 mb-4 p-3 bg-slate-800 rounded">
-          <div><label class="block text-xs mb-1 text-slate-400">ทีม</label><select id="fb-team" class="p-2 rounded bg-slate-950"><option value="home">Home</option><option value="away">Away</option></select></div>
-          <div><label class="block text-xs mb-1 text-slate-400">ชื่อนักเตะ / เบอร์</label><input type="text" id="fb-player" class="p-2 rounded bg-slate-950 w-32"></div>
-          <div><label class="block text-xs mb-1 text-slate-400">เหตุการณ์</label>
-            <select id="fb-event" class="p-2 rounded bg-slate-950">
-              <option value="⚽ Goal">⚽ ทำประตู</option><option value="🟨 Yellow Card">🟨 ใบเหลือง</option><option value="🟥 Red Card">🟥 ใบแดง</option>
-            </select>
+        <!-- Home Team -->
+        <div class="col-span-4 space-y-2 bg-slate-950/60 p-2.5 rounded-lg border border-slate-800">
+          <div class="flex gap-2 items-center">
+            <input type="text" id="input-home-name" placeholder="ชื่อทีมเหย้า" class="w-full p-1 rounded bg-slate-800 font-bold text-amber-400 text-sm">
+            <input type="file" id="input-home-logo" accept="image/*" class="w-24 text-[10px] text-slate-400">
           </div>
-          <button onclick="addMatchEvent()" class="px-4 py-2 bg-emerald-600 font-bold rounded">บันทึกเหตุการณ์</button>
-          <button onclick="clearMatchEvents()" class="px-4 py-2 bg-slate-700 font-bold rounded text-sm">ล้าง Log</button>
+          <div id="ctrl-home-score" class="text-6xl font-black text-emerald-400 bg-slate-950 py-1 rounded border border-slate-800 leading-none">0</div>
+          <div id="home-score-controls" class="flex justify-center gap-1.5 flex-wrap"></div>
         </div>
 
-        <!-- แผงบาสเกตบอล/ฟุตซอล (การทำฟาล์ว) -->
-        <div id="panel-fouls" class="hidden grid grid-cols-2 gap-4 mb-4">
-          <div class="p-3 bg-slate-800 rounded text-center">
-            <span class="block text-sm text-slate-400 mb-2">ฟาล์วทีมเหย้า (Home Fouls)</span>
-            <div class="flex justify-center items-center gap-4">
-              <button onclick="changeFoul('home', -1)" class="px-3 py-1 bg-rose-600 rounded font-bold">-</button>
-              <span id="ctrl-home-foul" class="text-3xl font-bold text-red-500">0</span>
-              <button onclick="changeFoul('home', 1)" class="px-3 py-1 bg-rose-600 rounded font-bold">+</button>
+        <!-- Center: Timer & Periods -->
+        <div class="col-span-4 space-y-2 px-1">
+          <div class="bg-slate-950 py-1 px-3 rounded border border-slate-800 relative">
+            <div id="ctrl-timer" class="text-4xl font-black text-amber-400 leading-none py-1">00:00</div>
+          </div>
+          
+          <div class="flex justify-center gap-1.5">
+            <button id="btn-timer-toggle" class="px-4 py-1 bg-amber-500 text-slate-950 font-bold rounded text-xs hover:bg-amber-400">START</button>
+            <button id="btn-timer-reset" class="px-3 py-1 bg-slate-700 hover:bg-slate-600 font-bold rounded text-xs">RESET</button>
+          </div>
+
+          <!-- ปรับเวลา Manual & Shot Clock -->
+          <div class="grid grid-cols-2 gap-1 text-[11px]">
+            <div class="bg-slate-800 p-1 rounded border border-slate-700">
+              <span class="text-[10px] text-slate-400 block font-semibold">⏱️ ตั้งเวลา Manual</span>
+              <div class="flex justify-center gap-1 items-center mt-0.5">
+                <input type="number" id="input-manual-min" placeholder="นาที" class="w-10 p-0.5 text-center bg-slate-950 rounded font-bold text-xs">
+                <span>:</span>
+                <input type="number" id="input-manual-sec" placeholder="วิ" class="w-10 p-0.5 text-center bg-slate-950 rounded font-bold text-xs">
+                <button onclick="setManualTime()" class="px-1.5 py-0.5 bg-amber-500 text-slate-950 font-bold rounded text-[10px]">ตั้ง</button>
+              </div>
+            </div>
+
+            <!-- Panel Shot Clock (บาสเกตบอล) -->
+            <div id="panel-shotclock-ctrl" class="hidden bg-red-950/50 p-1 rounded border border-red-800/60 flex flex-col justify-center items-center">
+              <span class="text-[10px] font-bold text-red-400 block">SHOT CLOCK</span>
+              <div class="flex gap-1 mt-0.5">
+                <button onclick="resetShotClock(24)" class="px-2 py-0.5 bg-red-600 hover:bg-red-500 text-white font-bold rounded text-[10px]">24s</button>
+                <button onclick="resetShotClock(14)" class="px-2 py-0.5 bg-red-600 hover:bg-red-500 text-white font-bold rounded text-[10px]">14s</button>
+              </div>
             </div>
           </div>
-          <div class="p-3 bg-slate-800 rounded text-center">
-            <span class="block text-sm text-slate-400 mb-2">ฟาล์วทีมเยือน (Away Fouls)</span>
-            <div class="flex justify-center items-center gap-4">
-              <button onclick="changeFoul('away', -1)" class="px-3 py-1 bg-rose-600 rounded font-bold">-</button>
-              <span id="ctrl-away-foul" class="text-3xl font-bold text-red-500">0</span>
-              <button onclick="changeFoul('away', 1)" class="px-3 py-1 bg-rose-600 rounded font-bold">+</button>
+
+          <input type="text" id="input-period" placeholder="ครึ่งเวลา / ควอเตอร์ / เซต" class="w-full p-1 text-center rounded bg-slate-800 text-xs font-bold text-slate-200">
+        </div>
+
+        <!-- Away Team -->
+        <div class="col-span-4 space-y-2 bg-slate-950/60 p-2.5 rounded-lg border border-slate-800">
+          <div class="flex gap-2 items-center">
+            <input type="text" id="input-away-name" placeholder="ชื่อทีมเยือน" class="w-full p-1 rounded bg-slate-800 font-bold text-amber-400 text-sm">
+            <input type="file" id="input-away-logo" accept="image/*" class="w-24 text-[10px] text-slate-400">
+          </div>
+          <div id="ctrl-away-score" class="text-6xl font-black text-emerald-400 bg-slate-950 py-1 rounded border border-slate-800 leading-none">0</div>
+          <div id="away-score-controls" class="flex justify-center gap-1.5 flex-wrap"></div>
+        </div>
+
+      </div>
+
+      <!-- Dynamic Control Panel (เหตุการณ์เสริม) -->
+      <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
+        <h3 class="font-bold text-slate-300 text-xs mb-2">🛠️ แผงควบคุมเสริม (Match Events)</h3>
+        
+        <div class="grid grid-cols-12 gap-2 items-center">
+          <!-- ฟุตบอล/ฟุตซอล -->
+          <div id="panel-football" class="hidden col-span-12 flex flex-wrap items-center gap-2 p-1.5 bg-slate-800/80 rounded">
+            <div><select id="fb-team" class="p-1 rounded bg-slate-950 text-xs"><option value="home">Home</option><option value="away">Away</option></select></div>
+            <div><input type="text" id="fb-player" placeholder="ชื่อ/เบอร์นักเตะ" class="p-1 rounded bg-slate-950 w-28 text-xs"></div>
+            <div>
+              <select id="fb-event" class="p-1 rounded bg-slate-950 text-xs">
+                <option value="⚽ Goal">⚽ ทำประตู</option><option value="🟨 Yellow Card">🟨 ใบเหลือง</option><option value="🟥 Red Card">🟥 ใบแดง</option>
+              </select>
+            </div>
+            <button onclick="addMatchEvent()" class="px-3 py-1 bg-emerald-600 font-bold rounded text-xs hover:bg-emerald-500">บันทึกเหตุการณ์</button>
+            <button onclick="clearMatchEvents()" class="px-3 py-1 bg-slate-700 font-bold rounded text-xs hover:bg-slate-600">ล้าง Log</button>
+          </div>
+
+          <!-- ฟาล์ว (บาส/ฟุตซอล) -->
+          <div id="panel-fouls" class="hidden col-span-12 grid grid-cols-2 gap-2">
+            <div class="p-1.5 bg-slate-800/80 rounded flex justify-between items-center px-4">
+              <span class="text-xs text-slate-400 font-bold">ฟาล์วทีมเหย้า (Home Fouls):</span>
+              <div class="flex items-center gap-2">
+                <button onclick="changeFoul('home', -1)" class="px-2 py-0.5 bg-rose-600 rounded font-bold text-xs">-</button>
+                <span id="ctrl-home-foul" class="text-lg font-bold text-red-500 min-w-[20px] text-center">0</span>
+                <button onclick="changeFoul('home', 1)" class="px-2 py-0.5 bg-rose-600 rounded font-bold text-xs">+</button>
+              </div>
+            </div>
+            <div class="p-1.5 bg-slate-800/80 rounded flex justify-between items-center px-4">
+              <span class="text-xs text-slate-400 font-bold">ฟาล์วทีมเยือน (Away Fouls):</span>
+              <div class="flex items-center gap-2">
+                <button onclick="changeFoul('away', -1)" class="px-2 py-0.5 bg-rose-600 rounded font-bold text-xs">-</button>
+                <span id="ctrl-away-foul" class="text-lg font-bold text-red-500 min-w-[20px] text-center">0</span>
+                <button onclick="changeFoul('away', 1)" class="px-2 py-0.5 bg-rose-600 rounded font-bold text-xs">+</button>
+              </div>
             </div>
           </div>
-        </div>
 
-        <!-- แผงวอลเลย์บอล/แบดมินตัน (จบเซ็ต) -->
-        <div id="panel-sets" class="hidden flex gap-4 mb-4 p-3 bg-slate-800 rounded justify-center items-center">
-          <button onclick="endSet()" class="px-6 py-2 bg-amber-500 text-slate-950 font-bold rounded text-lg">📌 จบเซ็ต (บันทึกคะแนน)</button>
-          <button onclick="resetSets()" class="px-4 py-2 bg-slate-700 font-bold rounded">รีเซ็ตเซ็ตทั้งหมด</button>
-        </div>
+          <!-- เซ็ต (วอลเลย์บอล/แบดมินตัน) -->
+          <div id="panel-sets" class="hidden col-span-12 flex gap-3 p-1.5 bg-slate-800/80 rounded justify-center items-center">
+            <button onclick="endSet()" class="px-4 py-1 bg-amber-500 text-slate-950 font-bold rounded text-xs hover:bg-amber-400">📌 จบเซ็ต (บันทึกคะแนนเซ็ตนี้)</button>
+            <button onclick="resetSets()" class="px-3 py-1 bg-slate-700 font-bold rounded text-xs hover:bg-slate-600">รีเซ็ตเซ็ตทั้งหมด</button>
+          </div>
 
-        <!-- ระบบเปลี่ยนตัว (ทุกโหมด) -->
-        <div class="flex flex-wrap items-end gap-3 pt-4 border-t border-slate-700">
-          <div><label class="block text-xs mb-1 text-slate-400">ทีม</label><select id="sub-team" class="p-2 rounded bg-slate-950"><option value="home">Home</option><option value="away">Away</option></select></div>
-          <div><label class="block text-xs mb-1 text-slate-400">ผู้เล่นเข้า 🟢</label><input type="text" id="sub-in" class="p-2 rounded bg-slate-950 w-32"></div>
-          <div><label class="block text-xs mb-1 text-slate-400">ผู้เล่นออก 🔴</label><input type="text" id="sub-out" class="p-2 rounded bg-slate-950 w-32"></div>
-          <button onclick="addSubstitute()" class="px-4 py-2 bg-blue-600 font-bold rounded">🔄 เปลี่ยนตัว</button>
+          <!-- เปลี่ยนตัว -->
+          <div class="col-span-12 flex flex-wrap items-center gap-2 pt-1 border-t border-slate-800">
+            <span class="text-xs font-bold text-slate-400">ระบบเปลี่ยนตัว:</span>
+            <select id="sub-team" class="p-1 rounded bg-slate-950 text-xs"><option value="home">Home</option><option value="away">Away</option></select>
+            <input type="text" id="sub-in" placeholder="เข้า 🟢" class="p-1 rounded bg-slate-950 w-24 text-xs">
+            <input type="text" id="sub-out" placeholder="ออก 🔴" class="p-1 rounded bg-slate-950 w-24 text-xs">
+            <button onclick="addSubstitute()" class="px-3 py-1 bg-blue-600 font-bold rounded text-xs hover:bg-blue-500">🔄 แจ้งเปลี่ยนตัว</button>
+          </div>
         </div>
 
       </div>
@@ -211,7 +224,7 @@
     <!-- View: 16:9 Display Window (For LED Screen) -->
     <div id="view-display" class="hidden fixed inset-0 bg-[#0a0f1d] w-screen h-screen flex flex-col justify-between p-8 select-none overflow-hidden" style="aspect-ratio: 16/9;">
       
-      <!-- Top Bar (ข้อ 5 & 6: แสดงชื่อการแข่งขันตรงกลาง ลบชื่อโหมดกีฬามุมซ้ายออก) -->
+      <!-- Top Bar -->
       <div class="h-[8%] flex justify-center items-center border-b-4 border-slate-800 pb-2 relative">
         <span id="disp-comp-name" class="text-4xl font-bold uppercase tracking-widest text-amber-400 text-center">CHAMPIONSHIP 2026</span>
       </div>
@@ -234,7 +247,6 @@
         <!-- Center Block -->
         <div class="flex-[1.2] flex flex-col items-center justify-center h-full shrink-0 gap-4">
           
-          <!-- ข้อ 6: ย้ายเลขบอกเซต / ครึ่งเวลา มาไว้เหนือเลข Score -->
           <div id="disp-period" class="text-3xl font-bold bg-amber-500 text-slate-950 px-8 py-2 rounded-xl shadow-lg border-2 border-amber-300">1ST HALF</div>
 
           <div class="flex items-center justify-center gap-8 w-full bg-slate-900/50 py-4 px-10 rounded-3xl border-4 border-slate-800 shadow-2xl relative">
@@ -243,21 +255,23 @@
             <span id="disp-away-score" class="text-[11rem] leading-none font-black text-emerald-400 led-glow-green w-1/2 text-left">0</span>
           </div>
           
-          <!-- Timer Section + Short clock -->
-          <div class="relative w-full">
+          <!-- Timer Section + Short Clock -->
+          <div class="relative w-full flex flex-col items-center justify-center">
+            <!-- ข้อ 4: ซ่อน/แสดง นาฬิกาเวลาแข่งขัน -->
             <div id="disp-timer" class="text-[7.5rem] leading-none font-black text-amber-400 led-glow-yellow bg-slate-950 w-full text-center py-3 rounded-2xl border-4 border-slate-800 shadow-2xl">
               00:00
             </div>
-            <!-- ข้อ 4: Short Clock 24 วิ ตัวหนังสือขาว พื้นกรอบสีแดง -->
-            <div id="disp-shotclock" class="hidden absolute -bottom-5 right-4 bg-red-600 text-white border-4 border-red-500 text-5xl font-black px-4 py-1 rounded-xl shadow-2xl">
+            
+            <!-- ข้อ 1: ย้าย Shot Clock มาอยู่ตรงกลางด้านล่างนาฬิกาเวลาแข่งขัน -->
+            <div id="disp-shotclock" class="hidden absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-red-600 text-white border-4 border-red-500 text-5xl font-black px-6 py-1 rounded-xl shadow-2xl z-20">
               24
             </div>
           </div>
 
-          <!-- ข้อ 2: ตารางแสดงคะแนนเซ็ตที่ผ่านมา (ใหญ่ ชัดเจน) -->
-          <div id="disp-set-scores-container" class="hidden w-full bg-slate-900 border-2 border-slate-700 p-3 rounded-2xl shadow-2xl">
-            <div class="text-xs text-slate-400 text-center uppercase font-bold tracking-widest mb-1">SCORE BY SETS</div>
-            <div id="disp-set-scores" class="grid grid-cols-5 gap-2 text-center"></div>
+          <!-- ข้อ 4: ตารางแสดงคะแนนเซ็ตที่ผ่านมา (ปรับขนาดใหญ่พิเศษ ชัดเจนขึ้น) -->
+          <div id="disp-set-scores-container" class="hidden w-full bg-slate-900/90 border-4 border-amber-500 p-4 rounded-3xl shadow-2xl">
+            <div class="text-sm text-slate-300 text-center uppercase font-black tracking-widest mb-2">SCORE BY SETS</div>
+            <div id="disp-set-scores" class="flex justify-center gap-3 text-center flex-wrap"></div>
           </div>
 
         </div>
@@ -281,8 +295,8 @@
 
       </div>
 
-      <!-- Bottom Bar (Marquee ตัวหนังสือวิ่ง) -->
-      <div class="h-[10%] bg-slate-900/80 rounded-xl flex items-center border border-slate-800 text-amber-400 text-4xl font-bold shadow-2xl">
+      <!-- Bottom Bar (Marquee ตัวหนังสือวิ่ง + ข้อ 3: เปิด/ปิด การแสดงผล) -->
+      <div id="disp-marquee-bar" class="h-[10%] bg-slate-900/80 rounded-xl flex items-center border border-slate-800 text-amber-400 text-4xl font-bold shadow-2xl">
         <div class="marquee-container h-full">
           <div id="disp-marquee" class="marquee-content h-full flex items-center">
             ยินดีต้อนรับสู่การแข่งขันนัดสำคัญประจำวันนี้
@@ -319,7 +333,7 @@
       homeScore: 0, awayScore: 0, timerSeconds: 0, timerRunning: false, shotClockSeconds: 24,
       period: '1ST HALF', homeLogo: '', awayLogo: '',
       homeFouls: 0, awayFouls: 0, setScoresHome: [], setScoresAway: [],
-      marqueeText: 'ยินดีต้อนรับสู่การแข่งขัน', matchEvent: { text: '', timestamp: 0 }
+      showMarquee: true, marqueeText: 'ยินดีต้อนรับสู่การแข่งขัน', matchEvent: { text: '', timestamp: 0 }
     };
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -386,7 +400,7 @@
       container.innerHTML = '';
       sports.forEach(sport => {
         const btn = document.createElement('button');
-        btn.className = `px-3 py-1.5 rounded font-bold uppercase text-xs transition ${matchState.sport === sport ? 'bg-amber-500 text-slate-950 shadow-lg' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`;
+        btn.className = `px-2 py-0.5 rounded font-bold uppercase text-[10px] transition ${matchState.sport === sport ? 'bg-amber-500 text-slate-950 shadow' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`;
         btn.innerText = sport;
         btn.onclick = () => { matchState.sport = sport; renderScoreButtons(sport); syncToDatabase(); setupSportsSelector(sports); };
         container.appendChild(btn);
@@ -399,12 +413,12 @@
       const awayContainer = document.getElementById('away-score-controls');
       
       let btns = sport === 'basketball' 
-        ? `<button onclick="changeScore('TEAM', 1)" class="px-3 py-2 bg-emerald-600 font-bold rounded text-lg">+1</button>
-           <button onclick="changeScore('TEAM', 2)" class="px-3 py-2 bg-emerald-600 font-bold rounded text-lg">+2</button>
-           <button onclick="changeScore('TEAM', 3)" class="px-3 py-2 bg-emerald-600 font-bold rounded text-lg">+3</button>
-           <button onclick="changeScore('TEAM', -1)" class="px-3 py-2 bg-rose-600 font-bold rounded text-lg">-1</button>`
-        : `<button onclick="changeScore('TEAM', 1)" class="px-6 py-2 bg-emerald-600 font-bold rounded text-2xl">+1</button>
-           <button onclick="changeScore('TEAM', -1)" class="px-6 py-2 bg-rose-600 font-bold rounded text-2xl">-1</button>`;
+        ? `<button onclick="changeScore('TEAM', 1)" class="px-2 py-1 bg-emerald-600 font-bold rounded text-xs hover:bg-emerald-500">+1</button>
+           <button onclick="changeScore('TEAM', 2)" class="px-2 py-1 bg-emerald-600 font-bold rounded text-xs hover:bg-emerald-500">+2</button>
+           <button onclick="changeScore('TEAM', 3)" class="px-2 py-1 bg-emerald-600 font-bold rounded text-xs hover:bg-emerald-500">+3</button>
+           <button onclick="changeScore('TEAM', -1)" class="px-2 py-1 bg-rose-600 font-bold rounded text-xs hover:bg-rose-500">-1</button>`
+        : `<button onclick="changeScore('TEAM', 1)" class="px-4 py-1 bg-emerald-600 font-bold rounded text-sm hover:bg-emerald-500">+1</button>
+           <button onclick="changeScore('TEAM', -1)" class="px-4 py-1 bg-rose-600 font-bold rounded text-sm hover:bg-rose-500">-1</button>`;
       
       homeContainer.innerHTML = btns.replace(/TEAM/g, 'home');
       awayContainer.innerHTML = btns.replace(/TEAM/g, 'away');
@@ -414,7 +428,6 @@
       document.getElementById('panel-sets').classList.add('hidden');
       document.getElementById('panel-shotclock-ctrl').classList.add('hidden');
 
-      // ข้อ 1: ฟุตซอลใช้ระบบเหตุการณ์ (ใบเหลือง/แดง/ประตู) เหมือนฟุตบอล
       if (sport === 'football' || sport === 'futsal') document.getElementById('panel-football').classList.remove('hidden');
       if (sport === 'basketball' || sport === 'futsal') document.getElementById('panel-fouls').classList.remove('hidden');
       if (sport === 'volleyball' || sport === 'badminton') document.getElementById('panel-sets').classList.remove('hidden');
@@ -433,7 +446,6 @@
       syncToDatabase();
     };
 
-    // ข้อ 3: ฟังก์ชันปรับเวลาแบบ Manual
     window.setManualTime = () => {
       const min = parseInt(document.getElementById('input-manual-min').value) || 0;
       const sec = parseInt(document.getElementById('input-manual-sec').value) || 0;
@@ -443,7 +455,6 @@
       syncToDatabase();
     };
 
-    // ข้อ 4: รีเซ็ต Shot clock 24 วิ
     window.resetShotClock = (sec) => {
       matchState.shotClockSeconds = sec;
       syncToDatabase();
@@ -495,7 +506,6 @@
     // Timer Count Loop
     setInterval(() => { 
       if (matchState.timerRunning) { 
-        // ข้อ 4: ถ้าเป็นบาสเก็ตบอลให้นับถอยหลัง
         if (matchState.sport === 'basketball') {
           if (matchState.timerSeconds > 0) matchState.timerSeconds--;
           if (matchState.shotClockSeconds > 0) matchState.shotClockSeconds--;
@@ -513,6 +523,12 @@
     document.getElementById('input-away-name').addEventListener('input', e => { matchState.awayName = e.target.value; syncToDatabase(); });
     document.getElementById('input-period').addEventListener('input', e => { matchState.period = e.target.value; syncToDatabase(); });
     document.getElementById('input-marquee').addEventListener('input', e => { matchState.marqueeText = e.target.value || ' '; syncToDatabase(); });
+    
+    // ข้อ 3: Listener สวิตช์ เปิด/ปิด ตัววิ่ง
+    document.getElementById('input-toggle-marquee').addEventListener('change', e => { 
+      matchState.showMarquee = e.target.checked; 
+      syncToDatabase(); 
+    });
 
     function updateControlUI() {
       if(document.activeElement.id !== 'input-comp-name') document.getElementById('input-comp-name').value = matchState.compName || '';
@@ -520,9 +536,8 @@
       if(document.activeElement.id !== 'input-away-name') document.getElementById('input-away-name').value = matchState.awayName;
       if(document.activeElement.id !== 'input-period') document.getElementById('input-period').value = matchState.period;
       if(document.activeElement.id !== 'input-marquee') document.getElementById('input-marquee').value = matchState.marqueeText;
+      document.getElementById('input-toggle-marquee').checked = matchState.showMarquee !== false;
       
-      document.getElementById('ctrl-home-name').innerText = matchState.homeName;
-      document.getElementById('ctrl-away-name').innerText = matchState.awayName;
       document.getElementById('ctrl-home-score').innerText = matchState.homeScore;
       document.getElementById('ctrl-away-score').innerText = matchState.awayScore;
       document.getElementById('btn-timer-toggle').innerText = matchState.timerRunning ? 'PAUSE' : 'START';
@@ -540,7 +555,6 @@
     // --- [Display Rendering] ---
     let eventTimeout = null;
     function renderDisplay(data) {
-      // ข้อ 5: แสดงชื่อการแข่งขันตรงกลางจอ
       document.getElementById('disp-comp-name').innerText = data.compName || 'CHAMPIONSHIP 2026';
       
       document.getElementById('disp-home-name').innerText = data.homeName || 'HOME';
@@ -548,17 +562,30 @@
       document.getElementById('disp-home-score').innerText = data.homeScore || 0;
       document.getElementById('disp-away-score').innerText = data.awayScore || 0;
       
-      // ข้อ 6: เลขบอกเซต / ครึ่งเวลา อยู่เหนือ Score
       document.getElementById('disp-period').innerText = data.period || '1ST HALF';
       
       document.getElementById('disp-marquee').innerText = data.marqueeText || ' ';
 
-      // Timer
-      const m = String(Math.floor((data.timerSeconds || 0) / 60)).padStart(2, '0');
-      const s = String((data.timerSeconds || 0) % 60).padStart(2, '0');
-      document.getElementById('disp-timer').innerText = `${m}:${s}`;
+      // ข้อ 3: เปิด / ปิด แถบตัววิ่งในหน้าจอ LED
+      const marqueeBarEl = document.getElementById('disp-marquee-bar');
+      if (data.showMarquee === false) {
+        marqueeBarEl.classList.add('hidden');
+      } else {
+        marqueeBarEl.classList.remove('hidden');
+      }
 
-      // ข้อ 4: Shot clock 24 วิ ตัวหนังสือขาว พื้นกรอบแดง
+      // ข้อ 4: วอลเลย์บอล / แบดมินตัน ซ่อนนาฬิกาเวลาแข่งขัน
+      const timerEl = document.getElementById('disp-timer');
+      if (data.sport === 'volleyball' || data.sport === 'badminton') {
+        timerEl.classList.add('hidden');
+      } else {
+        timerEl.classList.remove('hidden');
+        const m = String(Math.floor((data.timerSeconds || 0) / 60)).padStart(2, '0');
+        const s = String((data.timerSeconds || 0) % 60).padStart(2, '0');
+        timerEl.innerText = `${m}:${s}`;
+      }
+
+      // ข้อ 1: Shot Clock บาสเกตบอล แสดงผลตรงกลางด้านล่างนาฬิกา
       const shotClockEl = document.getElementById('disp-shotclock');
       if (data.sport === 'basketball') {
         shotClockEl.innerText = data.shotClockSeconds !== undefined ? data.shotClockSeconds : 24;
@@ -582,7 +609,7 @@
         document.getElementById('disp-away-fouls').innerText = data.awayFouls || 0;
       }
 
-      // ข้อ 2: คะแนนเซ็ตที่ผ่านมา แสดงรูปแบบตารางสี่เหลี่ยม ใหญ่ เห็นชัดเจน
+      // ข้อ 4: คะแนนเซ็ตที่ผ่านมา ปรับปรุงให้มีขนาดใหญ่ ตัวหนังสือเห็นชัดเจนเป็นพิเศษ
       const isSetSport = data.sport === 'volleyball' || data.sport === 'badminton';
       const setsContainer = document.getElementById('disp-set-scores-container');
       const setsContent = document.getElementById('disp-set-scores');
@@ -593,8 +620,8 @@
         data.setScoresHome.forEach((scoreH, idx) => {
           const scoreA = data.setScoresAway[idx];
           const card = document.createElement('div');
-          card.className = 'bg-slate-950 p-2 rounded-xl border border-slate-700 font-bold';
-          card.innerHTML = `<div class="text-[10px] text-slate-400">SET ${idx+1}</div><div class="text-xl text-amber-400">${scoreH} - ${scoreA}</div>`;
+          card.className = 'bg-slate-950 px-5 py-2.5 rounded-2xl border-2 border-amber-400 font-extrabold flex flex-col justify-center items-center shadow-lg min-w-[100px]';
+          card.innerHTML = `<div class="text-xs text-slate-400 uppercase font-black mb-0.5">SET ${idx+1}</div><div class="text-4xl text-amber-400 font-black tracking-wider">${scoreH} - ${scoreA}</div>`;
           setsContent.appendChild(card);
         });
       } else {

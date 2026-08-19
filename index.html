@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stadium Scoreboard System</title>
+  <link rel="manifest" href="manifest.json">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Prompt:wght@400;600;800&display=swap');
+    .font-digital { font-family: 'Orbitron', monospace; }
+    .font-prompt { font-family: 'Prompt', sans-serif; }
+    .led-border { border: 4px solid #1e293b; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
+    .led-glow-red { text-shadow: 0 0 15px #ef4444; }
+    .led-glow-yellow { text-shadow: 0 0 15px #eab308; }
+    .led-glow-green { text-shadow: 0 0 15px #22c55e; }
+  </style>
+</head>
+<body class="bg-slate-950 text-white font-prompt min-h-screen">
+
+  <div id="app" class="p-4">
+    <!-- View: Login -->
+    <div id="view-login" class="max-w-md mx-auto mt-20 bg-slate-900 p-6 rounded-xl border border-slate-800 shadow-2xl">
+      <h2 class="text-2xl font-bold mb-6 text-center text-amber-500">เข้าสู่ระบบ Scoreboard</h2>
+      <form id="login-form" class="space-y-4">
+        <div>
+          <label class="block text-sm mb-1">Email</label>
+          <input type="email" id="login-email" class="w-full p-2.5 rounded bg-slate-800 border border-slate-700 focus:outline-none focus:border-amber-500" required>
+        </div>
+        <div>
+          <label class="block text-sm mb-1">Password</label>
+          <input type="password" id="login-password" class="w-full p-2.5 rounded bg-slate-800 border border-slate-700 focus:outline-none focus:border-amber-500" required>
+        </div>
+        <button type="submit" class="w-full py-3 bg-amber-500 hover:bg-amber-600 font-bold rounded text-slate-950 transition">LOGIN</button>
+      </form>
+    </div>
+
+    <!-- View: Select Sport & Control Hub -->
+    <div id="view-control" class="hidden max-w-6xl mx-auto space-y-6">
+      <div class="flex justify-between items-center bg-slate-900 p-4 rounded-xl border border-slate-800">
+        <div>
+          <h1 class="text-xl font-bold text-amber-500">Stadium Scoreboard Controller</h1>
+          <p id="user-info" class="text-xs text-slate-400"></p>
+        </div>
+        <div class="space-x-2">
+          <button id="btn-extend-display" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 rounded font-semibold text-sm transition">🖥️ ส่งภาพไปจอ LED (Extend)</button>
+          <button id="btn-logout" class="px-4 py-2 bg-rose-600 hover:bg-rose-500 rounded font-semibold text-sm transition">ออกจากระบบ</button>
+        </div>
+      </div>
+
+      <!-- Admin Panel for Permissions -->
+      <div id="admin-panel" class="hidden bg-slate-900 p-4 rounded-xl border border-amber-500/30">
+        <h3 class="font-bold text-amber-400 mb-2">⚡ ระบบจัดการผู้ใช้งาน (Admin Only)</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+          <input type="text" id="admin-target-uid" placeholder="User UID" class="p-2 rounded bg-slate-800 border border-slate-700">
+          <select id="admin-sport-select" class="p-2 rounded bg-slate-800 border border-slate-700" multiple>
+            <option value="football">ฟุตบอล (Football)</option>
+            <option value="basketball">บาสเกตบอล (Basketball)</option>
+            <option value="volleyball">วอลเลย์บอล (Volleyball)</option>
+            <option value="futsal">ฟุตซอล (Futsal)</option>
+            <option value="badminton">แบดมินตัน (Badminton)</option>
+          </select>
+          <button id="btn-grant-permission" class="bg-amber-500 text-slate-950 font-bold rounded p-2">บันทึกสิทธิ์ผู้ใช้</button>
+        </div>
+      </div>
+
+      <!-- Sports Selection -->
+      <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+        <label class="block font-semibold mb-2 text-slate-300">เลือกประเภทกีฬา:</label>
+        <div id="sports-selector" class="flex flex-wrap gap-2"></div>
+      </div>
+
+      <!-- Match Info & File Settings -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-900 p-4 rounded-xl border border-slate-800">
+        <div class="space-y-3">
+          <h3 class="font-bold text-amber-400 border-b border-slate-800 pb-1">ตั้งค่าทีม Home</h3>
+          <input type="text" id="input-home-name" placeholder="ชื่อทีม Home" class="w-full p-2 rounded bg-slate-800 border border-slate-700">
+          <label class="block text-xs text-slate-400">โลโก้ทีม (จากเครื่อง Local):</label>
+          <input type="file" id="input-home-logo" accept="image/*" class="w-full text-xs text-slate-400 bg-slate-800 p-1.5 rounded">
+        </div>
+        <div class="space-y-3">
+          <h3 class="font-bold text-amber-400 border-b border-slate-800 pb-1">ตั้งค่าทีม Away</h3>
+          <input type="text" id="input-away-name" placeholder="ชื่อทีม Away" class="w-full p-2 rounded bg-slate-800 border border-slate-700">
+          <label class="block text-xs text-slate-400">โลโก้ทีม (จากเครื่อง Local):</label>
+          <input type="file" id="input-away-logo" accept="image/*" class="w-full text-xs text-slate-400 bg-slate-800 p-1.5 rounded">
+        </div>
+      </div>
+
+      <!-- Match Controller Interface -->
+      <div class="bg-slate-900 p-6 rounded-xl border border-slate-800 grid grid-cols-3 gap-6 text-center">
+        <!-- Home Score Control -->
+        <div class="space-y-4">
+          <div id="ctrl-home-name" class="text-2xl font-bold">HOME</div>
+          <div id="ctrl-home-score" class="text-6xl font-digital text-emerald-400 bg-slate-950 py-4 rounded border border-slate-800">0</div>
+          <div class="flex justify-center gap-2">
+            <button onclick="changeScore('home', 1)" class="px-4 py-2 bg-emerald-600 font-bold rounded">+1</button>
+            <button onclick="changeScore('home', 2)" class="px-4 py-2 bg-emerald-600 font-bold rounded">+2</button>
+            <button onclick="changeScore('home', 3)" class="px-4 py-2 bg-emerald-600 font-bold rounded">+3</button>
+            <button onclick="changeScore('home', -1)" class="px-4 py-2 bg-rose-600 font-bold rounded">-1</button>
+          </div>
+        </div>
+
+        <!-- Timer & Match Status -->
+        <div class="space-y-4">
+          <div id="ctrl-timer" class="text-5xl font-digital text-amber-400 bg-slate-950 py-4 rounded border border-slate-800">00:00</div>
+          <div class="flex justify-center gap-2">
+            <button id="btn-timer-toggle" class="px-6 py-2 bg-amber-500 text-slate-950 font-bold rounded">START</button>
+            <button id="btn-timer-reset" class="px-4 py-2 bg-slate-700 font-bold rounded">RESET</button>
+          </div>
+          <input type="text" id="input-period" placeholder="ครึ่งเวลา / ควอเตอร์ / เซต" class="w-full p-2 text-center rounded bg-slate-800 border border-slate-700">
+        </div>
+
+        <!-- Away Score Control -->
+        <div class="space-y-4">
+          <div id="ctrl-away-name" class="text-2xl font-bold">AWAY</div>
+          <div id="ctrl-away-score" class="text-6xl font-digital text-emerald-400 bg-slate-950 py-4 rounded border border-slate-800">0</div>
+          <div class="flex justify-center gap-2">
+            <button onclick="changeScore('away', 1)" class="px-4 py-2 bg-emerald-600 font-bold rounded">+1</button>
+            <button onclick="changeScore('away', 2)" class="px-4 py-2 bg-emerald-600 font-bold rounded">+2</button>
+            <button onclick="changeScore('away', 3)" class="px-4 py-2 bg-emerald-600 font-bold rounded">+3</button>
+            <button onclick="changeScore('away', -1)" class="px-4 py-2 bg-rose-600 font-bold rounded">-1</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- View: 16:9 Display Window (For LED Screen) -->
+    <div id="view-display" class="hidden fixed inset-0 bg-black w-screen h-screen flex flex-col justify-between p-6 select-none overflow-hidden" style="aspect-ratio: 16/9;">
+      <!-- Top Bar: Competition Logo & Title -->
+      <div class="h-[15%] flex justify-between items-center border-b-4 border-slate-800 pb-2">
+        <div class="flex items-center space-x-4">
+          <img id="disp-match-logo" src="" class="h-16 w-16 object-contain hidden">
+          <span id="disp-sport-title" class="text-2xl font-bold uppercase tracking-widest text-slate-400">STADIUM DISPLAY</span>
+        </div>
+        <div id="disp-period" class="text-3xl font-bold bg-amber-500 text-slate-950 px-6 py-1 rounded">1ST HALF</div>
+      </div>
+
+      <!-- Main Scoreboard Area -->
+      <div class="h-[70%] grid grid-cols-12 items-center gap-4">
+        <!-- Home -->
+        <div class="col-span-5 flex items-center justify-between bg-slate-900/80 p-6 rounded-2xl led-border h-full">
+          <div class="flex items-center space-x-4">
+            <img id="disp-home-logo" src="" class="w-28 h-28 object-contain rounded">
+            <span id="disp-home-name" class="text-4xl font-extrabold tracking-wider truncate max-w-[200px]">HOME</span>
+          </div>
+          <span id="disp-home-score" class="text-8xl font-digital font-black text-emerald-400 led-glow-green">0</span>
+        </div>
+
+        <!-- Timer / Center Status -->
+        <div class="col-span-2 flex flex-col items-center justify-center h-full">
+          <div id="disp-timer" class="text-6xl font-digital font-black text-amber-400 led-glow-yellow bg-slate-950 w-full text-center py-6 rounded-xl border-2 border-slate-800">
+            00:00
+          </div>
+        </div>
+
+        <!-- Away -->
+        <div class="col-span-5 flex items-center justify-between bg-slate-900/80 p-6 rounded-2xl led-border h-full">
+          <span id="disp-away-score" class="text-8xl font-digital font-black text-emerald-400 led-glow-green">0</span>
+          <div class="flex items-center space-x-4 text-right">
+            <span id="disp-away-name" class="text-4xl font-extrabold tracking-wider truncate max-w-[200px]">AWAY</span>
+            <img id="disp-away-logo" src="" class="w-28 h-28 object-contain rounded">
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Bar / Extra Info -->
+      <div class="h-[10%] bg-slate-900/50 rounded-lg flex items-center justify-around text-slate-400 text-xl font-semibold">
+        <div>LIVE STADIUM TRANSMISSION</div>
+        <div id="disp-sub-info">MATCH DAY</div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getDatabase, ref, set, onValue, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDMptdLpLEdbeVFKZj82M0gyoV2m_2y5Pk",
+      authDomain: "suchartstudio-9a78d.firebaseapp.com",
+      databaseURL: "https://suchartstudio-9a78d-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "suchartstudio-9a78d",
+      storageBucket: "suchartstudio-9a78d.firebasestorage.app",
+      messagingSenderId: "953369646185",
+      appId: "1:953369646185:web:8e1dce40dd448f3d6ebef8",
+      measurementId: "G-P8J0LYXW9C"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+
+    let currentUser = null;
+    let currentMatchRef = null;
+    let matchState = {
+      sport: 'football',
+      homeName: 'HOME',
+      awayName: 'AWAY',
+      homeScore: 0,
+      awayScore: 0,
+      timerSeconds: 0,
+      timerRunning: false,
+      period: '1ST HALF',
+      homeLogo: '',
+      awayLogo: ''
+    };
+
+    // Mode Detection (Control or Extended Display Display)
+    const urlParams = new URLSearchParams(window.location.search);
+    const isDisplayMode = urlParams.get('mode') === 'display';
+    const targetUid = urlParams.get('uid');
+
+    if (isDisplayMode && targetUid) {
+      document.getElementById('view-login').classList.add('hidden');
+      document.getElementById('view-control').classList.add('hidden');
+      document.getElementById('view-display').classList.remove('hidden');
+      
+      // Bind Realtime DB for Display
+      onValue(ref(db, `scoreboards/${targetUid}`), (snapshot) => {
+        const data = snapshot.val();
+        if (data) renderDisplay(data);
+      });
+    }
+
+    // Authentication Logic
+    onAuthStateChanged(auth, (user) => {
+      if (isDisplayMode) return;
+      if (user) {
+        currentUser = user;
+        document.getElementById('view-login').classList.add('hidden');
+        document.getElementById('view-control').classList.remove('hidden');
+        document.getElementById('user-info').innerText = `Logged in: ${user.email} (${user.uid})`;
+        
+        currentMatchRef = ref(db, `scoreboards/${user.uid}`);
+        
+        // Fetch User Permissions
+        onValue(ref(db, `users/${user.uid}`), (snapshot) => {
+          const userData = snapshot.val() || {};
+          setupSportsSelector(userData.allowedSports || ['football']);
+          if(userData.isAdmin) document.getElementById('admin-panel').classList.remove('hidden');
+        });
+
+        // Sync Match Data
+        onValue(currentMatchRef, (snapshot) => {
+          const data = snapshot.val();
+          if (data) {
+            matchState = { ...matchState, ...data };
+            updateControlUI();
+          }
+        });
+      } else {
+        document.getElementById('view-login').classList.remove('hidden');
+        document.getElementById('view-control').classList.add('hidden');
+      }
+    });
+
+    // Login Form
+    document.getElementById('login-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value;
+      const pass = document.getElementById('login-password').value;
+      signInWithEmailAndPassword(auth, email, pass).catch(err => alert(err.message));
+    });
+
+    document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
+
+    // Open Extended Display Window
+    document.getElementById('btn-extend-display').addEventListener('click', () => {
+      if (!currentUser) return;
+      const url = `${window.location.origin}${window.location.pathname}?mode=display&uid=${currentUser.uid}`;
+      window.open(url, 'ScoreboardWindow', 'width=1280,height=720');
+    });
+
+    // Handle Local Image Links (Base64 Object URLs without uploading to Firebase)
+    const handleLocalImage = (elementId, stateKey) => {
+      document.getElementById(elementId).addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            matchState[stateKey] = event.target.result;
+            syncToDatabase();
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    };
+    handleLocalImage('input-home-logo', 'homeLogo');
+    handleLocalImage('input-away-logo', 'awayLogo');
+
+    // Score Control Handlers
+    window.changeScore = (team, delta) => {
+      if (team === 'home') matchState.homeScore = Math.max(0, matchState.homeScore + delta);
+      if (team === 'away') matchState.awayScore = Math.max(0, matchState.awayScore + delta);
+      syncToDatabase();
+    };
+
+    // Timer Logic
+    let timerInterval = null;
+    document.getElementById('btn-timer-toggle').addEventListener('click', () => {
+      matchState.timerRunning = !matchState.timerRunning;
+      syncToDatabase();
+    });
+
+    document.getElementById('btn-timer-reset').addEventListener('click', () => {
+      matchState.timerSeconds = 0;
+      matchState.timerRunning = false;
+      syncToDatabase();
+    });
+
+    setInterval(() => {
+      if (matchState.timerRunning) {
+        matchState.timerSeconds++;
+        updateControlTimerUI();
+        if (currentUser) {
+          update(currentMatchRef, { timerSeconds: matchState.timerSeconds });
+        }
+      }
+    }, 1000);
+
+    // Sync UI Updates
+    function syncToDatabase() {
+      if (currentUser && currentMatchRef) {
+        set(currentMatchRef, matchState);
+      }
+    }
+
+    function updateControlUI() {
+      document.getElementById('ctrl-home-name').innerText = matchState.homeName;
+      document.getElementById('ctrl-away-name').innerText = matchState.awayName;
+      document.getElementById('ctrl-home-score').innerText = matchState.homeScore;
+      document.getElementById('ctrl-away-score').innerText = matchState.awayScore;
+      document.getElementById('btn-timer-toggle').innerText = matchState.timerRunning ? 'PAUSE' : 'START';
+      updateControlTimerUI();
+    }
+
+    function updateControlTimerUI() {
+      const mins = String(Math.floor(matchState.timerSeconds / 60)).padStart(2, '0');
+      const secs = String(matchState.timerSeconds % 60).padStart(2, '0');
+      document.getElementById('ctrl-timer').innerText = `${mins}:${secs}`;
+    }
+
+    function renderDisplay(data) {
+      document.getElementById('disp-home-name').innerText = data.homeName || 'HOME';
+      document.getElementById('disp-away-name').innerText = data.awayName || 'AWAY';
+      document.getElementById('disp-home-score').innerText = data.homeScore || 0;
+      document.getElementById('disp-away-score').innerText = data.awayScore || 0;
+      document.getElementById('disp-sport-title').innerText = (data.sport || 'SPORT').toUpperCase();
+      document.getElementById('disp-period').innerText = data.period || '1ST HALF';
+
+      const mins = String(Math.floor((data.timerSeconds || 0) / 60)).padStart(2, '0');
+      const secs = String((data.timerSeconds || 0) % 60).padStart(2, '0');
+      document.getElementById('disp-timer').innerText = `${mins}:${secs}`;
+
+      if (data.homeLogo) {
+        const hLogo = document.getElementById('disp-home-logo');
+        hLogo.src = data.homeLogo;
+        hLogo.classList.remove('hidden');
+      }
+      if (data.awayLogo) {
+        const aLogo = document.getElementById('disp-away-logo');
+        aLogo.src = data.awayLogo;
+        aLogo.classList.remove('hidden');
+      }
+    }
+
+    function setupSportsSelector(sports) {
+      const container = document.getElementById('sports-selector');
+      container.innerHTML = '';
+      sports.forEach(sport => {
+        const btn = document.createElement('button');
+        btn.className = `px-4 py-2 rounded font-bold capitalize ${matchState.sport === sport ? 'bg-amber-500 text-slate-950' : 'bg-slate-800 text-slate-300'}`;
+        btn.innerText = sport;
+        btn.onclick = () => {
+          matchState.sport = sport;
+          syncToDatabase();
+          setupSportsSelector(sports);
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    // Name Inputs Listeners
+    document.getElementById('input-home-name').addEventListener('input', (e) => {
+      matchState.homeName = e.target.value || 'HOME';
+      syncToDatabase();
+    });
+    document.getElementById('input-away-name').addEventListener('input', (e) => {
+      matchState.awayName = e.target.value || 'AWAY';
+      syncToDatabase();
+    });
+    document.getElementById('input-period').addEventListener('input', (e) => {
+      matchState.period = e.target.value || '1ST HALF';
+      syncToDatabase();
+    });
+  </script>
+</body>
+</html>

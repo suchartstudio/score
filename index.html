@@ -408,15 +408,18 @@
     const auth = getAuth(app);
     const db = getDatabase(app);
 
-    let currentUser = null;
-    let currentMatchRef = null;
-    let matchState = {
-      sport: 'football', compName: 'CHAMPIONSHIP 2026', homeName: 'HOME', awayName: 'AWAY', 
+    // Default State สำหรับรีเซ็ต
+    const defaultMatchState = {
+      sport: '', compName: 'CHAMPIONSHIP 2026', homeName: 'HOME', awayName: 'AWAY', 
       homeScore: 0, awayScore: 0, timerSeconds: 0, timerRunning: false, shotClockSeconds: 24,
       period: '1ST HALF', homeLogo: '', awayLogo: '',
       homeFouls: 0, awayFouls: 0, setScoresHome: [], setScoresAway: [],
-      showMarquee: true, marqueeText: 'ยินดีต้อนรับสู่การแข่งขัน', matchEvent: { text: '', timestamp: 0 }
+      showMarquee: true, marqueeText: 'ยินดีต้อนรับสู่การแข่งขันนัดสำคัญประจำวันนี้', matchEvent: { text: '', timestamp: 0 }
     };
+
+    let currentUser = null;
+    let currentMatchRef = null;
+    let matchState = JSON.parse(JSON.stringify(defaultMatchState));
 
     const sportPeriods = {
       football: ['1ST HALF', '2ND HALF', 'EXTRA 1', 'EXTRA 2', 'PENALTY'],
@@ -430,11 +433,13 @@
     const isDisplayMode = urlParams.get('mode') === 'display';
     const targetUid = urlParams.get('uid');
     let lastEventTimestamp = 0;
+    let eventTimeout;
 
     if (isDisplayMode && targetUid) {
       document.getElementById('view-login').classList.add('hidden');
       document.getElementById('main-nav').classList.add('hidden');
       document.getElementById('view-display').classList.remove('hidden');
+      // หน้าจออ่านข้อมูลจาก UID ของคนที่เปิด
       onValue(ref(db, `scoreboards/${targetUid}`), (snapshot) => {
         if (snapshot.val()) renderDisplay(snapshot.val());
       });
@@ -449,7 +454,6 @@
       signInWithEmailAndPassword(auth, inputUser, pass).catch(err => alert("Error: " + err.message));
     });
 
-    // --- Create User with DB record ---
     const createUserForm = document.getElementById('create-user-form');
     if(createUserForm) {
       createUserForm.addEventListener('submit', (e) => {
@@ -477,11 +481,14 @@
       });
     }
 
-    // --- Auth Change Handler ---
+    // --- ส่วนควบคุม Auth และจัดการ State ---
     onAuthStateChanged(auth, (user) => {
       if (isDisplayMode) return;
       if (user) {
         currentUser = user;
+        // รีเซ็ตค่าเป็นหน้าว่างๆ ก่อนเสมอเพื่อกันข้อมูลข้ามบัญชี
+        matchState = JSON.parse(JSON.stringify(defaultMatchState)); 
+        
         document.getElementById('view-login').classList.add('hidden');
         document.getElementById('main-nav').classList.remove('hidden');
         
@@ -491,12 +498,9 @@
         const adminBtn = document.getElementById('nav-btn-admin');
         if (user.email === 'suchart@suchartstudio.com') {
           adminBtn.classList.remove('hidden');
-          
-          // ดึงรายชื่อ User จาก Database
           onValue(ref(db, 'users'), (snapshot) => {
             const tbody = document.getElementById('users-table-body');
             tbody.innerHTML = '';
-            
             if (snapshot.exists()) {
               snapshot.forEach((childSnapshot) => {
                 const uid = childSnapshot.key;
@@ -523,56 +527,71 @@
               tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-500">ไม่มีข้อมูลผู้ใช้งานในระบบ</td></tr>';
             }
           });
-
         } else {
           adminBtn.classList.add('hidden');
         }
 
-        currentMatchRef = ref(db, `scoreboards/${user.uid}`);
-        onValue(currentMatchRef, (snapshot) => {
-          if (snapshot.val()) { matchState = { ...matchState, ...snapshot.val() }; updateControlUI(); }
+        // ดึงข้อมูลสิทธิ์และ Scoreboard เฉพาะบัญชีของผู้ใช้ปัจจุบัน
+        onValue(ref(db, `users/${user.uid}`), (snapshot) => {
+          const userData = snapshot.val();
+          let allowedSports = [];
+          if (user.email === 'suchart@suchartstudio.com') {
+            allowedSports = ['football', 'basketball', 'volleyball', 'futsal', 'badminton'];
+          } else if (userData && userData.sports) {
+            allowedSports = userData.sports;
+          } else {
+            allowedSports = ['football'];
+          }
+
+          setupSportsSelector(allowedSports);
+
+          currentMatchRef = ref(db, `scoreboards/${user.uid}`);
+          onValue(currentMatchRef, (matchSnap) => {
+            if (matchSnap.exists()) {
+              matchState = { ...defaultMatchState, ...matchSnap.val() };
+              // ถ้ากีฬาในฐานข้อมูลไม่ใช่สิทธิ์ที่อนุญาต ให้บังคับใช้สิทธิ์แรกที่มี
+              if (!allowedSports.includes(matchState.sport) && allowedSports.length > 0) {
+                matchState.sport = allowedSports[0];
+                syncToDatabase();
+              }
+            } else {
+              // เพิ่งใช้งานครั้งแรก สร้างข้อมูล Default
+              if (allowedSports.length > 0) matchState.sport = allowedSports[0];
+              syncToDatabase();
+            }
+            updateControlUI();
+            renderScoreButtons(matchState.sport);
+          });
         });
 
-        setupSportsSelector(['football', 'basketball', 'volleyball', 'futsal', 'badminton']);
         switchView('control');
       } else {
+        currentUser = null;
+        matchState = JSON.parse(JSON.stringify(defaultMatchState)); // เคลียร์ State ตอนล็อกเอาท์
         document.getElementById('view-login').classList.remove('hidden');
         document.getElementById('main-nav').classList.add('hidden');
         document.getElementById('view-control').classList.add('hidden');
       }
     });
 
-    // --- User Edit & Delete Functions ---
     window.openEditModal = (uid, username, sportsList) => {
       document.getElementById('edit-user-uid').value = uid;
       document.getElementById('edit-user-username').value = username;
-      
       const checkboxes = document.querySelectorAll('.edit-sport-checkbox');
-      checkboxes.forEach(cb => {
-        cb.checked = Array.isArray(sportsList) && sportsList.includes(cb.value);
-      });
-      
+      checkboxes.forEach(cb => { cb.checked = Array.isArray(sportsList) && sportsList.includes(cb.value); });
       document.getElementById('modal-edit-user').classList.remove('hidden');
     };
 
-    document.getElementById('btn-close-edit-modal').addEventListener('click', () => {
-      document.getElementById('modal-edit-user').classList.add('hidden');
-    });
+    document.getElementById('btn-close-edit-modal').addEventListener('click', () => document.getElementById('modal-edit-user').classList.add('hidden'));
 
     document.getElementById('btn-save-edit-user').addEventListener('click', () => {
       const uid = document.getElementById('edit-user-uid').value;
       const newUsername = document.getElementById('edit-user-username').value.trim();
       const selectedSports = Array.from(document.querySelectorAll('.edit-sport-checkbox:checked')).map(cb => cb.value);
-
       if (!newUsername) return alert('กรุณากรอก Username');
-
-      update(ref(db, `users/${uid}`), {
-        username: newUsername,
-        sports: selectedSports
-      }).then(() => {
-        alert('อัปเดตข้อมูลผู้ใช้งานเรียบร้อยแล้ว');
-        document.getElementById('modal-edit-user').classList.add('hidden');
-      }).catch(err => alert('เกิดข้อผิดพลาด: ' + err.message));
+      update(ref(db, `users/${uid}`), { username: newUsername, sports: selectedSports })
+        .then(() => { alert('อัปเดตข้อมูลผู้ใช้งานเรียบร้อยแล้ว'); document.getElementById('modal-edit-user').classList.add('hidden'); })
+        .catch(err => alert('เกิดข้อผิดพลาด: ' + err.message));
     });
 
     window.deleteUser = (uid, username) => {
@@ -592,8 +611,12 @@
     document.getElementById('nav-btn-control').addEventListener('click', () => switchView('control'));
     document.getElementById('nav-btn-admin').addEventListener('click', () => switchView('admin'));
     document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
+    
+    // เปิดจอ LED แบบผูกกับ UID
     document.getElementById('btn-extend-display').addEventListener('click', () => {
-      if (currentUser) window.open(`${window.location.origin}${window.location.pathname}?mode=display&uid=${currentUser.uid}`, 'Scoreboard', 'width=1280,height=720');
+      if (currentUser) {
+        window.open(`${window.location.origin}${window.location.pathname}?mode=display&uid=${currentUser.uid}`, 'Scoreboard', 'width=1280,height=720');
+      }
     });
 
     function syncToDatabase() { if (currentUser && currentMatchRef) set(currentMatchRef, matchState); }
@@ -608,16 +631,13 @@
         btn.onclick = () => { 
           matchState.sport = sport; 
           const periods = sportPeriods[sport] || [];
-          if (!periods.includes(matchState.period) && periods.length > 0) {
-            matchState.period = periods[0];
-          }
+          if (!periods.includes(matchState.period) && periods.length > 0) matchState.period = periods[0];
           renderScoreButtons(sport); 
           syncToDatabase(); 
           setupSportsSelector(sports); 
         };
         container.appendChild(btn);
       });
-      renderScoreButtons(matchState.sport);
     }
 
     function renderPeriodButtons(sport) {
@@ -625,17 +645,12 @@
       if (!container) return;
       container.innerHTML = '';
       const periods = sportPeriods[sport] || [];
-      
       periods.forEach(p => {
         const btn = document.createElement('button');
         const isActive = matchState.period === p;
         btn.className = `px-3.5 py-1.5 text-sm font-bold rounded transition-colors ${isActive ? 'bg-amber-500 text-slate-950 shadow' : 'bg-slate-700 text-slate-200 hover:bg-slate-600'}`;
         btn.innerText = p;
-        btn.onclick = () => {
-          matchState.period = p;
-          syncToDatabase();
-          renderPeriodButtons(sport);
-        };
+        btn.onclick = () => { matchState.period = p; syncToDatabase(); renderPeriodButtons(sport); };
         container.appendChild(btn);
       });
     }
@@ -689,10 +704,7 @@
       syncToDatabase();
     };
 
-    window.resetShotClock = (sec) => {
-      matchState.shotClockSeconds = sec;
-      syncToDatabase();
-    };
+    window.resetShotClock = (sec) => { matchState.shotClockSeconds = sec; syncToDatabase(); };
 
     window.endSet = () => {
       if(!matchState.setScoresHome) matchState.setScoresHome = [];
@@ -721,10 +733,7 @@
       const pOut = document.getElementById('sub-out').value;
       if(!pIn && !pOut) return;
       const teamName = team === 'home' ? matchState.homeName : matchState.awayName;
-      const subTxt = dict[currentLang].txtSubEvent;
-      const inTxt = dict[currentLang].txtSubIn;
-      const outTxt = dict[currentLang].txtSubOut;
-      triggerEventDisplay(`${subTxt} (${teamName}) | ${inTxt} ${pIn || '-'} | ${outTxt} ${pOut || '-'}`, team);
+      triggerEventDisplay(`${dict[currentLang].txtSubEvent} (${teamName}) | ${dict[currentLang].txtSubIn} ${pIn || '-'} | ${dict[currentLang].txtSubOut} ${pOut || '-'}`, team);
       document.getElementById('sub-in').value = ''; document.getElementById('sub-out').value = '';
     };
 
@@ -750,7 +759,7 @@
           matchState.timerSeconds++;
         }
         updateControlTimerUI(); 
-        if (currentUser) update(currentMatchRef, { timerSeconds: matchState.timerSeconds, shotClockSeconds: matchState.shotClockSeconds }); 
+        if (currentUser && currentMatchRef) update(currentMatchRef, { timerSeconds: matchState.timerSeconds, shotClockSeconds: matchState.shotClockSeconds }); 
       } 
     }, 1000);
 

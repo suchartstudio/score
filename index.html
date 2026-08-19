@@ -27,11 +27,11 @@
     <!-- View: Login -->
     <div id="view-login" class="max-w-md mx-auto mt-20 bg-slate-900 p-6 rounded-xl border border-slate-800 shadow-2xl">
       <h2 class="text-2xl font-bold mb-2 text-center text-amber-500">Scoreboard System</h2>
-      <p class="text-xs text-slate-400 text-center mb-6">เข้าสู่ระบบควบคุมสกอร์บอร์ด / ผู้ดูแลระบบ</p>
+      <p class="text-xs text-slate-400 text-center mb-6" data-i18n="subtitleLogin">เข้าสู่ระบบควบคุมสกอร์บอร์ด / ผู้ดูแลระบบ</p>
       <form id="login-form" class="space-y-4">
         <div>
           <label class="block text-sm mb-1">Username</label>
-          <input type="text" id="login-username" placeholder="ชื่อผู้ใช้งาน (ไม่ต้องใส่ @)" class="w-full p-2.5 rounded bg-slate-800 border border-slate-700" required>
+          <input type="text" id="login-username" data-i18n-placeholder="userPlaceholder" placeholder="ชื่อผู้ใช้งาน (ไม่ต้องใส่ @)" class="w-full p-2.5 rounded bg-slate-800 border border-slate-700" required>
         </div>
         <div>
           <label class="block text-sm mb-1">Password</label>
@@ -46,40 +46,41 @@
       <div class="flex items-center gap-3">
         <h1 class="text-lg font-bold text-amber-500">Stadium Scoreboard</h1>
         <span id="user-info" class="text-xs text-slate-400"></span>
+        <button id="btn-lang-toggle" class="ml-2 px-2 py-1 bg-slate-700 hover:bg-slate-600 rounded text-xs font-bold transition-colors">🌐 TH</button>
       </div>
       <div class="flex items-center gap-2">
-        <button id="nav-btn-control" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 rounded text-xs font-semibold">🎮 หน้าควบคุม</button>
-        <button id="nav-btn-admin" class="hidden px-3 py-1 bg-amber-500 text-slate-950 hover:bg-amber-400 rounded text-xs font-bold">⚡ จัดการ User</button>
-        <button id="btn-extend-display" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 rounded font-semibold text-xs">🖥️ เปิดจอ LED</button>
-        <button id="btn-logout" class="px-3 py-1 bg-rose-600 hover:bg-rose-500 rounded font-semibold text-xs">ออกจากระบบ</button>
+        <button id="nav-btn-control" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 rounded text-xs font-semibold" data-i18n="navControl">🎮 หน้าควบคุม</button>
+        <button id="nav-btn-admin" class="hidden px-3 py-1 bg-amber-500 text-slate-950 hover:bg-amber-400 rounded text-xs font-bold" data-i18n="navAdmin">⚡ จัดการ User</button>
+        <button id="btn-extend-display" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 rounded font-semibold text-xs" data-i18n="navLed">🖥️ เปิดจอ LED</button>
+        <button id="btn-logout" class="px-3 py-1 bg-rose-600 hover:bg-rose-500 rounded font-semibold text-xs" data-i18n="navLogout">ออกจากระบบ</button>
       </div>
     </div>
 
     <!-- View: Admin -->
     <div id="view-admin" class="hidden max-w-6xl mx-auto space-y-4">
       <div class="bg-slate-900 p-4 rounded-xl border border-amber-500/30">
-        <h3 class="text-sm font-bold text-amber-400 mb-3">➕ เพิ่มผู้ใช้งานใหม่</h3>
+        <h3 class="text-sm font-bold text-amber-400 mb-3" data-i18n="adminAddUser">➕ เพิ่มผู้ใช้งานใหม่</h3>
         <form id="create-user-form" class="grid grid-cols-1 md:grid-cols-3 gap-3">
           <div>
             <label class="block text-xs mb-1 text-slate-400">Username</label>
-            <input type="text" id="new-user-username" placeholder="ชื่อผู้ใช้งาน (ไม่ต้องใส่ @)" class="w-full p-1.5 rounded bg-slate-800 text-sm" required>
+            <input type="text" id="new-user-username" data-i18n-placeholder="userPlaceholder" placeholder="ชื่อผู้ใช้งาน (ไม่ต้องใส่ @)" class="w-full p-1.5 rounded bg-slate-800 text-sm" required>
           </div>
           <div><label class="block text-xs mb-1 text-slate-400">Password</label><input type="password" id="new-user-password" class="w-full p-1.5 rounded bg-slate-800 text-sm" required></div>
-          <div><label class="block text-xs mb-1 text-slate-400">สิทธิ์กีฬา</label>
+          <div><label class="block text-xs mb-1 text-slate-400" data-i18n="adminSportPerm">สิทธิ์กีฬา</label>
             <div class="flex flex-wrap gap-2 text-xs pt-1">
-              <label><input type="checkbox" value="football" class="sport-checkbox" checked> ฟุตบอล</label>
-              <label><input type="checkbox" value="basketball" class="sport-checkbox" checked> บาส</label>
-              <label><input type="checkbox" value="volleyball" class="sport-checkbox"> วอลเลย์</label>
-              <label><input type="checkbox" value="futsal" class="sport-checkbox"> ฟุตซอล</label>
-              <label><input type="checkbox" value="badminton" class="sport-checkbox"> แบดฯ</label>
+              <label><input type="checkbox" value="football" class="sport-checkbox" checked> <span data-i18n="sportFBall">ฟุตบอล</span></label>
+              <label><input type="checkbox" value="basketball" class="sport-checkbox" checked> <span data-i18n="sportBball">บาส</span></label>
+              <label><input type="checkbox" value="volleyball" class="sport-checkbox"> <span data-i18n="sportVball">วอลเลย์</span></label>
+              <label><input type="checkbox" value="futsal" class="sport-checkbox"> <span data-i18n="sportFutsal">ฟุตซอล</span></label>
+              <label><input type="checkbox" value="badminton" class="sport-checkbox"> <span data-i18n="sportBad">แบดฯ</span></label>
             </div>
           </div>
-          <div class="md:col-span-3"><button type="submit" class="bg-amber-500 text-slate-950 font-bold px-4 py-1.5 rounded text-sm hover:bg-amber-400">สร้างผู้ใช้งาน</button></div>
+          <div class="md:col-span-3"><button type="submit" class="bg-amber-500 text-slate-950 font-bold px-4 py-1.5 rounded text-sm hover:bg-amber-400" data-i18n="btnCreateUser">สร้างผู้ใช้งาน</button></div>
         </form>
       </div>
       <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
         <table class="w-full text-left text-xs text-slate-300">
-          <thead class="bg-slate-800 text-amber-400"><tr><th class="p-2">UID</th><th class="p-2">Username</th><th class="p-2">Role</th><th class="p-2">สิทธิ์</th><th class="p-2">จัดการ</th></tr></thead>
+          <thead class="bg-slate-800 text-amber-400"><tr><th class="p-2">UID</th><th class="p-2">Username</th><th class="p-2">Role</th><th class="p-2" data-i18n="thPerm">สิทธิ์</th><th class="p-2" data-i18n="thManage">จัดการ</th></tr></thead>
           <tbody id="users-table-body" class="divide-y divide-slate-800"></tbody>
         </table>
       </div>
@@ -91,33 +92,33 @@
       <!-- โหมดกีฬา & ชื่อการแข่งขัน & ตัววิ่ง (รวมอยู่ในแถวเดียว) -->
       <div class="grid grid-cols-12 gap-2 bg-slate-900 p-2.5 rounded-xl border border-slate-800 items-center">
         <div class="col-span-3 border-r border-slate-800 pr-2">
-          <label class="block font-bold mb-1 text-slate-300 text-[11px]">เลือกโหมดกีฬา:</label>
+          <label class="block font-bold mb-1 text-slate-300 text-[11px]" data-i18n="lblSelectSport">เลือกโหมดกีฬา:</label>
           <div id="sports-selector" class="flex flex-wrap gap-1.5"></div>
         </div>
         <div class="col-span-3 border-r border-slate-800 px-2">
-          <label class="block font-bold mb-1 text-slate-300 text-[11px]">🏆 ชื่อรายการแข่งขัน:</label>
+          <label class="block font-bold mb-1 text-slate-300 text-[11px]" data-i18n="lblCompName">🏆 ชื่อรายการแข่งขัน:</label>
           <input type="text" id="input-comp-name" placeholder="CHAMPIONSHIP 2026" class="w-full p-2 rounded bg-slate-800 border border-slate-700 font-bold text-amber-400 text-sm">
         </div>
         <div class="col-span-6 pl-2">
           <div class="flex justify-between items-center mb-1">
-            <label class="font-bold text-slate-300 text-[11px]">📢 ข้อความตัววิ่ง (Marquee):</label>
+            <label class="font-bold text-slate-300 text-[11px]" data-i18n="lblMarquee">📢 ข้อความตัววิ่ง (Marquee):</label>
             <label class="flex items-center cursor-pointer text-amber-400 font-bold text-[11px]">
               <input type="checkbox" id="input-toggle-marquee" class="sr-only peer" checked>
               <div class="relative w-8 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
-              <span class="ms-2 text-sm">แสดงตัววิ่ง</span>
+              <span class="ms-2 text-sm" data-i18n="lblShowMarquee">แสดงตัววิ่ง</span>
             </label>
           </div>
-          <input type="text" id="input-marquee" placeholder="ยินดีต้อนรับสู่การแข่งขัน..." class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-sm">
+          <input type="text" id="input-marquee" data-i18n-placeholder="marqueeDefault" placeholder="ยินดีต้อนรับสู่การแข่งขันนัดสำคัญประจำวันนี้" class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-sm">
         </div>
       </div>
 
       <!-- Main Match Controller -->
       <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 grid grid-cols-12 gap-3 text-center items-start">
         
-        <!-- Home Team (เอาเส้นขอบออกตามคำขอ) -->
+        <!-- Home Team -->
         <div class="col-span-4 space-y-3 bg-slate-950/60 p-3 rounded-lg">
           <div class="flex gap-2 items-center">
-            <input type="text" id="input-home-name" placeholder="ชื่อทีมเหย้า" class="w-full p-2 rounded bg-slate-800 font-bold text-amber-400 text-base">
+            <input type="text" id="input-home-name" data-i18n-placeholder="homePlaceholder" placeholder="ชื่อทีมเหย้า" class="w-full p-2 rounded bg-slate-800 font-bold text-amber-400 text-base">
             <input type="file" id="input-home-logo" accept="image/*" class="w-24 text-[10px] text-slate-400">
           </div>
           <div id="ctrl-home-score" class="text-7xl font-black text-emerald-400 bg-slate-950 py-2 rounded leading-none">0</div>
@@ -138,12 +139,12 @@
           <!-- ปรับเวลา Manual & Shot Clock -->
           <div class="grid grid-cols-2 gap-2 text-[11px]">
             <div class="bg-slate-800 p-2 rounded">
-              <span class="text-xs text-slate-400 block font-semibold">⏱️ ตั้งเวลา</span>
+              <span class="text-xs text-slate-400 block font-semibold" data-i18n="lblSetTime">⏱️ ตั้งเวลา</span>
               <div class="flex justify-center gap-1 items-center mt-1">
-                <input type="number" id="input-manual-min" placeholder="น." class="w-10 p-1.5 text-center bg-slate-950 rounded font-bold text-sm">
+                <input type="number" id="input-manual-min" data-i18n-placeholder="placeholderMin" placeholder="น." class="w-10 p-1.5 text-center bg-slate-950 rounded font-bold text-sm">
                 <span class="text-sm">:</span>
-                <input type="number" id="input-manual-sec" placeholder="วิ" class="w-10 p-1.5 text-center bg-slate-950 rounded font-bold text-sm">
-                <button onclick="setManualTime()" class="px-3 py-1.5 bg-amber-500 text-slate-950 font-bold rounded text-xs ml-1">ตั้ง</button>
+                <input type="number" id="input-manual-sec" data-i18n-placeholder="placeholderSec" placeholder="วิ" class="w-10 p-1.5 text-center bg-slate-950 rounded font-bold text-sm">
+                <button onclick="setManualTime()" class="px-3 py-1.5 bg-amber-500 text-slate-950 font-bold rounded text-xs ml-1" data-i18n="btnSet">ตั้ง</button>
               </div>
             </div>
 
@@ -159,15 +160,15 @@
 
           <!-- ปุ่มเลือก Period ตามกีฬาที่เลือก -->
           <div class="bg-slate-800 p-2 rounded mt-2">
-            <span class="text-xs text-slate-400 block font-semibold mb-2">🎯 เลือกช่วงการแข่งขัน</span>
+            <span class="text-xs text-slate-400 block font-semibold mb-2" data-i18n="lblPeriod">🎯 เลือกช่วงการแข่งขัน</span>
             <div id="period-selector-container" class="flex flex-wrap justify-center gap-1.5"></div>
           </div>
         </div>
 
-        <!-- Away Team (เอาเส้นขอบออกตามคำขอ) -->
+        <!-- Away Team -->
         <div class="col-span-4 space-y-3 bg-slate-950/60 p-3 rounded-lg">
           <div class="flex gap-2 items-center">
-            <input type="text" id="input-away-name" placeholder="ชื่อทีมเยือน" class="w-full p-2 rounded bg-slate-800 font-bold text-amber-400 text-base">
+            <input type="text" id="input-away-name" data-i18n-placeholder="awayPlaceholder" placeholder="ชื่อทีมเยือน" class="w-full p-2 rounded bg-slate-800 font-bold text-amber-400 text-base">
             <input type="file" id="input-away-logo" accept="image/*" class="w-24 text-[10px] text-slate-400">
           </div>
           <div id="ctrl-away-score" class="text-7xl font-black text-emerald-400 bg-slate-950 py-2 rounded leading-none">0</div>
@@ -178,26 +179,28 @@
 
       <!-- Dynamic Control Panel (เหตุการณ์เสริม) -->
       <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 mt-2">
-        <h3 class="font-bold text-slate-300 text-sm mb-3">🛠️ แผงควบคุมเสริม (Match Events)</h3>
+        <h3 class="font-bold text-slate-300 text-sm mb-3" data-i18n="lblEvents">🛠️ แผงควบคุมเสริม (Match Events)</h3>
         
         <div class="grid grid-cols-12 gap-3 items-center">
           <!-- ฟุตบอล/ฟุตซอล -->
           <div id="panel-football" class="hidden col-span-12 flex flex-wrap items-center gap-2.5 p-2 bg-slate-800/80 rounded">
             <div><select id="fb-team" class="p-2 rounded bg-slate-950 text-sm"><option value="home">Home</option><option value="away">Away</option></select></div>
-            <div><input type="text" id="fb-player" placeholder="ชื่อ/เบอร์นักเตะ" class="p-2 rounded bg-slate-950 w-36 text-sm"></div>
+            <div><input type="text" id="fb-player" data-i18n-placeholder="playerPlaceholder" placeholder="ชื่อ/เบอร์นักเตะ" class="p-2 rounded bg-slate-950 w-36 text-sm"></div>
             <div>
               <select id="fb-event" class="p-2 rounded bg-slate-950 text-sm">
-                <option value="⚽ Goal">⚽ ทำประตู</option><option value="🟨 Yellow Card">🟨 ใบเหลือง</option><option value="🟥 Red Card">🟥 ใบแดง</option>
+                <option value="⚽ Goal" data-i18n="optGoal">⚽ ทำประตู</option>
+                <option value="🟨 Yellow Card" data-i18n="optYellow">🟨 ใบเหลือง</option>
+                <option value="🟥 Red Card" data-i18n="optRed">🟥 ใบแดง</option>
               </select>
             </div>
-            <button onclick="addMatchEvent()" class="px-4 py-2 bg-emerald-600 font-bold rounded text-sm hover:bg-emerald-500">บันทึกเหตุการณ์</button>
-            <button onclick="clearMatchEvents()" class="px-4 py-2 bg-slate-700 font-bold rounded text-sm hover:bg-slate-600">ล้าง Log</button>
+            <button onclick="addMatchEvent()" class="px-4 py-2 bg-emerald-600 font-bold rounded text-sm hover:bg-emerald-500" data-i18n="btnSaveEvent">บันทึกเหตุการณ์</button>
+            <button onclick="clearMatchEvents()" class="px-4 py-2 bg-slate-700 font-bold rounded text-sm hover:bg-slate-600" data-i18n="btnClearLog">ล้าง Log</button>
           </div>
 
           <!-- ฟาล์ว (บาส/ฟุตซอล) -->
           <div id="panel-fouls" class="hidden col-span-12 grid grid-cols-2 gap-3">
             <div class="p-2.5 bg-slate-800/80 rounded flex justify-between items-center px-4">
-              <span class="text-sm text-slate-400 font-bold">ฟาล์วทีมเหย้า (Home Fouls):</span>
+              <span class="text-sm text-slate-400 font-bold" data-i18n="lblHomeFouls">ฟาล์วทีมเหย้า (Home Fouls):</span>
               <div class="flex items-center gap-3">
                 <button onclick="changeFoul('home', -1)" class="px-4 py-1.5 bg-rose-600 rounded font-black text-xl hover:bg-rose-500">-</button>
                 <span id="ctrl-home-foul" class="text-2xl font-bold text-red-500 min-w-[30px] text-center">0</span>
@@ -205,7 +208,7 @@
               </div>
             </div>
             <div class="p-2.5 bg-slate-800/80 rounded flex justify-between items-center px-4">
-              <span class="text-sm text-slate-400 font-bold">ฟาล์วทีมเยือน (Away Fouls):</span>
+              <span class="text-sm text-slate-400 font-bold" data-i18n="lblAwayFouls">ฟาล์วทีมเยือน (Away Fouls):</span>
               <div class="flex items-center gap-3">
                 <button onclick="changeFoul('away', -1)" class="px-4 py-1.5 bg-rose-600 rounded font-black text-xl hover:bg-rose-500">-</button>
                 <span id="ctrl-away-foul" class="text-2xl font-bold text-red-500 min-w-[30px] text-center">0</span>
@@ -216,17 +219,17 @@
 
           <!-- เซ็ต (วอลเลย์บอล/แบดมินตัน) -->
           <div id="panel-sets" class="hidden col-span-12 flex gap-4 p-2 bg-slate-800/80 rounded justify-center items-center">
-            <button onclick="endSet()" class="px-6 py-2.5 bg-amber-500 text-slate-950 font-bold rounded text-sm hover:bg-amber-400">📌 จบเซ็ต (บันทึกคะแนนเซ็ตนี้)</button>
-            <button onclick="resetSets()" class="px-4 py-2.5 bg-slate-700 font-bold rounded text-sm hover:bg-slate-600">รีเซ็ตเซ็ตทั้งหมด</button>
+            <button onclick="endSet()" class="px-6 py-2.5 bg-amber-500 text-slate-950 font-bold rounded text-sm hover:bg-amber-400" data-i18n="btnEndSet">📌 จบเซ็ต (บันทึกคะแนนเซ็ตนี้)</button>
+            <button onclick="resetSets()" class="px-4 py-2.5 bg-slate-700 font-bold rounded text-sm hover:bg-slate-600" data-i18n="btnResetSets">รีเซ็ตเซ็ตทั้งหมด</button>
           </div>
 
           <!-- เปลี่ยนตัว -->
           <div class="col-span-12 flex flex-wrap items-center gap-3 pt-2 border-t border-slate-800">
-            <span class="text-sm font-bold text-slate-400">ระบบเปลี่ยนตัว:</span>
+            <span class="text-sm font-bold text-slate-400" data-i18n="lblSub">ระบบเปลี่ยนตัว:</span>
             <select id="sub-team" class="p-2 rounded bg-slate-950 text-sm"><option value="home">Home</option><option value="away">Away</option></select>
-            <input type="text" id="sub-in" placeholder="เข้า 🟢" class="p-2 rounded bg-slate-950 w-28 text-sm">
-            <input type="text" id="sub-out" placeholder="ออก 🔴" class="p-2 rounded bg-slate-950 w-28 text-sm">
-            <button onclick="addSubstitute()" class="px-4 py-2 bg-blue-600 font-bold rounded text-sm hover:bg-blue-500">🔄 แจ้งเปลี่ยนตัว</button>
+            <input type="text" id="sub-in" data-i18n-placeholder="subIn" placeholder="เข้า 🟢" class="p-2 rounded bg-slate-950 w-28 text-sm">
+            <input type="text" id="sub-out" data-i18n-placeholder="subOut" placeholder="ออก 🔴" class="p-2 rounded bg-slate-950 w-28 text-sm">
+            <button onclick="addSubstitute()" class="px-4 py-2 bg-blue-600 font-bold rounded text-sm hover:bg-blue-500" data-i18n="btnSub">🔄 แจ้งเปลี่ยนตัว</button>
           </div>
         </div>
 
@@ -316,6 +319,114 @@
     import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getDatabase, ref, set, onValue, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
+    // --- Translation Data (i18n) ---
+    const dict = {
+      th: {
+        subtitleLogin: "เข้าสู่ระบบควบคุมสกอร์บอร์ด / ผู้ดูแลระบบ",
+        userPlaceholder: "ชื่อผู้ใช้งาน (ไม่ต้องใส่ @)",
+        navControl: "🎮 หน้าควบคุม",
+        navAdmin: "⚡ จัดการ User",
+        navLed: "🖥️ เปิดจอ LED",
+        navLogout: "ออกจากระบบ",
+        adminAddUser: "➕ เพิ่มผู้ใช้งานใหม่",
+        adminSportPerm: "สิทธิ์กีฬา",
+        sportFBall: "ฟุตบอล", sportBball: "บาส", sportVball: "วอลเลย์", sportFutsal: "ฟุตซอล", sportBad: "แบดฯ",
+        btnCreateUser: "สร้างผู้ใช้งาน",
+        thPerm: "สิทธิ์", thManage: "จัดการ",
+        lblSelectSport: "เลือกโหมดกีฬา:",
+        lblCompName: "🏆 ชื่อรายการแข่งขัน:",
+        lblMarquee: "📢 ข้อความตัววิ่ง (Marquee):",
+        lblShowMarquee: "แสดงตัววิ่ง",
+        homePlaceholder: "ชื่อทีมเหย้า",
+        awayPlaceholder: "ชื่อทีมเยือน",
+        lblSetTime: "⏱️ ตั้งเวลา",
+        placeholderMin: "น.", placeholderSec: "วิ",
+        btnSet: "ตั้ง",
+        lblPeriod: "🎯 เลือกช่วงการแข่งขัน",
+        lblEvents: "🛠️ แผงควบคุมเสริม (Match Events)",
+        playerPlaceholder: "ชื่อ/เบอร์นักเตะ",
+        optGoal: "⚽ ทำประตู", optYellow: "🟨 ใบเหลือง", optRed: "🟥 ใบแดง",
+        btnSaveEvent: "บันทึกเหตุการณ์", btnClearLog: "ล้าง Log",
+        lblHomeFouls: "ฟาล์วทีมเหย้า (Home Fouls):", lblAwayFouls: "ฟาล์วทีมเยือน (Away Fouls):",
+        btnEndSet: "📌 จบเซ็ต (บันทึกคะแนนเซ็ตนี้)", btnResetSets: "รีเซ็ตเซ็ตทั้งหมด",
+        lblSub: "ระบบเปลี่ยนตัว:", subIn: "เข้า 🟢", subOut: "ออก 🔴", btnSub: "🔄 แจ้งเปลี่ยนตัว",
+        alertCreateSuccess: "สร้างผู้ใช้สำเร็จ!\n(ระบบอาจทำการเปลี่ยนสิทธิ์ Login ไปยังบัญชีที่เพิ่งสร้างใหม่)",
+        alertCreateFail: "ไม่สามารถสร้างผู้ใช้ได้ Error: ",
+        marqueeDefault: "ยินดีต้อนรับสู่การแข่งขันนัดสำคัญประจำวันนี้",
+        txtSubEvent: "🔄 เปลี่ยนตัว", txtSubIn: "เข้า:", txtSubOut: "ออก:"
+      },
+      en: {
+        subtitleLogin: "Scoreboard Control System / Admin Login",
+        userPlaceholder: "Username (No @ needed)",
+        navControl: "🎮 Control Panel",
+        navAdmin: "⚡ Manage Users",
+        navLed: "🖥️ Open LED",
+        navLogout: "Logout",
+        adminAddUser: "➕ Add New User",
+        adminSportPerm: "Sport Permissions",
+        sportFBall: "Football", sportBball: "Basketball", sportVball: "Volleyball", sportFutsal: "Futsal", sportBad: "Badminton",
+        btnCreateUser: "Create User",
+        thPerm: "Permissions", thManage: "Action",
+        lblSelectSport: "Select Sport Mode:",
+        lblCompName: "🏆 Competition Name:",
+        lblMarquee: "📢 Marquee Text:",
+        lblShowMarquee: "Show Marquee",
+        homePlaceholder: "Home Team Name",
+        awayPlaceholder: "Away Team Name",
+        lblSetTime: "⏱️ Set Time",
+        placeholderMin: "Min", placeholderSec: "Sec",
+        btnSet: "Set",
+        lblPeriod: "🎯 Select Match Period",
+        lblEvents: "🛠️ Match Events Panel",
+        playerPlaceholder: "Player Name/No.",
+        optGoal: "⚽ Goal", optYellow: "🟨 Yellow Card", optRed: "🟥 Red Card",
+        btnSaveEvent: "Save Event", btnClearLog: "Clear Log",
+        lblHomeFouls: "Home Fouls:", lblAwayFouls: "Away Fouls:",
+        btnEndSet: "📌 End Set (Save Score)", btnResetSets: "Reset All Sets",
+        lblSub: "Substitution:", subIn: "In 🟢", subOut: "Out 🔴", btnSub: "🔄 Substitute",
+        alertCreateSuccess: "User created successfully!\n(System may switch login to the newly created account)",
+        alertCreateFail: "Failed to create user. Error: ",
+        marqueeDefault: "Welcome to today's match",
+        txtSubEvent: "🔄 Substitution", txtSubIn: "In:", txtSubOut: "Out:"
+      }
+    };
+
+    let currentLang = localStorage.getItem('scoreboard_lang') || 'th';
+    const btnLangToggle = document.getElementById('btn-lang-toggle');
+
+    function applyLanguage() {
+      // Toggle button text
+      btnLangToggle.innerText = currentLang === 'th' ? '🌐 TH' : '🌐 EN';
+      
+      // Texts
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[currentLang][key]) el.innerText = dict[currentLang][key];
+      });
+      // Placeholders
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (dict[currentLang][key]) el.placeholder = dict[currentLang][key];
+      });
+      
+      // Dropdown Options
+      const fbEvent = document.getElementById('fb-event');
+      if (fbEvent) {
+        if(dict[currentLang].optGoal) fbEvent.options[0].text = dict[currentLang].optGoal;
+        if(dict[currentLang].optYellow) fbEvent.options[1].text = dict[currentLang].optYellow;
+        if(dict[currentLang].optRed) fbEvent.options[2].text = dict[currentLang].optRed;
+      }
+    }
+
+    btnLangToggle.addEventListener('click', () => {
+      currentLang = currentLang === 'th' ? 'en' : 'th';
+      localStorage.setItem('scoreboard_lang', currentLang);
+      applyLanguage();
+    });
+
+    // Execute on page load
+    applyLanguage();
+
     const firebaseConfig = {
       apiKey: "AIzaSyDMptdLpLEdbeVFKZj82M0gyoV2m_2y5Pk",
       authDomain: "suchartstudio-9a78d.firebaseapp.com",
@@ -384,10 +495,10 @@
 
         createUserWithEmailAndPassword(auth, newUserEmail, newPassword)
           .then((userCredential) => {
-            alert(`สร้างผู้ใช้ ${newUsername} สำเร็จ!\n(ระบบอาจทำการเปลี่ยนสิทธิ์ Login ไปยังบัญชีที่เพิ่งสร้างใหม่)`);
+            alert(dict[currentLang].alertCreateSuccess);
             document.getElementById('create-user-form').reset();
           })
-          .catch((error) => alert("ไม่สามารถสร้างผู้ใช้ได้ Error: " + error.message));
+          .catch((error) => alert(dict[currentLang].alertCreateFail + error.message));
       });
     }
 
@@ -421,6 +532,7 @@
       document.getElementById(`view-${v}`).classList.remove('hidden');
     };
     document.getElementById('nav-btn-control').addEventListener('click', () => switchView('control'));
+    document.getElementById('nav-btn-admin').addEventListener('click', () => switchView('admin'));
     document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
     document.getElementById('btn-extend-display').addEventListener('click', () => {
       if (currentUser) window.open(`${window.location.origin}${window.location.pathname}?mode=display&uid=${currentUser.uid}`, 'Scoreboard', 'width=1280,height=720');
@@ -474,7 +586,6 @@
       const homeContainer = document.getElementById('home-score-controls');
       const awayContainer = document.getElementById('away-score-controls');
       
-      // ปรับขนาดปุ่ม Score ให้ใหญ่ขึ้นมาก
       let btns = sport === 'basketball' 
         ? `<button onclick="changeScore('TEAM', 1)" class="px-5 py-3 bg-emerald-600 font-black rounded-lg text-lg hover:bg-emerald-500">+1</button>
            <button onclick="changeScore('TEAM', 2)" class="px-5 py-3 bg-emerald-600 font-black rounded-lg text-lg hover:bg-emerald-500">+2</button>
@@ -539,9 +650,11 @@
     window.addMatchEvent = () => {
       const team = document.getElementById('fb-team').value;
       const player = document.getElementById('fb-player').value || 'Unknown Player';
-      const evt = document.getElementById('fb-event').value;
+      const eventDropdown = document.getElementById('fb-event');
+      const evtText = eventDropdown.options[eventDropdown.selectedIndex].text;
+      
       const teamName = team === 'home' ? matchState.homeName : matchState.awayName;
-      triggerEventDisplay(`${evt} : ${player} (${teamName})`, team);
+      triggerEventDisplay(`${evtText} : ${player} (${teamName})`, team);
       document.getElementById('fb-player').value = '';
     };
 
@@ -551,7 +664,12 @@
       const pOut = document.getElementById('sub-out').value;
       if(!pIn && !pOut) return;
       const teamName = team === 'home' ? matchState.homeName : matchState.awayName;
-      triggerEventDisplay(`🔄 เปลี่ยนตัว (${teamName}) | เข้า: ${pIn || '-'} | ออก: ${pOut || '-'}`, team);
+      
+      const subTxt = dict[currentLang].txtSubEvent;
+      const inTxt = dict[currentLang].txtSubIn;
+      const outTxt = dict[currentLang].txtSubOut;
+
+      triggerEventDisplay(`${subTxt} (${teamName}) | ${inTxt} ${pIn || '-'} | ${outTxt} ${pOut || '-'}`, team);
       document.getElementById('sub-in').value = ''; document.getElementById('sub-out').value = '';
     };
 

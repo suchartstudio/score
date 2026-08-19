@@ -7,11 +7,10 @@
   <link rel="manifest" href="manifest.json">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* นำเข้าฟอนต์ Chakra Petch และ Orbitron สำหรับตัวเลขดิจิทัล */
-    @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Orbitron:wght@700;900&display=swap');
+    /* ใช้ฟอนต์ Chakra Petch ฟอนต์เดียวทั้งระบบ รวมถึงตัวเลขด้วย */
+    @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&display=swap');
     
     body { font-family: 'Chakra Petch', sans-serif; }
-    .font-digital { font-family: 'Orbitron', monospace; }
     .led-border { border: 4px solid #1e293b; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
     .led-glow-red { text-shadow: 0 0 15px #ef4444; }
     .led-glow-yellow { text-shadow: 0 0 15px #eab308; }
@@ -21,7 +20,7 @@
 <body class="bg-slate-950 text-white min-h-screen">
 
   <div id="app" class="p-4">
-    <!-- View: Login (เหมือนเดิม) -->
+    <!-- View: Login -->
     <div id="view-login" class="max-w-md mx-auto mt-20 bg-slate-900 p-6 rounded-xl border border-slate-800 shadow-2xl">
       <h2 class="text-2xl font-bold mb-2 text-center text-amber-500">Scoreboard System</h2>
       <p class="text-xs text-slate-400 text-center mb-6">เข้าสู่ระบบควบคุมสกอร์บอร์ด / ผู้ดูแลระบบ</p>
@@ -52,7 +51,7 @@
       </div>
     </div>
 
-    <!-- View: Admin (เหมือนเดิม) -->
+    <!-- View: Admin -->
     <div id="view-admin" class="hidden max-w-6xl mx-auto space-y-6">
       <div class="bg-slate-900 p-6 rounded-xl border border-amber-500/30">
         <h3 class="text-lg font-bold text-amber-400 mb-4">➕ เพิ่มผู้ใช้งานใหม่</h3>
@@ -120,14 +119,13 @@
         <!-- Home Score Control -->
         <div class="space-y-4">
           <div id="ctrl-home-name" class="text-2xl font-bold">HOME</div>
-          <div id="ctrl-home-score" class="text-7xl font-digital text-emerald-400 bg-slate-950 py-4 rounded border border-slate-800">0</div>
-          <!-- ไดนามิกปุ่มสกอร์ -->
+          <div id="ctrl-home-score" class="text-7xl font-bold text-emerald-400 bg-slate-950 py-4 rounded border border-slate-800">0</div>
           <div id="home-score-controls" class="flex justify-center gap-2 flex-wrap"></div>
         </div>
 
         <!-- Timer -->
         <div class="space-y-4">
-          <div id="ctrl-timer" class="text-5xl font-digital text-amber-400 bg-slate-950 py-4 rounded border border-slate-800">00:00</div>
+          <div id="ctrl-timer" class="text-5xl font-bold text-amber-400 bg-slate-950 py-4 rounded border border-slate-800">00:00</div>
           <div class="flex justify-center gap-2">
             <button id="btn-timer-toggle" class="px-6 py-2 bg-amber-500 text-slate-950 font-bold rounded text-lg">START</button>
             <button id="btn-timer-reset" class="px-4 py-2 bg-slate-700 font-bold rounded text-lg">RESET</button>
@@ -138,15 +136,14 @@
         <!-- Away Score Control -->
         <div class="space-y-4">
           <div id="ctrl-away-name" class="text-2xl font-bold">AWAY</div>
-          <div id="ctrl-away-score" class="text-7xl font-digital text-emerald-400 bg-slate-950 py-4 rounded border border-slate-800">0</div>
-          <!-- ไดนามิกปุ่มสกอร์ -->
+          <div id="ctrl-away-score" class="text-7xl font-bold text-emerald-400 bg-slate-950 py-4 rounded border border-slate-800">0</div>
           <div id="away-score-controls" class="flex justify-center gap-2 flex-wrap"></div>
         </div>
       </div>
     </div>
 
     <!-- View: 16:9 Display Window (For LED Screen) -->
-    <!-- ปรับ Layout: โลโก้ใหญ่ด้านบน ชื่อด้านล่าง คะแนนอยู่ด้านข้าง เวลาอยู่ตรงกลาง -->
+    <!-- ปรับ Layout: คะแนนอยู่ตรงกลางบนสุด มีขีดคั่น, นาฬิกาอยู่ล่างคะแนน, ชื่อทีมแสดงเต็มขึ้นบรรทัดใหม่ได้ -->
     <div id="view-display" class="hidden fixed inset-0 bg-[#0a0f1d] w-screen h-screen flex flex-col justify-between p-8 select-none overflow-hidden" style="aspect-ratio: 16/9;">
       
       <!-- Top Bar -->
@@ -156,43 +153,46 @@
       </div>
 
       <!-- Main Scoreboard -->
-      <div class="h-[75%] flex justify-between items-center w-full gap-6">
+      <div class="h-[75%] flex justify-between items-center w-full gap-8">
         
         <!-- Home Team Block -->
-        <div class="flex-1 flex items-center justify-between bg-slate-900/60 p-6 rounded-3xl led-border h-full">
-          <!-- Logo & Name (ด้านนอก) -->
-          <div class="flex flex-col items-center justify-center w-5/12 h-full">
-            <div class="h-56 w-56 flex items-center justify-center mb-6">
-              <img id="disp-home-logo" src="" class="max-h-full max-w-full object-contain drop-shadow-2xl hidden">
-            </div>
-            <span id="disp-home-name" class="text-[3.5rem] font-bold tracking-wide truncate w-full text-center leading-tight">HOME</span>
+        <div class="flex-1 flex flex-col items-center justify-start bg-slate-900/60 p-8 rounded-3xl led-border h-full overflow-hidden">
+          <!-- Logo (ด้านบน) -->
+          <div class="h-[55%] w-full flex items-center justify-center mb-4 mt-2">
+            <img id="disp-home-logo" src="" class="max-h-full max-w-full object-contain drop-shadow-2xl hidden">
           </div>
-          <!-- Score (ด้านใน ใกล้เวลา) -->
-          <div class="w-7/12 flex justify-end pr-4">
-            <span id="disp-home-score" class="text-[14rem] leading-none font-digital font-black text-emerald-400 led-glow-green">0</span>
-          </div>
+          <!-- Name (แสดงผลเต็มขึ้นบรรทัดใหม่ได้) -->
+          <span id="disp-home-name" class="text-6xl font-bold tracking-wide break-words whitespace-normal text-center leading-tight flex-1 flex items-center w-full justify-center">
+            HOME
+          </span>
         </div>
 
-        <!-- Center Timer Block -->
-        <div class="w-1/4 flex flex-col items-center justify-center h-full shrink-0">
-          <div id="disp-timer" class="text-8xl font-digital font-black text-amber-400 led-glow-yellow bg-slate-950 w-full text-center py-10 rounded-2xl border-4 border-slate-800 shadow-2xl">
+        <!-- Center Score & Timer Block -->
+        <div class="flex-[1.2] flex flex-col items-center justify-center h-full shrink-0 gap-6">
+          
+          <!-- Score Row (คะแนนซ้าย - ขวา) -->
+          <div class="flex items-center justify-center gap-8 w-full bg-slate-900/50 py-6 px-10 rounded-3xl border-4 border-slate-800 shadow-2xl">
+            <span id="disp-home-score" class="text-[12rem] leading-none font-black text-emerald-400 led-glow-green w-1/2 text-right">0</span>
+            <span class="text-[9rem] leading-none font-black text-slate-500 pb-4">-</span>
+            <span id="disp-away-score" class="text-[12rem] leading-none font-black text-emerald-400 led-glow-green w-1/2 text-left">0</span>
+          </div>
+
+          <!-- Timer Row (อยู่ด้านล่างคะแนน) -->
+          <div id="disp-timer" class="text-[8rem] font-black text-amber-400 led-glow-yellow bg-slate-950 w-full text-center py-4 rounded-2xl border-4 border-slate-800 shadow-2xl">
             00:00
           </div>
         </div>
 
         <!-- Away Team Block -->
-        <div class="flex-1 flex items-center justify-between bg-slate-900/60 p-6 rounded-3xl led-border h-full">
-          <!-- Score (ด้านใน ใกล้เวลา) -->
-          <div class="w-7/12 flex justify-start pl-4">
-            <span id="disp-away-score" class="text-[14rem] leading-none font-digital font-black text-emerald-400 led-glow-green">0</span>
+        <div class="flex-1 flex flex-col items-center justify-start bg-slate-900/60 p-8 rounded-3xl led-border h-full overflow-hidden">
+          <!-- Logo (ด้านบน) -->
+          <div class="h-[55%] w-full flex items-center justify-center mb-4 mt-2">
+            <img id="disp-away-logo" src="" class="max-h-full max-w-full object-contain drop-shadow-2xl hidden">
           </div>
-          <!-- Logo & Name (ด้านนอก) -->
-          <div class="flex flex-col items-center justify-center w-5/12 h-full">
-            <div class="h-56 w-56 flex items-center justify-center mb-6">
-              <img id="disp-away-logo" src="" class="max-h-full max-w-full object-contain drop-shadow-2xl hidden">
-            </div>
-            <span id="disp-away-name" class="text-[3.5rem] font-bold tracking-wide truncate w-full text-center leading-tight">AWAY</span>
-          </div>
+          <!-- Name (แสดงผลเต็มขึ้นบรรทัดใหม่ได้) -->
+          <span id="disp-away-name" class="text-6xl font-bold tracking-wide break-words whitespace-normal text-center leading-tight flex-1 flex items-center w-full justify-center">
+            AWAY
+          </span>
         </div>
 
       </div>
@@ -257,7 +257,6 @@
       });
     }
 
-    // [Authentication และ UI Switching โค้ดเดิม] ...
     document.getElementById('login-form').addEventListener('submit', (e) => {
       e.preventDefault();
       let inputUser = document.getElementById('login-username').value.trim();
@@ -317,7 +316,6 @@
       if (currentUser) window.open(`${window.location.origin}${window.location.pathname}?mode=display&uid=${currentUser.uid}`, 'Scoreboard', 'width=1280,height=720');
     });
 
-    // --- ส่วนสร้างปุ่มคะแนนแบบไดนามิกตามประเภทกีฬา ---
     function renderScoreButtons(sport) {
       const homeContainer = document.getElementById('home-score-controls');
       const awayContainer = document.getElementById('away-score-controls');
@@ -331,7 +329,6 @@
           <button onclick="changeScore('TEAM', -1)" class="px-3 py-2 bg-rose-600 hover:bg-rose-500 font-bold rounded text-xl">-1</button>
         `;
       } else {
-        // ฟุตบอล, วอลเลย์บอล, ฟุตซอล, แบดมินตัน ใช้แพทเทิร์นพื้นฐาน
         buttonsHtml = `
           <button onclick="changeScore('TEAM', 1)" class="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 font-bold rounded text-2xl">+1</button>
           <button onclick="changeScore('TEAM', -1)" class="px-6 py-2 bg-rose-600 hover:bg-rose-500 font-bold rounded text-2xl">-1</button>
@@ -352,11 +349,11 @@
           matchState.sport = sport;
           renderScoreButtons(sport);
           syncToDatabase();
-          setupSportsSelector(sports); // Render tab ใหม่ให้สี Active ตรงกัน
+          setupSportsSelector(sports);
         };
         container.appendChild(btn);
       });
-      renderScoreButtons(matchState.sport); // โหลดปุ่มครั้งแรก
+      renderScoreButtons(matchState.sport);
     }
 
     window.changeScore = (team, delta) => {
@@ -365,7 +362,6 @@
       syncToDatabase();
     };
 
-    // [ฟังก์ชัน Timer, Image Upload, Data Sync เหมือนเดิม]
     const handleLocalImg = (el, key) => {
       document.getElementById(el).addEventListener('change', (e) => {
         const f = e.target.files[0];
@@ -389,6 +385,7 @@
     }, 1000);
 
     function syncToDatabase() { if (currentUser && currentMatchRef) set(currentMatchRef, matchState); }
+    
     function updateControlUI() {
       document.getElementById('ctrl-home-name').innerText = matchState.homeName;
       document.getElementById('ctrl-away-name').innerText = matchState.awayName;
@@ -397,6 +394,7 @@
       document.getElementById('btn-timer-toggle').innerText = matchState.timerRunning ? 'PAUSE' : 'START';
       updateControlTimerUI();
     }
+    
     function updateControlTimerUI() {
       const m = String(Math.floor(matchState.timerSeconds / 60)).padStart(2, '0');
       const s = String(matchState.timerSeconds % 60).padStart(2, '0');
@@ -425,7 +423,6 @@
     document.getElementById('input-away-name').addEventListener('input', e => { matchState.awayName = e.target.value || 'AWAY'; syncToDatabase(); });
     document.getElementById('input-period').addEventListener('input', e => { matchState.period = e.target.value || '1ST HALF'; syncToDatabase(); });
     
-    // Admin สร้าง User (ฟังก์ชันเดิมย่อส่วนให้กระทัดรัด)
     document.getElementById('create-user-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       try {
@@ -434,6 +431,7 @@
         await secondaryAuth.signOut(); alert("สร้างผู้ใช้สำเร็จ!"); document.getElementById('create-user-form').reset();
       } catch (err) { alert(err.message); }
     });
+    
     function renderUsersTable(obj) {
       const tbody = document.getElementById('users-table-body'); tbody.innerHTML = '';
       Object.keys(obj).forEach(uid => {

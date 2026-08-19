@@ -7,7 +7,6 @@
   <link rel="manifest" href="manifest.json">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* ใช้ฟอนต์ Chakra Petch ฟอนต์เดียวทั้งระบบ รวมถึงตัวเลขด้วย */
     @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&display=swap');
     
     body { font-family: 'Chakra Petch', sans-serif; }
@@ -15,25 +14,24 @@
     .led-glow-red { text-shadow: 0 0 15px #ef4444; }
     .led-glow-yellow { text-shadow: 0 0 15px #eab308; }
     .led-glow-green { text-shadow: 0 0 15px #22c55e; }
+
+    /* CSS สำหรับตัวหนังสือวิ่ง (Marquee) */
+    .marquee-container { overflow: hidden; white-space: nowrap; width: 100%; display: flex; align-items: center; }
+    .marquee-content { display: inline-block; animation: marquee 20s linear infinite; padding-left: 100%; }
+    @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
   </style>
 </head>
 <body class="bg-slate-950 text-white min-h-screen">
 
   <div id="app" class="p-4">
-    <!-- View: Login -->
+    <!-- View: Login (ซ่อนเมื่อแสดงผล LED) -->
     <div id="view-login" class="max-w-md mx-auto mt-20 bg-slate-900 p-6 rounded-xl border border-slate-800 shadow-2xl">
       <h2 class="text-2xl font-bold mb-2 text-center text-amber-500">Scoreboard System</h2>
       <p class="text-xs text-slate-400 text-center mb-6">เข้าสู่ระบบควบคุมสกอร์บอร์ด / ผู้ดูแลระบบ</p>
       <form id="login-form" class="space-y-4">
-        <div>
-          <label class="block text-sm mb-1 text-slate-300">Username / Email</label>
-          <input type="text" id="login-username" placeholder="suchart หรือ email@domain.com" class="w-full p-2.5 rounded bg-slate-800 border border-slate-700 focus:outline-none focus:border-amber-500" required>
-        </div>
-        <div>
-          <label class="block text-sm mb-1 text-slate-300">Password</label>
-          <input type="password" id="login-password" placeholder="••••••••" class="w-full p-2.5 rounded bg-slate-800 border border-slate-700 focus:outline-none focus:border-amber-500" required>
-        </div>
-        <button type="submit" class="w-full py-3 bg-amber-500 hover:bg-amber-600 font-bold rounded text-slate-950 transition text-lg">LOGIN</button>
+        <div><label class="block text-sm mb-1">Username / Email</label><input type="text" id="login-username" class="w-full p-2.5 rounded bg-slate-800 border border-slate-700" required></div>
+        <div><label class="block text-sm mb-1">Password</label><input type="password" id="login-password" class="w-full p-2.5 rounded bg-slate-800 border border-slate-700" required></div>
+        <button type="submit" class="w-full py-3 bg-amber-500 hover:bg-amber-600 font-bold rounded text-slate-950 text-lg">LOGIN</button>
       </form>
     </div>
 
@@ -43,49 +41,37 @@
         <h1 class="text-xl font-bold text-amber-500">Stadium Scoreboard System</h1>
         <p id="user-info" class="text-xs text-slate-400"></p>
       </div>
-      <div class="flex items-center gap-2">
+      <div class="flex flex-wrap items-center gap-2">
         <button id="nav-btn-control" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded text-sm font-semibold">🎮 หน้าควบคุม</button>
-        <button id="nav-btn-admin" class="hidden px-3 py-1.5 bg-amber-500 text-slate-950 hover:bg-amber-400 rounded text-sm font-bold">⚡ ระบบจัดการ User</button>
-        <button id="btn-extend-display" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 rounded font-semibold text-sm">🖥️ เปิดจอ LED (16:9)</button>
+        <button id="nav-btn-admin" class="hidden px-3 py-1.5 bg-amber-500 text-slate-950 hover:bg-amber-400 rounded text-sm font-bold">⚡ จัดการ User</button>
+        <button id="btn-extend-display" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 rounded font-semibold text-sm">🖥️ เปิดจอ LED</button>
         <button id="btn-logout" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-500 rounded font-semibold text-sm">ออกจากระบบ</button>
       </div>
     </div>
 
     <!-- View: Admin -->
     <div id="view-admin" class="hidden max-w-6xl mx-auto space-y-6">
+      <!-- (ส่วน Admin เหมือนเดิม) -->
       <div class="bg-slate-900 p-6 rounded-xl border border-amber-500/30">
         <h3 class="text-lg font-bold text-amber-400 mb-4">➕ เพิ่มผู้ใช้งานใหม่</h3>
         <form id="create-user-form" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label class="block text-xs mb-1 text-slate-400">Email ผู้ใช้ใหม่</label>
-            <input type="email" id="new-user-email" class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-sm" required>
-          </div>
-          <div>
-            <label class="block text-xs mb-1 text-slate-400">Password</label>
-            <input type="password" id="new-user-password" class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-sm" required>
-          </div>
-          <div>
-            <label class="block text-xs mb-1 text-slate-400">สิทธิ์กีฬาที่เข้าถึงได้</label>
+          <div><label class="block text-xs mb-1 text-slate-400">Email</label><input type="email" id="new-user-email" class="w-full p-2 rounded bg-slate-800" required></div>
+          <div><label class="block text-xs mb-1 text-slate-400">Password</label><input type="password" id="new-user-password" class="w-full p-2 rounded bg-slate-800" required></div>
+          <div><label class="block text-xs mb-1 text-slate-400">สิทธิ์กีฬา</label>
             <div class="flex flex-wrap gap-2 text-xs pt-1">
-              <label class="flex items-center gap-1"><input type="checkbox" value="football" class="sport-checkbox" checked> ฟุตบอล</label>
-              <label class="flex items-center gap-1"><input type="checkbox" value="basketball" class="sport-checkbox" checked> บาสเกตบอล</label>
-              <label class="flex items-center gap-1"><input type="checkbox" value="volleyball" class="sport-checkbox"> วอลเลย์บอล</label>
-              <label class="flex items-center gap-1"><input type="checkbox" value="futsal" class="sport-checkbox"> ฟุตซอล</label>
-              <label class="flex items-center gap-1"><input type="checkbox" value="badminton" class="sport-checkbox"> แบดมินตัน</label>
+              <label><input type="checkbox" value="football" class="sport-checkbox" checked> ฟุตบอล</label>
+              <label><input type="checkbox" value="basketball" class="sport-checkbox" checked> บาส</label>
+              <label><input type="checkbox" value="volleyball" class="sport-checkbox"> วอลเลย์</label>
+              <label><input type="checkbox" value="futsal" class="sport-checkbox"> ฟุตซอล</label>
+              <label><input type="checkbox" value="badminton" class="sport-checkbox"> แบดฯ</label>
             </div>
           </div>
-          <div class="md:col-span-3">
-            <button type="submit" class="bg-amber-500 text-slate-950 font-bold px-6 py-2 rounded text-sm hover:bg-amber-400">บันทึกสร้างผู้ใช้งาน</button>
-          </div>
+          <div class="md:col-span-3"><button type="submit" class="bg-amber-500 text-slate-950 font-bold px-6 py-2 rounded hover:bg-amber-400">สร้างผู้ใช้งาน</button></div>
         </form>
       </div>
-
       <div class="bg-slate-900 p-6 rounded-xl border border-slate-800">
-        <h3 class="text-lg font-bold text-slate-200 mb-4">📋 รายชื่อผู้ใช้งานทั้งหมดในระบบ</h3>
         <table class="w-full text-left text-sm text-slate-300">
-          <thead class="bg-slate-800 text-amber-400">
-            <tr><th class="p-3">UID</th><th class="p-3">Email</th><th class="p-3">Role</th><th class="p-3">สิทธิ์กีฬา</th><th class="p-3">จัดการ</th></tr>
-          </thead>
+          <thead class="bg-slate-800 text-amber-400"><tr><th class="p-3">UID</th><th class="p-3">Email</th><th class="p-3">Role</th><th class="p-3">สิทธิ์</th><th class="p-3">จัดการ</th></tr></thead>
           <tbody id="users-table-body" class="divide-y divide-slate-800"></tbody>
         </table>
       </div>
@@ -94,119 +80,180 @@
     <!-- View: Scoreboard Control Hub -->
     <div id="view-control" class="hidden max-w-6xl mx-auto space-y-6">
       
-      <!-- Sports Selection Tab -->
-      <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
-        <label class="block font-bold mb-3 text-slate-300 text-lg">เลือกโหมดกีฬา (ปุ่มควบคุมจะเปลี่ยนตาม):</label>
-        <div id="sports-selector" class="flex flex-wrap gap-2"></div>
+      <!-- โหมดกีฬา & Marquee -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+          <label class="block font-bold mb-3 text-slate-300">เลือกโหมดกีฬา:</label>
+          <div id="sports-selector" class="flex flex-wrap gap-2"></div>
+        </div>
+        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+          <label class="block font-bold mb-3 text-slate-300">📢 ข้อความตัววิ่ง (Marquee):</label>
+          <input type="text" id="input-marquee" placeholder="ยินดีต้อนรับสู่การแข่งขัน..." class="w-full p-2.5 rounded bg-slate-800 border border-slate-700 text-lg">
+        </div>
       </div>
 
       <!-- Match Info -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-900 p-4 rounded-xl border border-slate-800">
         <div class="space-y-3">
           <h3 class="font-bold text-amber-400 text-lg">ทีมเหย้า (Home)</h3>
-          <input type="text" id="input-home-name" placeholder="ชื่อทีม" class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-lg font-bold">
-          <input type="file" id="input-home-logo" accept="image/*" class="w-full text-sm text-slate-400 bg-slate-800 p-1.5 rounded">
+          <input type="text" id="input-home-name" placeholder="ชื่อทีม" class="w-full p-2 rounded bg-slate-800 font-bold text-lg">
+          <input type="file" id="input-home-logo" accept="image/*" class="w-full text-sm">
         </div>
         <div class="space-y-3">
           <h3 class="font-bold text-amber-400 text-lg">ทีมเยือน (Away)</h3>
-          <input type="text" id="input-away-name" placeholder="ชื่อทีม" class="w-full p-2 rounded bg-slate-800 border border-slate-700 text-lg font-bold">
-          <input type="file" id="input-away-logo" accept="image/*" class="w-full text-sm text-slate-400 bg-slate-800 p-1.5 rounded">
+          <input type="text" id="input-away-name" placeholder="ชื่อทีม" class="w-full p-2 rounded bg-slate-800 font-bold text-lg">
+          <input type="file" id="input-away-logo" accept="image/*" class="w-full text-sm">
         </div>
       </div>
 
-      <!-- Match Controller Interface -->
+      <!-- Match Controller Interface (Score & Timer) -->
       <div class="bg-slate-900 p-6 rounded-xl border border-slate-800 grid grid-cols-3 gap-6 text-center">
-        <!-- Home Score Control -->
         <div class="space-y-4">
           <div id="ctrl-home-name" class="text-2xl font-bold">HOME</div>
           <div id="ctrl-home-score" class="text-7xl font-bold text-emerald-400 bg-slate-950 py-4 rounded border border-slate-800">0</div>
           <div id="home-score-controls" class="flex justify-center gap-2 flex-wrap"></div>
         </div>
-
-        <!-- Timer -->
         <div class="space-y-4">
           <div id="ctrl-timer" class="text-5xl font-bold text-amber-400 bg-slate-950 py-4 rounded border border-slate-800">00:00</div>
           <div class="flex justify-center gap-2">
             <button id="btn-timer-toggle" class="px-6 py-2 bg-amber-500 text-slate-950 font-bold rounded text-lg">START</button>
             <button id="btn-timer-reset" class="px-4 py-2 bg-slate-700 font-bold rounded text-lg">RESET</button>
           </div>
-          <input type="text" id="input-period" placeholder="ครึ่งเวลา / ควอเตอร์ / เซต" class="w-full p-2 text-center rounded bg-slate-800 border border-slate-700 text-lg font-bold">
+          <input type="text" id="input-period" placeholder="ครึ่งเวลา / ควอเตอร์ / เซต" class="w-full p-2 text-center rounded bg-slate-800 text-lg font-bold">
         </div>
-
-        <!-- Away Score Control -->
         <div class="space-y-4">
           <div id="ctrl-away-name" class="text-2xl font-bold">AWAY</div>
           <div id="ctrl-away-score" class="text-7xl font-bold text-emerald-400 bg-slate-950 py-4 rounded border border-slate-800">0</div>
           <div id="away-score-controls" class="flex justify-center gap-2 flex-wrap"></div>
         </div>
       </div>
+
+      <!-- Dynamic Control Panel (เปลี่ยนตามกีฬา) -->
+      <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+        <h3 class="font-bold text-slate-300 text-lg mb-4">🛠️ แผงควบคุมเสริม (Match Events)</h3>
+        
+        <!-- แผงฟุตบอล (ประตู, ใบเหลือง, ใบแดง) -->
+        <div id="panel-football" class="hidden flex flex-wrap items-end gap-3 mb-4 p-3 bg-slate-800 rounded">
+          <div><label class="block text-xs mb-1 text-slate-400">ทีม</label><select id="fb-team" class="p-2 rounded bg-slate-950"><option value="home">Home</option><option value="away">Away</option></select></div>
+          <div><label class="block text-xs mb-1 text-slate-400">ชื่อนักเตะ</label><input type="text" id="fb-player" class="p-2 rounded bg-slate-950 w-32"></div>
+          <div><label class="block text-xs mb-1 text-slate-400">เหตุการณ์</label>
+            <select id="fb-event" class="p-2 rounded bg-slate-950">
+              <option value="⚽ Goal">⚽ ทำประตู</option><option value="🟨 Yellow Card">🟨 ใบเหลือง</option><option value="🟥 Red Card">🟥 ใบแดง</option>
+            </select>
+          </div>
+          <button onclick="addMatchEvent()" class="px-4 py-2 bg-emerald-600 font-bold rounded">บันทึกเหตุการณ์</button>
+          <button onclick="clearMatchEvents()" class="px-4 py-2 bg-slate-700 font-bold rounded text-sm">ล้าง Log</button>
+        </div>
+
+        <!-- แผงบาสเกตบอล/ฟุตซอล (การทำฟาล์ว) -->
+        <div id="panel-fouls" class="hidden grid grid-cols-2 gap-4 mb-4">
+          <div class="p-3 bg-slate-800 rounded text-center">
+            <span class="block text-sm text-slate-400 mb-2">ฟาล์วทีมเหย้า (Home Fouls)</span>
+            <div class="flex justify-center items-center gap-4">
+              <button onclick="changeFoul('home', -1)" class="px-3 py-1 bg-rose-600 rounded font-bold">-</button>
+              <span id="ctrl-home-foul" class="text-3xl font-bold text-red-500">0</span>
+              <button onclick="changeFoul('home', 1)" class="px-3 py-1 bg-rose-600 rounded font-bold">+</button>
+            </div>
+          </div>
+          <div class="p-3 bg-slate-800 rounded text-center">
+            <span class="block text-sm text-slate-400 mb-2">ฟาล์วทีมเยือน (Away Fouls)</span>
+            <div class="flex justify-center items-center gap-4">
+              <button onclick="changeFoul('away', -1)" class="px-3 py-1 bg-rose-600 rounded font-bold">-</button>
+              <span id="ctrl-away-foul" class="text-3xl font-bold text-red-500">0</span>
+              <button onclick="changeFoul('away', 1)" class="px-3 py-1 bg-rose-600 rounded font-bold">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- แผงวอลเลย์บอล/แบดมินตัน (จบเซ็ต) -->
+        <div id="panel-sets" class="hidden flex gap-4 mb-4 p-3 bg-slate-800 rounded justify-center items-center">
+          <button onclick="endSet()" class="px-6 py-2 bg-amber-500 text-slate-950 font-bold rounded text-lg">📌 จบเซ็ต (บันทึกคะแนน)</button>
+          <button onclick="resetSets()" class="px-4 py-2 bg-slate-700 font-bold rounded">รีเซ็ตเซ็ตทั้งหมด</button>
+        </div>
+
+        <!-- ระบบเปลี่ยนตัว (แสดงทุกโหมด) -->
+        <div class="flex flex-wrap items-end gap-3 pt-4 border-t border-slate-700">
+          <div><label class="block text-xs mb-1 text-slate-400">ทีม</label><select id="sub-team" class="p-2 rounded bg-slate-950"><option value="home">Home</option><option value="away">Away</option></select></div>
+          <div><label class="block text-xs mb-1 text-slate-400">ผู้เล่นเข้า 🟢</label><input type="text" id="sub-in" class="p-2 rounded bg-slate-950 w-32"></div>
+          <div><label class="block text-xs mb-1 text-slate-400">ผู้เล่นออก 🔴</label><input type="text" id="sub-out" class="p-2 rounded bg-slate-950 w-32"></div>
+          <button onclick="addSubstitute()" class="px-4 py-2 bg-blue-600 font-bold rounded">🔄 เปลี่ยนตัว</button>
+        </div>
+
+      </div>
     </div>
 
     <!-- View: 16:9 Display Window (For LED Screen) -->
-    <!-- ปรับ Layout: คะแนนอยู่ตรงกลางบนสุด มีขีดคั่น, นาฬิกาอยู่ล่างคะแนน, ชื่อทีมแสดงเต็มขึ้นบรรทัดใหม่ได้ -->
     <div id="view-display" class="hidden fixed inset-0 bg-[#0a0f1d] w-screen h-screen flex flex-col justify-between p-8 select-none overflow-hidden" style="aspect-ratio: 16/9;">
       
       <!-- Top Bar -->
-      <div class="h-[10%] flex justify-between items-center border-b-4 border-slate-800 pb-2">
+      <div class="h-[8%] flex justify-between items-center border-b-4 border-slate-800 pb-2">
         <span id="disp-sport-title" class="text-4xl font-bold uppercase tracking-widest text-slate-400">STADIUM DISPLAY</span>
         <div id="disp-period" class="text-4xl font-bold bg-amber-500 text-slate-950 px-8 py-2 rounded">1ST HALF</div>
       </div>
 
       <!-- Main Scoreboard -->
-      <div class="h-[75%] flex justify-between items-center w-full gap-8">
+      <div class="h-[74%] flex justify-between items-center w-full gap-8 relative">
         
         <!-- Home Team Block -->
-        <div class="flex-1 flex flex-col items-center justify-start bg-slate-900/60 p-8 rounded-3xl led-border h-full overflow-hidden">
-          <!-- Logo (ด้านบน) -->
-          <div class="h-[55%] w-full flex items-center justify-center mb-4 mt-2">
+        <div class="flex-1 flex flex-col items-center justify-start bg-slate-900/60 p-8 rounded-3xl led-border h-full overflow-hidden relative">
+          <div class="h-[50%] w-full flex items-center justify-center mb-2 mt-2">
             <img id="disp-home-logo" src="" class="max-h-full max-w-full object-contain drop-shadow-2xl hidden">
           </div>
-          <!-- Name (แสดงผลเต็มขึ้นบรรทัดใหม่ได้) -->
-          <span id="disp-home-name" class="text-6xl font-bold tracking-wide break-words whitespace-normal text-center leading-tight flex-1 flex items-center w-full justify-center">
-            HOME
-          </span>
+          <span id="disp-home-name" class="text-6xl font-bold tracking-wide break-words whitespace-normal text-center leading-tight flex-1 flex items-center w-full justify-center">HOME</span>
+          <!-- ฟาล์ว (ซ่อนไว้ถ้าไม่ใช่กีฬาที่ฟาล์ว) -->
+          <div id="disp-home-fouls-container" class="hidden absolute bottom-4 left-0 w-full text-center">
+            <span class="bg-red-600 text-white font-bold text-3xl px-6 py-2 rounded-xl shadow-lg border-2 border-red-800">FOULS: <span id="disp-home-fouls">0</span></span>
+          </div>
         </div>
 
-        <!-- Center Score & Timer Block -->
+        <!-- Center Block -->
         <div class="flex-[1.2] flex flex-col items-center justify-center h-full shrink-0 gap-6">
-          
-          <!-- Score Row (คะแนนซ้าย - ขวา) -->
-          <div class="flex items-center justify-center gap-8 w-full bg-slate-900/50 py-6 px-10 rounded-3xl border-4 border-slate-800 shadow-2xl">
+          <div class="flex items-center justify-center gap-8 w-full bg-slate-900/50 py-6 px-10 rounded-3xl border-4 border-slate-800 shadow-2xl relative">
             <span id="disp-home-score" class="text-[12rem] leading-none font-black text-emerald-400 led-glow-green w-1/2 text-right">0</span>
             <span class="text-[9rem] leading-none font-black text-slate-500 pb-4">-</span>
             <span id="disp-away-score" class="text-[12rem] leading-none font-black text-emerald-400 led-glow-green w-1/2 text-left">0</span>
+            
+            <!-- คะแนนเซ็ตที่ผ่านมา (สำหรับวอลเลย์ฯ/แบดฯ) -->
+            <div id="disp-set-scores" class="hidden absolute -bottom-14 left-0 w-full text-center text-3xl font-bold text-amber-300 bg-slate-900/80 py-2 rounded-xl border border-slate-700"></div>
           </div>
-
-          <!-- Timer Row (อยู่ด้านล่างคะแนน) -->
+          
           <div id="disp-timer" class="text-[8rem] font-black text-amber-400 led-glow-yellow bg-slate-950 w-full text-center py-4 rounded-2xl border-4 border-slate-800 shadow-2xl">
             00:00
           </div>
         </div>
 
         <!-- Away Team Block -->
-        <div class="flex-1 flex flex-col items-center justify-start bg-slate-900/60 p-8 rounded-3xl led-border h-full overflow-hidden">
-          <!-- Logo (ด้านบน) -->
-          <div class="h-[55%] w-full flex items-center justify-center mb-4 mt-2">
+        <div class="flex-1 flex flex-col items-center justify-start bg-slate-900/60 p-8 rounded-3xl led-border h-full overflow-hidden relative">
+          <div class="h-[50%] w-full flex items-center justify-center mb-2 mt-2">
             <img id="disp-away-logo" src="" class="max-h-full max-w-full object-contain drop-shadow-2xl hidden">
           </div>
-          <!-- Name (แสดงผลเต็มขึ้นบรรทัดใหม่ได้) -->
-          <span id="disp-away-name" class="text-6xl font-bold tracking-wide break-words whitespace-normal text-center leading-tight flex-1 flex items-center w-full justify-center">
-            AWAY
-          </span>
+          <span id="disp-away-name" class="text-6xl font-bold tracking-wide break-words whitespace-normal text-center leading-tight flex-1 flex items-center w-full justify-center">AWAY</span>
+          <!-- ฟาล์ว -->
+          <div id="disp-away-fouls-container" class="hidden absolute bottom-4 left-0 w-full text-center">
+            <span class="bg-red-600 text-white font-bold text-3xl px-6 py-2 rounded-xl shadow-lg border-2 border-red-800">FOULS: <span id="disp-away-fouls">0</span></span>
+          </div>
+        </div>
+
+        <!-- Events Log Popup (แจ้งเตือนทำประตู/เปลี่ยนตัว/ใบเหลือง-แดง) -->
+        <div id="disp-events-box" class="hidden absolute top-[10%] left-1/2 transform -translate-x-1/2 w-4/5 max-w-4xl bg-slate-900/95 border-4 border-emerald-500 rounded-2xl p-6 shadow-2xl z-50 transition-opacity duration-500">
+          <div id="disp-events-text" class="text-4xl font-bold text-center text-white break-words"></div>
         </div>
 
       </div>
 
-      <!-- Bottom Bar -->
-      <div class="h-[8%] bg-slate-900/50 rounded-xl flex items-center justify-around text-slate-400 text-2xl font-semibold">
-        <div>LIVE STADIUM TRANSMISSION</div>
-        <div>MATCH DAY</div>
+      <!-- Bottom Bar (Marquee ตัวหนังสือวิ่ง) -->
+      <div class="h-[10%] bg-slate-900/80 rounded-xl flex items-center border border-slate-800 text-amber-400 text-4xl font-bold shadow-2xl">
+        <div class="marquee-container h-full">
+          <div id="disp-marquee" class="marquee-content h-full flex items-center">
+            ยินดีต้อนรับสู่การแข่งขันนัดสำคัญประจำวันนี้
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
   <script type="module">
-    // ... [ โค้ด Firebase Import เหมือนเดิมทุกประการ ] ...
+    // --- [Firebase Import] ---
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getDatabase, ref, set, onValue, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -231,39 +278,35 @@
     let currentUser = null;
     let currentMatchRef = null;
     let matchState = {
-      sport: 'football',
-      homeName: 'HOME',
-      awayName: 'AWAY',
-      homeScore: 0,
-      awayScore: 0,
-      timerSeconds: 0,
-      timerRunning: false,
-      period: '1ST HALF',
-      homeLogo: '',
-      awayLogo: ''
+      sport: 'football', homeName: 'HOME', awayName: 'AWAY', 
+      homeScore: 0, awayScore: 0, timerSeconds: 0, timerRunning: false, 
+      period: '1ST HALF', homeLogo: '', awayLogo: '',
+      homeFouls: 0, awayFouls: 0, setScoresHome: [], setScoresAway: [],
+      marqueeText: 'ยินดีต้อนรับสู่การแข่งขัน', matchEvent: { text: '', timestamp: 0 }
     };
 
     const urlParams = new URLSearchParams(window.location.search);
     const isDisplayMode = urlParams.get('mode') === 'display';
     const targetUid = urlParams.get('uid');
+    let lastEventTimestamp = 0; // ควบคุม Popup Events ในจอ
 
     if (isDisplayMode && targetUid) {
       document.getElementById('view-login').classList.add('hidden');
       document.getElementById('main-nav').classList.add('hidden');
       document.getElementById('view-display').classList.remove('hidden');
       onValue(ref(db, `scoreboards/${targetUid}`), (snapshot) => {
-        const data = snapshot.val();
-        if (data) renderDisplay(data);
+        if (snapshot.val()) renderDisplay(snapshot.val());
       });
     }
 
+    // --- [Auth Logic] ---
     document.getElementById('login-form').addEventListener('submit', (e) => {
       e.preventDefault();
       let inputUser = document.getElementById('login-username').value.trim();
       const pass = document.getElementById('login-password').value;
       if (inputUser === 'suchart') inputUser = 'suchart@suchartstudio.com';
       else if (!inputUser.includes('@')) inputUser = `${inputUser}@suchartstudio.com`;
-      signInWithEmailAndPassword(auth, inputUser, pass).catch(err => alert("Login Error: " + err.message));
+      signInWithEmailAndPassword(auth, inputUser, pass).catch(err => alert("Error: " + err.message));
     });
 
     onAuthStateChanged(auth, (user) => {
@@ -286,11 +329,7 @@
 
         currentMatchRef = ref(db, `scoreboards/${user.uid}`);
         onValue(currentMatchRef, (snapshot) => {
-          const data = snapshot.val();
-          if (data) {
-            matchState = { ...matchState, ...data };
-            updateControlUI();
-          }
+          if (snapshot.val()) { matchState = { ...matchState, ...snapshot.val() }; updateControlUI(); }
         });
         
         onValue(ref(db, `users`), (snapshot) => renderUsersTable(snapshot.val() || {}));
@@ -302,105 +341,145 @@
       }
     });
 
-    window.switchView = (viewName) => {
+    window.switchView = (v) => {
       document.getElementById('view-control').classList.add('hidden');
       document.getElementById('view-admin').classList.add('hidden');
-      if (viewName === 'control') document.getElementById('view-control').classList.remove('hidden');
-      if (viewName === 'admin') document.getElementById('view-admin').classList.remove('hidden');
+      document.getElementById(`view-${v}`).classList.remove('hidden');
     };
     document.getElementById('nav-btn-control').addEventListener('click', () => switchView('control'));
     document.getElementById('nav-btn-admin').addEventListener('click', () => switchView('admin'));
     document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
-    
     document.getElementById('btn-extend-display').addEventListener('click', () => {
       if (currentUser) window.open(`${window.location.origin}${window.location.pathname}?mode=display&uid=${currentUser.uid}`, 'Scoreboard', 'width=1280,height=720');
     });
 
-    function renderScoreButtons(sport) {
-      const homeContainer = document.getElementById('home-score-controls');
-      const awayContainer = document.getElementById('away-score-controls');
-      let buttonsHtml = '';
-
-      if (sport === 'basketball') {
-        buttonsHtml = `
-          <button onclick="changeScore('TEAM', 1)" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 font-bold rounded text-xl">+1</button>
-          <button onclick="changeScore('TEAM', 2)" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 font-bold rounded text-xl">+2</button>
-          <button onclick="changeScore('TEAM', 3)" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 font-bold rounded text-xl">+3</button>
-          <button onclick="changeScore('TEAM', -1)" class="px-3 py-2 bg-rose-600 hover:bg-rose-500 font-bold rounded text-xl">-1</button>
-        `;
-      } else {
-        buttonsHtml = `
-          <button onclick="changeScore('TEAM', 1)" class="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 font-bold rounded text-2xl">+1</button>
-          <button onclick="changeScore('TEAM', -1)" class="px-6 py-2 bg-rose-600 hover:bg-rose-500 font-bold rounded text-2xl">-1</button>
-        `;
-      }
-      homeContainer.innerHTML = buttonsHtml.replace(/TEAM/g, 'home');
-      awayContainer.innerHTML = buttonsHtml.replace(/TEAM/g, 'away');
-    }
+    // --- [Control Functions] ---
+    function syncToDatabase() { if (currentUser && currentMatchRef) set(currentMatchRef, matchState); }
 
     function setupSportsSelector(sports) {
       const container = document.getElementById('sports-selector');
       container.innerHTML = '';
       sports.forEach(sport => {
         const btn = document.createElement('button');
-        btn.className = `px-5 py-2.5 rounded font-bold uppercase text-lg transition ${matchState.sport === sport ? 'bg-amber-500 text-slate-950 shadow-lg' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`;
+        btn.className = `px-5 py-2.5 rounded font-bold uppercase transition ${matchState.sport === sport ? 'bg-amber-500 text-slate-950 shadow-lg' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`;
         btn.innerText = sport;
-        btn.onclick = () => {
-          matchState.sport = sport;
-          renderScoreButtons(sport);
-          syncToDatabase();
-          setupSportsSelector(sports);
-        };
+        btn.onclick = () => { matchState.sport = sport; renderScoreButtons(sport); syncToDatabase(); setupSportsSelector(sports); };
         container.appendChild(btn);
       });
       renderScoreButtons(matchState.sport);
     }
 
-    window.changeScore = (team, delta) => {
-      if (team === 'home') matchState.homeScore = Math.max(0, matchState.homeScore + delta);
-      if (team === 'away') matchState.awayScore = Math.max(0, matchState.awayScore + delta);
+    function renderScoreButtons(sport) {
+      const homeContainer = document.getElementById('home-score-controls');
+      const awayContainer = document.getElementById('away-score-controls');
+      
+      let btns = sport === 'basketball' 
+        ? `<button onclick="changeScore('TEAM', 1)" class="px-3 py-2 bg-emerald-600 font-bold rounded text-xl">+1</button>
+           <button onclick="changeScore('TEAM', 2)" class="px-3 py-2 bg-emerald-600 font-bold rounded text-xl">+2</button>
+           <button onclick="changeScore('TEAM', 3)" class="px-3 py-2 bg-emerald-600 font-bold rounded text-xl">+3</button>
+           <button onclick="changeScore('TEAM', -1)" class="px-3 py-2 bg-rose-600 font-bold rounded text-xl">-1</button>`
+        : `<button onclick="changeScore('TEAM', 1)" class="px-6 py-2 bg-emerald-600 font-bold rounded text-2xl">+1</button>
+           <button onclick="changeScore('TEAM', -1)" class="px-6 py-2 bg-rose-600 font-bold rounded text-2xl">-1</button>`;
+      
+      homeContainer.innerHTML = btns.replace(/TEAM/g, 'home');
+      awayContainer.innerHTML = btns.replace(/TEAM/g, 'away');
+
+      // เปิด/ปิดแผงควบคุมเฉพาะกีฬา
+      document.getElementById('panel-football').classList.add('hidden');
+      document.getElementById('panel-fouls').classList.add('hidden');
+      document.getElementById('panel-sets').classList.add('hidden');
+
+      if (sport === 'football') document.getElementById('panel-football').classList.remove('hidden');
+      if (sport === 'basketball' || sport === 'futsal') document.getElementById('panel-fouls').classList.remove('hidden');
+      if (sport === 'volleyball' || sport === 'badminton') document.getElementById('panel-sets').classList.remove('hidden');
+    }
+
+    window.changeScore = (t, d) => {
+      if (t === 'home') matchState.homeScore = Math.max(0, matchState.homeScore + d);
+      if (t === 'away') matchState.awayScore = Math.max(0, matchState.awayScore + d);
+      syncToDatabase();
+    };
+    
+    window.changeFoul = (t, d) => {
+      if (t === 'home') matchState.homeFouls = Math.max(0, matchState.homeFouls + d);
+      if (t === 'away') matchState.awayFouls = Math.max(0, matchState.awayFouls + d);
       syncToDatabase();
     };
 
-    const handleLocalImg = (el, key) => {
-      document.getElementById(el).addEventListener('change', (e) => {
-        const f = e.target.files[0];
-        if (f) {
-          const r = new FileReader();
-          r.onload = ev => { matchState[key] = ev.target.result; syncToDatabase(); };
-          r.readAsDataURL(f);
-        }
-      });
+    window.endSet = () => {
+      if(!matchState.setScoresHome) matchState.setScoresHome = [];
+      if(!matchState.setScoresAway) matchState.setScoresAway = [];
+      matchState.setScoresHome.push(matchState.homeScore);
+      matchState.setScoresAway.push(matchState.awayScore);
+      matchState.homeScore = 0; matchState.awayScore = 0;
+      matchState.period = `SET ${matchState.setScoresHome.length + 1}`;
+      syncToDatabase();
     };
-    handleLocalImg('input-home-logo', 'homeLogo');
-    handleLocalImg('input-away-logo', 'awayLogo');
+    window.resetSets = () => { matchState.setScoresHome = []; matchState.setScoresAway = []; syncToDatabase(); };
+
+    window.addMatchEvent = () => {
+      const team = document.getElementById('fb-team').value;
+      const player = document.getElementById('fb-player').value || 'Unknown Player';
+      const evt = document.getElementById('fb-event').value;
+      const teamName = team === 'home' ? matchState.homeName : matchState.awayName;
+      triggerEventDisplay(`${evt} : ${player} (${teamName})`, team);
+      document.getElementById('fb-player').value = '';
+    };
+
+    window.addSubstitute = () => {
+      const team = document.getElementById('sub-team').value;
+      const pIn = document.getElementById('sub-in').value;
+      const pOut = document.getElementById('sub-out').value;
+      if(!pIn && !pOut) return;
+      const teamName = team === 'home' ? matchState.homeName : matchState.awayName;
+      triggerEventDisplay(`🔄 เปลี่ยนตัว (${teamName}) | เข้า: ${pIn || '-'} | ออก: ${pOut || '-'}`, team);
+      document.getElementById('sub-in').value = ''; document.getElementById('sub-out').value = '';
+    };
+
+    window.clearMatchEvents = () => triggerEventDisplay('', '');
+
+    function triggerEventDisplay(text, teamInfo) {
+      matchState.matchEvent = { text, teamInfo, timestamp: Date.now() };
+      syncToDatabase();
+    }
+
+    const handleImg = (el, k) => { document.getElementById(el).addEventListener('change', (e) => { const f = e.target.files[0]; if (f) { const r = new FileReader(); r.onload = ev => { matchState[k] = ev.target.result; syncToDatabase(); }; r.readAsDataURL(f); } }); };
+    handleImg('input-home-logo', 'homeLogo'); handleImg('input-away-logo', 'awayLogo');
 
     document.getElementById('btn-timer-toggle').addEventListener('click', () => { matchState.timerRunning = !matchState.timerRunning; syncToDatabase(); });
     document.getElementById('btn-timer-reset').addEventListener('click', () => { matchState.timerSeconds = 0; matchState.timerRunning = false; syncToDatabase(); });
-    setInterval(() => {
-      if (matchState.timerRunning) {
-        matchState.timerSeconds++; updateControlTimerUI();
-        if (currentUser) update(currentMatchRef, { timerSeconds: matchState.timerSeconds });
-      }
-    }, 1000);
+    setInterval(() => { if (matchState.timerRunning) { matchState.timerSeconds++; updateControlTimerUI(); if (currentUser) update(currentMatchRef, { timerSeconds: matchState.timerSeconds }); } }, 1000);
 
-    function syncToDatabase() { if (currentUser && currentMatchRef) set(currentMatchRef, matchState); }
-    
+    // Live Input Listeners
+    document.getElementById('input-home-name').addEventListener('input', e => { matchState.homeName = e.target.value; syncToDatabase(); });
+    document.getElementById('input-away-name').addEventListener('input', e => { matchState.awayName = e.target.value; syncToDatabase(); });
+    document.getElementById('input-period').addEventListener('input', e => { matchState.period = e.target.value; syncToDatabase(); });
+    document.getElementById('input-marquee').addEventListener('input', e => { matchState.marqueeText = e.target.value || ' '; syncToDatabase(); });
+
     function updateControlUI() {
+      if(document.activeElement.id !== 'input-home-name') document.getElementById('input-home-name').value = matchState.homeName;
+      if(document.activeElement.id !== 'input-away-name') document.getElementById('input-away-name').value = matchState.awayName;
+      if(document.activeElement.id !== 'input-period') document.getElementById('input-period').value = matchState.period;
+      if(document.activeElement.id !== 'input-marquee') document.getElementById('input-marquee').value = matchState.marqueeText;
+      
       document.getElementById('ctrl-home-name').innerText = matchState.homeName;
       document.getElementById('ctrl-away-name').innerText = matchState.awayName;
       document.getElementById('ctrl-home-score').innerText = matchState.homeScore;
       document.getElementById('ctrl-away-score').innerText = matchState.awayScore;
       document.getElementById('btn-timer-toggle').innerText = matchState.timerRunning ? 'PAUSE' : 'START';
+      
+      document.getElementById('ctrl-home-foul').innerText = matchState.homeFouls || 0;
+      document.getElementById('ctrl-away-foul').innerText = matchState.awayFouls || 0;
       updateControlTimerUI();
     }
-    
     function updateControlTimerUI() {
       const m = String(Math.floor(matchState.timerSeconds / 60)).padStart(2, '0');
       const s = String(matchState.timerSeconds % 60).padStart(2, '0');
       document.getElementById('ctrl-timer').innerText = `${m}:${s}`;
     }
 
+    // --- [Display Rendering] ---
+    let eventTimeout = null;
     function renderDisplay(data) {
       document.getElementById('disp-home-name').innerText = data.homeName || 'HOME';
       document.getElementById('disp-away-name').innerText = data.awayName || 'AWAY';
@@ -408,38 +487,61 @@
       document.getElementById('disp-away-score').innerText = data.awayScore || 0;
       document.getElementById('disp-sport-title').innerText = (data.sport || 'SPORT').toUpperCase();
       document.getElementById('disp-period').innerText = data.period || '1ST HALF';
+      
+      // Marquee
+      document.getElementById('disp-marquee').innerText = data.marqueeText || ' ';
 
+      // Timer
       const m = String(Math.floor((data.timerSeconds || 0) / 60)).padStart(2, '0');
       const s = String((data.timerSeconds || 0) % 60).padStart(2, '0');
       document.getElementById('disp-timer').innerText = `${m}:${s}`;
 
+      // Logos
       const hLogo = document.getElementById('disp-home-logo');
       if (data.homeLogo) { hLogo.src = data.homeLogo; hLogo.classList.remove('hidden'); } else { hLogo.classList.add('hidden'); }
       const aLogo = document.getElementById('disp-away-logo');
       if (data.awayLogo) { aLogo.src = data.awayLogo; aLogo.classList.remove('hidden'); } else { aLogo.classList.add('hidden'); }
-    }
 
-    document.getElementById('input-home-name').addEventListener('input', e => { matchState.homeName = e.target.value || 'HOME'; syncToDatabase(); });
-    document.getElementById('input-away-name').addEventListener('input', e => { matchState.awayName = e.target.value || 'AWAY'; syncToDatabase(); });
-    document.getElementById('input-period').addEventListener('input', e => { matchState.period = e.target.value || '1ST HALF'; syncToDatabase(); });
-    
-    document.getElementById('create-user-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      try {
-        const cred = await createUserWithEmailAndPassword(secondaryAuth, document.getElementById('new-user-email').value, document.getElementById('new-user-password').value);
-        await set(ref(db, `users/${cred.user.uid}`), { email: document.getElementById('new-user-email').value, role: 'operator', allowedSports: Array.from(document.querySelectorAll('.sport-checkbox:checked')).map(cb => cb.value) });
-        await secondaryAuth.signOut(); alert("สร้างผู้ใช้สำเร็จ!"); document.getElementById('create-user-form').reset();
-      } catch (err) { alert(err.message); }
-    });
-    
-    function renderUsersTable(obj) {
-      const tbody = document.getElementById('users-table-body'); tbody.innerHTML = '';
-      Object.keys(obj).forEach(uid => {
-        const u = obj[uid]; const admin = u.role === 'admin'; const sports = (u.allowedSports || []).join(', ');
-        tbody.innerHTML += `<tr class="border-b border-slate-800"><td class="p-3">${uid.substring(0,8)}</td><td class="p-3">${u.email}</td><td class="p-3">${u.role}</td><td class="p-3">${sports}</td><td class="p-3">${admin ? 'Master' : `<button onclick="editSports('${uid}','${sports}')" class="text-xs bg-amber-500 text-black px-2 py-1 rounded">แก้ไข</button>`}</td></tr>`;
-      });
+      // Fouls Display (BBall, Futsal)
+      const isFoulSport = data.sport === 'basketball' || data.sport === 'futsal';
+      document.getElementById('disp-home-fouls-container').classList.toggle('hidden', !isFoulSport);
+      document.getElementById('disp-away-fouls-container').classList.toggle('hidden', !isFoulSport);
+      if(isFoulSport) {
+        document.getElementById('disp-home-fouls').innerText = data.homeFouls || 0;
+        document.getElementById('disp-away-fouls').innerText = data.awayFouls || 0;
+      }
+
+      // Sets Display (VB, BD)
+      const isSetSport = data.sport === 'volleyball' || data.sport === 'badminton';
+      const setsContainer = document.getElementById('disp-set-scores');
+      if(isSetSport && data.setScoresHome && data.setScoresHome.length > 0) {
+        setsContainer.classList.remove('hidden');
+        let txt = '';
+        for(let i=0; i<data.setScoresHome.length; i++){
+          txt += `[${data.setScoresHome[i]} - ${data.setScoresAway[i]}] `;
+        }
+        setsContainer.innerText = txt;
+      } else {
+        setsContainer.classList.add('hidden');
+      }
+
+      // Event Notification Popup
+      if(data.matchEvent && data.matchEvent.timestamp !== lastEventTimestamp) {
+        lastEventTimestamp = data.matchEvent.timestamp;
+        const box = document.getElementById('disp-events-box');
+        const text = document.getElementById('disp-events-text');
+        if(data.matchEvent.text) {
+          text.innerText = data.matchEvent.text;
+          // เปลี่ยนสีขอบตามทีม (ถ้ามี)
+          box.className = `absolute top-[10%] left-1/2 transform -translate-x-1/2 w-4/5 max-w-4xl bg-slate-900/95 border-4 rounded-2xl p-6 shadow-2xl z-50 transition-opacity duration-500 ${data.matchEvent.teamInfo === 'home' ? 'border-amber-400' : 'border-blue-400'}`;
+          box.classList.remove('hidden');
+          clearTimeout(eventTimeout);
+          eventTimeout = setTimeout(() => { box.classList.add('hidden'); }, 7000); // โชว์ 7 วินาที
+        } else {
+          box.classList.add('hidden');
+        }
+      }
     }
-    window.editSports = (uid, curr) => { const n = prompt("ฟุตบอล, บาสเกตบอล, วอลเลย์บอล, ฟุตซอล, แบดมินตัน:", curr); if (n) update(ref(db, `users/${uid}`), { allowedSports: n.split(',').map(s=>s.trim().toLowerCase()) }); };
   </script>
 </body>
 </html>

@@ -18,7 +18,7 @@
             background-color: #000;
             color: #fff;
             margin: 0;
-            overflow: hidden; /* ป้องกัน Scrollbar สำหรับ Control Panel */
+            overflow: hidden; 
         }
 
         .led-text {
@@ -51,12 +51,15 @@
             aspect-ratio: 16 / 9;
             background-image: radial-gradient(circle, #1a1a1a 0%, #000000 100%);
             border: 4px solid #333;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8) inset;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.8) inset;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
-        /* ปรับแต่ง Scrollbar ใน Control Panel ให้เล็กที่สุดถ้าจำเป็น */
+        /* ปรับแต่ง Scrollbar ใน Control Panel */
         .control-panel {
-            height: calc(100vh - 50px); /* ลบความสูงของ Nav */
+            height: calc(100vh - 50px);
             overflow-y: auto;
         }
         .control-panel::-webkit-scrollbar { width: 6px; }
@@ -75,13 +78,13 @@
     </nav>
 
     <!-- Main Container -->
-    <div id="app" class="w-full"></div>
+    <div id="app" class="w-full flex justify-center items-center h-[calc(100vh-50px)]"></div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // *** ใส่ Config ของคุณที่นี่ ***
+        // *** ใส่ Config Firebase ของคุณที่นี่ ***
         const firebaseConfig = {
             apiKey: "YOUR_API_KEY",
             authDomain: "YOUR_AUTH_DOMAIN",
@@ -105,19 +108,17 @@
             home: { name: "HOME TEAM", score: 0, sets: 0, color: "#1d4ed8", fouls: 0, logo: "" },
             away: { name: "AWAY TEAM", score: 0, sets: 0, color: "#b91c1c", fouls: 0, logo: "" },
             marquee: { text: "WELCOME TO THE CHAMPIONSHIP FINALS | SPONSORED BY YOUR BRAND", visible: true },
-            matchEvent: { text: "", teamInfo: "", timestamp: 0 }
         };
 
         let currentView = 'control'; // 'control' หรือ 'display'
-        let localTimerInterval = null;
 
-        // ฟังก์ชันสำหรับสลับหน้าจอ (เปิดในหน้าต่างใหม่ได้โดยตรงผ่าน URL param แต่ที่นี่ใช้ JS สลับ)
+        // ฟังก์ชันสำหรับสลับหน้าจอ
         window.switchView = (view) => {
             currentView = view;
             renderApp();
         };
 
-        // ผูกฟังก์ชัน Global
+        // ฟังก์ชันอัปเดต State Global
         window.updateState = (key, subKey, value) => {
             if(subKey) {
                 matchState[key][subKey] = value;
@@ -131,17 +132,11 @@
         window.adjustScore = (team, amount) => {
             matchState[team].score = Math.max(0, matchState[team].score + amount);
             syncToFirebase();
-            triggerEvent(team, amount > 0 ? "SCORED!" : "SCORE CORRECTED");
         };
 
-        window.triggerEvent = (team, text) => {
-            matchState.matchEvent = {
-                text: text,
-                teamInfo: matchState[team].name,
-                timestamp: Date.now()
-            };
+        window.adjustSet = (team, amount) => {
+            matchState[team].sets = Math.max(0, matchState[team].sets + amount);
             syncToFirebase();
-            renderApp();
         };
 
         // Firebase Sync
@@ -164,115 +159,128 @@
             const appDiv = document.getElementById('app');
             if (currentView === 'control') {
                 appDiv.innerHTML = renderControlPanel();
+                appDiv.className = "w-full h-[calc(100vh-50px)]";
             } else {
                 appDiv.innerHTML = renderDisplayPanel();
+                appDiv.className = "w-full h-[calc(100vh-50px)] flex justify-center items-center bg-black p-4";
             }
             attachControlListeners();
         }
 
-        // --- 1. CONTROL PANEL (ปรับให้กระชับ เล็กกะทัดรัด ไม่มี Scroll ยืดเยื้อ) ---
+        // --- 1. CONTROL PANEL ---
         function renderControlPanel() {
             const sports = ['basketball', 'football', 'futsal', 'volleyball', 'badminton', 'takraw'];
+            const isNoTimerSport = ['volleyball', 'badminton', 'takraw'].includes(matchState.sport);
             
             return `
-            <div class="control-panel p-2 bg-gray-900 text-sm">
+            <div class="control-panel w-full p-4 bg-gray-900 text-sm">
                 <!-- แถวบนสุด: กีฬา, ชื่อรายการ, Marquee -->
-                <div class="grid grid-cols-12 gap-2 mb-2 bg-gray-800 p-2 rounded border border-gray-700">
+                <div class="grid grid-cols-12 gap-4 mb-4 bg-gray-800 p-4 rounded-lg border border-gray-700 shadow-lg">
                     <div class="col-span-3 flex flex-col">
-                        <label class="text-gray-400 text-xs">Sport Type</label>
-                        <select id="input-sport" class="bg-gray-700 text-white rounded p-1">
+                        <label class="text-gray-400 text-xs font-bold mb-1">Sport Type</label>
+                        <select id="input-sport" class="bg-gray-700 text-white rounded p-2 border border-gray-600 focus:border-blue-500 outline-none">
                             ${sports.map(s => `<option value="${s}" ${matchState.sport === s ? 'selected' : ''}>${s.toUpperCase()}</option>`).join('')}
                         </select>
                     </div>
                     <div class="col-span-4 flex flex-col">
-                        <label class="text-gray-400 text-xs">Competition Name</label>
-                        <input id="input-comp" type="text" class="bg-gray-700 text-white rounded p-1" value="${matchState.competitionName}">
+                        <label class="text-gray-400 text-xs font-bold mb-1">Competition Name</label>
+                        <input id="input-comp" type="text" class="bg-gray-700 text-white rounded p-2 border border-gray-600" value="${matchState.competitionName}">
                     </div>
                     <div class="col-span-5 flex flex-col">
-                        <div class="flex justify-between items-center">
-                            <label class="text-gray-400 text-xs">Marquee Text</label>
-                            <label class="flex items-center gap-1 text-xs cursor-pointer">
-                                <input type="checkbox" id="input-marquee-visible" ${matchState.marquee.visible ? 'checked' : ''}>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="text-gray-400 text-xs font-bold">Marquee Text</label>
+                            <label class="flex items-center gap-2 text-xs cursor-pointer bg-gray-700 px-2 py-1 rounded">
+                                <input type="checkbox" id="input-marquee-visible" ${matchState.marquee.visible ? 'checked' : ''} class="w-4 h-4">
                                 Show Marquee
                             </label>
                         </div>
-                        <input id="input-marquee" type="text" class="bg-gray-700 text-white rounded p-1" value="${matchState.marquee.text}">
+                        <input id="input-marquee" type="text" class="bg-gray-700 text-white rounded p-2 border border-gray-600" value="${matchState.marquee.text}">
                     </div>
                 </div>
 
                 <!-- แถวกลาง: กระดานคะแนน Home / Center / Away -->
-                <div class="grid grid-cols-3 gap-2 h-full">
+                <div class="grid grid-cols-3 gap-4 h-full">
                     
                     <!-- HOME TEAM -->
-                    <div class="bg-gray-800 p-2 rounded border-t-4 border-blue-600 flex flex-col gap-2">
-                        <div class="text-center font-bold text-blue-400 text-lg border-b border-gray-700 pb-1">HOME TEAM</div>
-                        <input id="input-home-name" type="text" class="bg-gray-700 rounded p-1 text-center font-bold" value="${matchState.home.name}">
-                        <div class="flex items-center justify-between mt-1">
-                            <label class="text-gray-400 text-xs">Color:</label>
-                            <input id="input-home-color" type="color" value="${matchState.home.color}" class="bg-gray-700 h-6 w-12 cursor-pointer">
+                    <div class="bg-gray-800 p-4 rounded-lg border-t-4 shadow-lg flex flex-col gap-4" style="border-color: ${matchState.home.color}">
+                        <div class="text-center font-bold text-lg border-b border-gray-700 pb-2" style="color: ${matchState.home.color}">HOME TEAM</div>
+                        <input id="input-home-name" type="text" class="bg-gray-700 rounded p-2 text-center font-bold text-xl" value="${matchState.home.name}">
+                        <div class="flex items-center justify-between">
+                            <label class="text-gray-400 text-xs font-bold">Team Color:</label>
+                            <input id="input-home-color" type="color" value="${matchState.home.color}" class="bg-gray-700 h-8 w-16 cursor-pointer rounded">
                         </div>
-                        <div class="flex-1 flex flex-col justify-center items-center mt-2">
-                            <div class="text-5xl font-bold mb-2">${matchState.home.score}</div>
-                            <div class="flex gap-2">
-                                <button onclick="adjustScore('home', -1)" class="bg-red-900 hover:bg-red-700 px-4 py-1 rounded text-xl">-1</button>
-                                <button onclick="adjustScore('home', 1)" class="bg-green-700 hover:bg-green-600 px-4 py-1 rounded text-xl">+1</button>
-                                <button onclick="adjustScore('home', 2)" class="bg-green-700 hover:bg-green-600 px-4 py-1 rounded text-xl">+2</button>
-                                ${matchState.sport === 'basketball' ? `<button onclick="adjustScore('home', 3)" class="bg-green-700 hover:bg-green-600 px-4 py-1 rounded text-xl">+3</button>` : ''}
+                        <div class="flex-1 flex flex-col justify-center items-center bg-gray-900 rounded-lg p-4">
+                            <div class="text-6xl font-bold mb-4">${matchState.home.score}</div>
+                            <div class="flex gap-2 flex-wrap justify-center">
+                                <button onclick="adjustScore('home', -1)" class="bg-red-900 hover:bg-red-700 px-4 py-2 rounded font-bold">-1</button>
+                                <button onclick="adjustScore('home', 1)" class="bg-green-700 hover:bg-green-600 px-4 py-2 rounded font-bold">+1</button>
+                                ${matchState.sport === 'basketball' ? `<button onclick="adjustScore('home', 2)" class="bg-green-700 hover:bg-green-600 px-4 py-2 rounded font-bold">+2</button><button onclick="adjustScore('home', 3)" class="bg-green-700 hover:bg-green-600 px-4 py-2 rounded font-bold">+3</button>` : ''}
                             </div>
                         </div>
-                        <div class="grid grid-cols-2 gap-2 mt-2">
-                            <div>
-                                <label class="text-gray-400 text-xs block text-center">Sets</label>
-                                <input id="input-home-sets" type="number" class="w-full bg-gray-700 rounded p-1 text-center" value="${matchState.home.sets}">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-gray-900 p-2 rounded text-center">
+                                <label class="text-gray-400 text-xs font-bold block mb-1">Sets / Games</label>
+                                <div class="flex items-center justify-center gap-2">
+                                    <button onclick="adjustSet('home', -1)" class="bg-gray-700 px-2 rounded">-</button>
+                                    <span class="text-xl font-bold">${matchState.home.sets}</span>
+                                    <button onclick="adjustSet('home', 1)" class="bg-gray-700 px-2 rounded">+</button>
+                                </div>
                             </div>
-                            <div>
-                                <label class="text-gray-400 text-xs block text-center">Fouls</label>
-                                <input id="input-home-fouls" type="number" class="w-full bg-gray-700 rounded p-1 text-center" value="${matchState.home.fouls}">
+                            <div class="bg-gray-900 p-2 rounded text-center ${isNoTimerSport ? 'opacity-30 pointer-events-none' : ''}">
+                                <label class="text-gray-400 text-xs font-bold block mb-1">Fouls</label>
+                                <input id="input-home-fouls" type="number" class="w-full bg-gray-700 rounded p-1 text-center font-bold" value="${matchState.home.fouls}">
                             </div>
                         </div>
                     </div>
 
                     <!-- CENTER (Timer & Period) -->
-                    <div class="bg-gray-800 p-2 rounded border border-gray-700 flex flex-col gap-2 items-center text-center">
-                        <label class="text-gray-400 text-xs">Period / Quarter / Half</label>
-                        <input id="input-period" type="text" class="bg-gray-700 rounded p-1 text-center w-24 font-bold text-xl" value="${matchState.period}">
+                    <div class="bg-gray-800 p-4 rounded-lg border border-gray-700 shadow-lg flex flex-col gap-4 items-center">
+                        <div class="w-full bg-gray-900 p-3 rounded text-center">
+                            <label class="text-gray-400 text-xs font-bold block mb-1">Period / Quarter / Set</label>
+                            <input id="input-period" type="text" class="bg-gray-700 rounded p-2 text-center w-32 font-bold text-2xl mx-auto" value="${matchState.period}">
+                        </div>
                         
-                        <label class="text-gray-400 text-xs mt-2">Main Timer</label>
-                        <input id="input-timer" type="text" class="bg-gray-700 rounded p-2 text-center text-3xl font-mono w-full" value="${matchState.timer.time}">
-                        
-                        <div class="w-full flex flex-col mt-2">
+                        <div class="w-full bg-gray-900 p-4 rounded text-center flex-1 flex flex-col justify-center ${isNoTimerSport ? 'opacity-30 pointer-events-none' : ''}">
+                            <label class="text-gray-400 text-xs font-bold block mb-2">Main Timer (MM:SS)</label>
+                            <input id="input-timer" type="text" class="bg-black text-yellow-400 rounded p-2 text-center text-5xl font-mono w-full border border-gray-700 tracking-widest" value="${matchState.timer.time}">
+                            
                             ${matchState.sport === 'basketball' ? `
-                            <label class="text-red-400 text-xs font-bold mt-2">Shot Clock</label>
-                            <input id="input-shotclock" type="text" class="bg-gray-700 rounded p-1 text-center text-2xl text-red-500 font-mono w-full mb-2" value="${matchState.timer.shotClock}">
+                            <div class="mt-6 border-t border-gray-700 pt-4">
+                                <label class="text-red-400 text-xs font-bold block mb-2">Shot Clock</label>
+                                <input id="input-shotclock" type="text" class="bg-black text-red-500 rounded p-2 text-center text-4xl font-mono w-32 mx-auto border border-red-900" value="${matchState.timer.shotClock}">
+                            </div>
                             ` : ''}
                         </div>
                     </div>
 
                     <!-- AWAY TEAM -->
-                    <div class="bg-gray-800 p-2 rounded border-t-4 border-red-600 flex flex-col gap-2">
-                        <div class="text-center font-bold text-red-400 text-lg border-b border-gray-700 pb-1">AWAY TEAM</div>
-                        <input id="input-away-name" type="text" class="bg-gray-700 rounded p-1 text-center font-bold" value="${matchState.away.name}">
-                        <div class="flex items-center justify-between mt-1">
-                            <label class="text-gray-400 text-xs">Color:</label>
-                            <input id="input-away-color" type="color" value="${matchState.away.color}" class="bg-gray-700 h-6 w-12 cursor-pointer">
+                    <div class="bg-gray-800 p-4 rounded-lg border-t-4 shadow-lg flex flex-col gap-4" style="border-color: ${matchState.away.color}">
+                        <div class="text-center font-bold text-lg border-b border-gray-700 pb-2" style="color: ${matchState.away.color}">AWAY TEAM</div>
+                        <input id="input-away-name" type="text" class="bg-gray-700 rounded p-2 text-center font-bold text-xl" value="${matchState.away.name}">
+                        <div class="flex items-center justify-between">
+                            <label class="text-gray-400 text-xs font-bold">Team Color:</label>
+                            <input id="input-away-color" type="color" value="${matchState.away.color}" class="bg-gray-700 h-8 w-16 cursor-pointer rounded">
                         </div>
-                        <div class="flex-1 flex flex-col justify-center items-center mt-2">
-                            <div class="text-5xl font-bold mb-2">${matchState.away.score}</div>
-                            <div class="flex gap-2">
-                                <button onclick="adjustScore('away', -1)" class="bg-red-900 hover:bg-red-700 px-4 py-1 rounded text-xl">-1</button>
-                                <button onclick="adjustScore('away', 1)" class="bg-green-700 hover:bg-green-600 px-4 py-1 rounded text-xl">+1</button>
-                                <button onclick="adjustScore('away', 2)" class="bg-green-700 hover:bg-green-600 px-4 py-1 rounded text-xl">+2</button>
-                                ${matchState.sport === 'basketball' ? `<button onclick="adjustScore('away', 3)" class="bg-green-700 hover:bg-green-600 px-4 py-1 rounded text-xl">+3</button>` : ''}
+                        <div class="flex-1 flex flex-col justify-center items-center bg-gray-900 rounded-lg p-4">
+                            <div class="text-6xl font-bold mb-4">${matchState.away.score}</div>
+                            <div class="flex gap-2 flex-wrap justify-center">
+                                <button onclick="adjustScore('away', -1)" class="bg-red-900 hover:bg-red-700 px-4 py-2 rounded font-bold">-1</button>
+                                <button onclick="adjustScore('away', 1)" class="bg-green-700 hover:bg-green-600 px-4 py-2 rounded font-bold">+1</button>
+                                ${matchState.sport === 'basketball' ? `<button onclick="adjustScore('away', 2)" class="bg-green-700 hover:bg-green-600 px-4 py-2 rounded font-bold">+2</button><button onclick="adjustScore('away', 3)" class="bg-green-700 hover:bg-green-600 px-4 py-2 rounded font-bold">+3</button>` : ''}
                             </div>
                         </div>
-                        <div class="grid grid-cols-2 gap-2 mt-2">
-                            <div>
-                                <label class="text-gray-400 text-xs block text-center">Sets</label>
-                                <input id="input-away-sets" type="number" class="w-full bg-gray-700 rounded p-1 text-center" value="${matchState.away.sets}">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-gray-900 p-2 rounded text-center">
+                                <label class="text-gray-400 text-xs font-bold block mb-1">Sets / Games</label>
+                                <div class="flex items-center justify-center gap-2">
+                                    <button onclick="adjustSet('away', -1)" class="bg-gray-700 px-2 rounded">-</button>
+                                    <span class="text-xl font-bold">${matchState.away.sets}</span>
+                                    <button onclick="adjustSet('away', 1)" class="bg-gray-700 px-2 rounded">+</button>
+                                </div>
                             </div>
-                            <div>
-                                <label class="text-gray-400 text-xs block text-center">Fouls</label>
-                                <input id="input-away-fouls" type="number" class="w-full bg-gray-700 rounded p-1 text-center" value="${matchState.away.fouls}">
+                            <div class="bg-gray-900 p-2 rounded text-center ${isNoTimerSport ? 'opacity-30 pointer-events-none' : ''}">
+                                <label class="text-gray-400 text-xs font-bold block mb-1">Fouls</label>
+                                <input id="input-away-fouls" type="number" class="w-full bg-gray-700 rounded p-1 text-center font-bold" value="${matchState.away.fouls}">
                             </div>
                         </div>
                     </div>
@@ -280,22 +288,89 @@
             </div>`;
         }
 
-        // ดักจับการเปลี่ยนแปลงค่าใน Control Panel
+        // --- 2. LED DISPLAY PANEL ---
+        function renderDisplayPanel() {
+            const isNoTimerSport = ['volleyball', 'badminton', 'takraw'].includes(matchState.sport);
+            
+            return `
+            <div class="display-screen w-full max-w-[1400px] relative rounded-lg p-6">
+                <!-- Header -->
+                <div class="text-center bg-black bg-opacity-60 p-2 rounded-lg border border-gray-800 mx-auto w-4/5 mb-2 shadow-lg">
+                    <h1 class="text-4xl text-yellow-400 led-text font-bold tracking-widest uppercase">${matchState.competitionName}</h1>
+                    <h2 class="text-2xl text-gray-300 mt-1 uppercase">PERIOD / SET: ${matchState.period}</h2>
+                </div>
+
+                <!-- Main Score Area -->
+                <div class="flex justify-between items-stretch flex-1 w-full px-8 gap-8 mt-4">
+                    
+                    <!-- Home Team -->
+                    <div class="flex-1 bg-black bg-opacity-70 p-6 rounded-2xl border-l-[12px] flex flex-col items-center justify-between shadow-2xl relative" style="border-color: ${matchState.home.color}">
+                        <div class="text-5xl font-bold text-white led-text truncate w-full text-center tracking-wide uppercase">${matchState.home.name}</div>
+                        <div class="text-[16rem] leading-none font-bold led-text my-auto" style="color: ${matchState.home.color}">${matchState.home.score}</div>
+                        ${!isNoTimerSport ? `<div class="text-4xl text-red-500 led-text font-bold bg-gray-900 px-6 py-2 rounded-lg">FOULS: ${matchState.home.fouls}</div>` : ''}
+                    </div>
+
+                    <!-- Center Area -->
+                    <div class="flex flex-col items-center justify-center w-1/4">
+                        ${isNoTimerSport ? `
+                            <!-- Layout สำหรับ วอลเลย์บอล / แบดมินตัน (ไม่มีเวลา, เน้นเซ็ต) -->
+                            <div class="bg-black bg-opacity-80 p-8 rounded-2xl border border-gray-700 w-full text-center shadow-2xl">
+                                <div class="text-4xl text-yellow-400 led-text mb-6 tracking-widest">SETS</div>
+                                <div class="flex justify-center items-center gap-6">
+                                    <div class="text-[8rem] leading-none font-bold text-white led-text">${matchState.home.sets}</div>
+                                    <div class="text-6xl font-bold text-gray-600">-</div>
+                                    <div class="text-[8rem] leading-none font-bold text-white led-text">${matchState.away.sets}</div>
+                                </div>
+                            </div>
+                        ` : `
+                            <!-- Layout สำหรับ บาส / ฟุตบอล / ฟุตซอล (มีเวลา) -->
+                            <div class="text-3xl text-gray-400 mb-2 font-bold tracking-widest">TIME</div>
+                            <div class="text-[7rem] leading-none font-mono font-bold text-yellow-400 led-text bg-black bg-opacity-80 px-8 py-4 rounded-xl border border-gray-800 shadow-2xl">${matchState.timer.time}</div>
+                            
+                            ${matchState.sport === 'basketball' ? `
+                            <div class="mt-12 mb-2 text-2xl text-red-400 font-bold tracking-widest">SHOT CLOCK</div>
+                            <div class="text-[8rem] leading-none font-mono font-bold text-red-500 led-text bg-black bg-opacity-80 px-8 py-2 rounded-xl border-4 border-red-900 shadow-2xl">${matchState.timer.shotClock}</div>
+                            ` : `
+                            <div class="mt-12 text-2xl text-yellow-400 font-bold tracking-widest">SETS</div>
+                            <div class="text-6xl font-bold text-white led-text bg-black bg-opacity-60 px-8 py-4 rounded-lg mt-2">${matchState.home.sets} - ${matchState.away.sets}</div>
+                            `}
+                        `}
+                    </div>
+
+                    <!-- Away Team -->
+                    <div class="flex-1 bg-black bg-opacity-70 p-6 rounded-2xl border-r-[12px] flex flex-col items-center justify-between shadow-2xl relative" style="border-color: ${matchState.away.color}">
+                        <div class="text-5xl font-bold text-white led-text truncate w-full text-center tracking-wide uppercase">${matchState.away.name}</div>
+                        <div class="text-[16rem] leading-none font-bold led-text my-auto" style="color: ${matchState.away.color}">${matchState.away.score}</div>
+                        ${!isNoTimerSport ? `<div class="text-4xl text-red-500 led-text font-bold bg-gray-900 px-6 py-2 rounded-lg">FOULS: ${matchState.away.fouls}</div>` : ''}
+                    </div>
+                </div>
+
+                <!-- Marquee -->
+                ${matchState.marquee.visible ? `
+                <div class="marquee-container mt-6 rounded-lg shadow-lg">
+                    <div class="marquee-content text-yellow-300 led-text">${matchState.marquee.text}</div>
+                </div>
+                ` : '<div class="h-[46px] mt-6"></div>'}
+            </div>`;
+        }
+
+        // --- 3. EVENT LISTENERS สำหรับ Control Panel ---
         function attachControlListeners() {
             if (currentView !== 'control') return;
+            
+            // Map ID ของ input เข้ากับ Object State
             const bindings = [
                 { id: 'input-sport', key: 'sport' },
                 { id: 'input-comp', key: 'competitionName' },
                 { id: 'input-marquee', key: 'marquee', subKey: 'text' },
                 { id: 'input-period', key: 'period' },
                 { id: 'input-timer', key: 'timer', subKey: 'time' },
+                { id: 'input-shotclock', key: 'timer', subKey: 'shotClock' },
                 { id: 'input-home-name', key: 'home', subKey: 'name' },
                 { id: 'input-home-color', key: 'home', subKey: 'color' },
-                { id: 'input-home-sets', key: 'home', subKey: 'sets' },
                 { id: 'input-home-fouls', key: 'home', subKey: 'fouls' },
                 { id: 'input-away-name', key: 'away', subKey: 'name' },
                 { id: 'input-away-color', key: 'away', subKey: 'color' },
-                { id: 'input-away-sets', key: 'away', subKey: 'sets' },
                 { id: 'input-away-fouls', key: 'away', subKey: 'fouls' },
             ];
 
@@ -303,56 +378,24 @@
                 const el = document.getElementById(b.id);
                 if (el) {
                     el.addEventListener('change', (e) => {
-                        updateState(b.key,เนื่องจากคำว่า **"code index"** ค่อนข้างกว้าง ผมขออนุญาตอ้างอิงถึงไฟล์ **`index.html`** ซึ่งเป็นหน้าแรกมาตรฐานของเว็บไซต์ (HTML5 Boilerplate) นะครับ 
+                        let val = e.target.value;
+                        if (e.target.type === 'number') val = parseInt(val) || 0;
+                        updateState(b.key, b.subKey, val);
+                    });
+                }
+            });
 
-นี่คือโครงสร้างโค้ด HTML5 มาตรฐานอัปเดตล่าสุด ที่รองรับการแสดงผลบนมือถือ (Responsive) และมีโครงสร้างพื้นฐานพร้อมใช้งาน:
+            // จัดการ Checkbox แยกต่างหาก
+            const marqueeVisibleCheckbox = document.getElementById('input-marquee-visible');
+            if (marqueeVisibleCheckbox) {
+                marqueeVisibleCheckbox.addEventListener('change', (e) => {
+                    updateState('marquee', 'visible', e.target.checked);
+                });
+            }
+        }
 
-```html
-<!DOCTYPE html>
-<html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="คำอธิบายเว็บไซต์ของคุณ สำหรับการทำ SEO">
-    <meta name="author" content="ชื่อผู้จัดทำ">
-    
-    <title>หน้าแรก (Index) | ชื่อเว็บไซต์</title>
-
-    <!-- สำหรับเชื่อมต่อไฟล์ CSS (ถ้ามี) -->
-    <!-- <link rel="stylesheet" href="styles.css"> -->
-
-    <!-- สำหรับเพิ่ม Favicon (ไอคอนที่แท็บเบราว์เซอร์) -->
-    <!-- <link rel="icon" type="image/x-icon" href="favicon.ico"> -->
-</head>
-<body>
-
-    <!-- ส่วนหัวของเว็บไซต์ (Header/Navbar) -->
-    <header>
-        <nav>
-            <ul>
-                <li><a href="#">หน้าแรก</a></li>
-                <li><a href="#">เกี่ยวกับเรา</a></li>
-                <li><a href="#">ติดต่อเรา</a></li>
-            </ul>
-        </nav>
-        <h1>ยินดีต้อนรับสู่เว็บไซต์</h1>
-    </header>
-
-    <!-- ส่วนเนื้อหาหลัก (Main Content) -->
-    <main>
-        <section>
-            <h2>เนื้อหาส่วนที่ 1</h2>
-            <p>นี่คือโครงสร้างพื้นฐานสำหรับไฟล์ index.html เริ่มต้นของคุณ</p>
-        </section>
-    </main>
-
-    <!-- ส่วนท้ายของเว็บไซต์ (Footer) -->
-    <footer>
-        <p>&copy; 2026 ชื่อเว็บไซต์ของคุณ สงวนลิขสิทธิ์</p>
-    </footer>
-
-    <!-- สำหรับเชื่อมต่อไฟล์ JavaScript (ถ้ามี) ให้ไว้ก่อนปิด tag body -->
-    <!-- <script src="script.js"></script> -->
-
+        // Render ครั้งแรกตอนโหลด
+        renderApp();
+    </script>
 </body>
 </html>

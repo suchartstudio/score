@@ -147,6 +147,11 @@
             <button id="btn-timer-reset" class="px-4 py-2.5 bg-slate-700 hover:bg-slate-600 font-bold rounded-lg text-sm">RESET</button>
           </div>
 
+          <!-- ปุ่ม Reset Match -->
+          <div class="flex justify-center">
+            <button onclick="resetMatch()" class="w-full py-2 bg-rose-700 hover:bg-rose-600 font-bold rounded-lg text-sm text-white border border-rose-500" data-i18n="btnResetMatch">🔄 เริ่มการแข่งขันใหม่ (Reset All)</button>
+          </div>
+
           <div class="grid grid-cols-2 gap-2 text-[11px]">
             <div class="bg-slate-800 p-2 rounded">
               <span class="text-xs text-slate-400 block font-semibold" data-i18n="lblSetTime">⏱️ ตั้งเวลา</span>
@@ -351,7 +356,8 @@
         scShotclock: "Shotclock 24/14", scAwayScore: "คะแนนเยือน +", scAwaySub: "คะแนนเยือน -1", scHomeFoul: "ฟาล์วเหย้า +/-", 
         scAwayFoul: "ฟาล์วเยือน +/-", scEndSet: "จบเซ็ต",
         subText: "เปลี่ยนตัว", subInLabel: "เข้า", subOutLabel: "ออก",
-        alertPlayerErr: "กรุณาใส่ชื่อหรือเบอร์นักเตะครับ", alertSubErr: "กรุณาระบุคนเข้าและคนออกให้ครบถ้วนครับ"
+        alertPlayerErr: "กรุณาใส่ชื่อหรือเบอร์นักเตะครับ", alertSubErr: "กรุณาระบุคนเข้าและคนออกให้ครบถ้วนครับ",
+        btnResetMatch: "🔄 เริ่มการแข่งขันใหม่ (Reset All)", confirmReset: "ยืนยันการรีเซ็ตคะแนนและเวลาทั้งหมดเพื่อเริ่มแมตช์ใหม่?"
       },
       en: {
         subtitleLogin: "Scoreboard Control System / Admin Login", userPlaceholder: "Username (No @ needed)",
@@ -371,7 +377,8 @@
         scShotclock: "Shotclock 24/14", scAwayScore: "Away Score +", scAwaySub: "Away Score -1", scHomeFoul: "Home Foul +/-", 
         scAwayFoul: "Away Foul +/-", scEndSet: "End Set",
         subText: "Substitution", subInLabel: "IN", subOutLabel: "OUT",
-        alertPlayerErr: "Please enter player name/number.", alertSubErr: "Please fill in both players."
+        alertPlayerErr: "Please enter player name/number.", alertSubErr: "Please fill in both players.",
+        btnResetMatch: "🔄 New Match (Reset All)", confirmReset: "Confirm resetting all scores and time for a new match?"
       }
     };
 
@@ -683,9 +690,33 @@
       matchState.period = `SET ${matchState.setScoresHome.length + 1}`;
       syncToDatabase();
     };
+    
     window.resetSets = () => { matchState.setScoresHome = []; matchState.setScoresAway = []; syncToDatabase(); };
 
-    // ฟังก์ชัน Match Events (สลับภาษาถูกต้อง)
+    // ฟังก์ชันเริ่มการแข่งขันใหม่
+    window.resetMatch = () => {
+      const confirmMsg = dict[currentLang].confirmReset;
+      if(confirm(confirmMsg)) {
+        matchState.homeScore = 0;
+        matchState.awayScore = 0;
+        matchState.homeFouls = 0;
+        matchState.awayFouls = 0;
+        matchState.timerSeconds = 0;
+        matchState.timerRunning = false;
+        matchState.shotClockSeconds = 24;
+        matchState.setScoresHome = [];
+        matchState.setScoresAway = [];
+        matchState.matchEvent = { text: '', timestamp: 0 };
+        
+        const periods = sportPeriods[matchState.sport] || [];
+        if (periods.length > 0) matchState.period = periods[0];
+        
+        syncToDatabase();
+        updateControlUI();
+        renderPeriodButtons(matchState.sport);
+      }
+    };
+
     window.addMatchEvent = () => {
       const team = document.getElementById('fb-team').value;
       const player = document.getElementById('fb-player').value.trim();
